@@ -1,0 +1,94 @@
+{
+  "meta": {
+    "title": "AI news in 60 seconds",
+    "format": "9:16",
+    "theme": "paper",
+    "captions": "karaoke",
+    "handle": "@liuantum"
+  },
+  "audio": { "music": "auto:tense", "musicVolume": 0.3 },
+  "scenes": [
+    {
+      "type": "title",
+      "kicker": "AI news · today",
+      "headline": "The AI race just went ==global==",
+      "camera": "crash-zoom",
+      "bg": "halftone",
+      "narration": "The AI race just went global, and it is moving faster than ever.",
+      "stickers": [{ "type": "face-mindblown", "x": 78, "y": 72, "size": 18, "at": 1.2 }],
+      "transition": "whip-up"
+    },
+    {
+      "type": "chapter",
+      "number": 1,
+      "title": "Where the data centers are",
+      "theme": "yellow",
+      "transition": "zoom-through"
+    },
+    {
+      "type": "map",
+      "title": "Data-center hotspots",
+      "highlight": [{ "name": "USA", "label": "USA" }, { "name": "Ireland" }, { "name": "India" }, { "name": "Japan" }],
+      "focus": { "lon": 20, "lat": 30, "zoom": 1.25 },
+      "arcs": [{ "from": [-77, 39], "to": [-6.3, 53.3] }, { "from": [-6.3, 53.3], "to": [72.8, 19] }, { "from": [72.8, 19], "to": [139.7, 35.7] }],
+      "narration": "New AI data centers are spreading across continents, from the US to Europe to Asia.",
+      "source": "Illustrative example",
+      "transition": "paper-slide"
+    },
+    {
+      "type": "donut",
+      "value": 62,
+      "title": "of companies now ==use AI== weekly",
+      "label": "Illustrative survey figure",
+      "camera": "push-in",
+      "narration": "Most companies now use AI every single week.",
+      "transition": "iris"
+    },
+    {
+      "type": "photo",
+      "frame": "polaroid",
+      "media": "search:robot arm factory",
+      "label": "robot arm",
+      "caption": "Robots are learning from ==video==",
+      "camera": "dolly-zoom",
+      "stickers": [{ "type": "arrow-curve", "x": 72, "y": 22, "size": 16, "at": 1.6 }, { "type": "label", "text": "NEW", "x": 26, "y": 20, "size": 7, "at": 1.2 }],
+      "narration": "And robots are now learning new skills just by watching video.",
+      "transition": "tear"
+    },
+    {
+      "type": "collage",
+      "title": "This week in AI",
+      "media": [{ "src": "search:smartphone ai assistant", "label": "assistants" }, { "src": "search:server room", "label": "compute" }, { "src": "search:medical scan", "label": "health" }, { "src": "search:self driving car", "label": "cars" }],
+      "narration": "This week alone: smarter assistants, bigger compute, new medical tools, and self driving progress.",
+      "transition": "glitch"
+    },
+    {
+      "type": "screen",
+      "device": "phone",
+      "kicker": "Product update",
+      "headline": "Your assistant can now ==book, buy and plan== for you",
+      "body": ["Agents are moving from chat to action.", "Expect more apps to open up to them."],
+      "click": { "x": 50, "y": 62, "at": 2.6 },
+      "caption": "agents!",
+      "narration": "Assistants are moving from chatting to actually doing things for you.",
+      "transition": "slide-up"
+    },
+    {
+      "type": "broll",
+      "media": ["search:city night timelapse", "search:circuit board macro"],
+      "text": "The **next** wave is here",
+      "lowerThird": { "title": "Daily AI brief", "sub": "@liuantum" },
+      "narration": "The next wave is already here.",
+      "transition": "flash"
+    },
+    {
+      "type": "outro",
+      "headline": "Follow for daily AI news",
+      "cta": "Follow",
+      "handle": "@liuantum",
+      "bg": "rays",
+      "theme": "yellow",
+      "narration": "Follow for your daily AI news."
+    }
+  ]
+}

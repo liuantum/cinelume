@@ -1,0 +1,7 @@
+node_modules/
+.vox-cache/
+*.preview.mp4
+*-stills/
+*.player.html
+.DS_Store
+skills/vox-video/examples/*.mp4

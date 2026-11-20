@@ -1,0 +1,165 @@
+{
+  "meta": {
+    "title": "Why the whole world is fighting over one tiny chip",
+    "format": "16:9",
+    "theme": "paper",
+    "captions": "boxed",
+    "handle": "@liuantum",
+    "progress": true
+  },
+  "audio": { "music": "auto", "musicVolume": 0.3 },
+  "scenes": [
+    {
+      "type": "title",
+      "kicker": "Explained",
+      "headline": "Why the world is ==fighting== over a [[tiny chip]]",
+      "sub": "And why one island makes almost all of them",
+      "camera": "push-in",
+      "narration": "This is the most important object in the modern economy. And almost nobody has seen one.",
+      "stickers": [{ "type": "chip", "x": 86, "y": 24, "size": 14, "at": 1.4 }, { "type": "sparkle", "x": 78, "y": 14, "size": 6, "at": 1.7 }],
+      "transition": "whip-left"
+    },
+    {
+      "type": "kinetic",
+      "lines": ["It powers your **phone**", "It trains **AI**", "It decides ==who wins=="],
+      "camera": "handheld",
+      "narration": "It powers your phone. It trains every AI model. And increasingly, it decides who wins.",
+      "transition": "zoom-through"
+    },
+    {
+      "type": "map",
+      "title": "One island, one bottleneck",
+      "highlight": [{ "name": "Taiwan", "label": "Taiwan" }],
+      "from": { "lon": 110, "lat": 25, "zoom": 1.6 },
+      "focus": { "lon": 121, "lat": 23.7, "zoom": 14 },
+      "pins": [{ "lon": 120.97, "lat": 24.8, "label": "Hsinchu Science Park" }],
+      "narration": "Most of the world's most advanced chips are made right here, on an island smaller than many countries' provinces.",
+      "source": "Illustrative example",
+      "transition": "paper-slide"
+    },
+    {
+      "type": "bignumber",
+      "kicker": "Share of the most advanced chips",
+      "value": 90,
+      "prefix": "~",
+      "suffix": "%",
+      "label": "made by ==a single company==",
+      "camera": "crash-zoom",
+      "narration": "Roughly ninety percent of the most advanced chips come from a single company.",
+      "source": "Illustrative example",
+      "transition": "iris"
+    },
+    {
+      "type": "bar",
+      "title": "Who spends the most on new chip factories",
+      "subtitle": "Illustrative capex, $ billions",
+      "data": [
+        { "label": "Company A", "value": 30 },
+        { "label": "Company B", "value": 25 },
+        { "label": "Company C", "value": 18 },
+        { "label": "Company D", "value": 9 }
+      ],
+      "highlight": "Company A",
+      "prefix": "$",
+      "suffix": "B",
+      "camera": "pan-right",
+      "narration": "And the race to build more factories is staggeringly expensive.",
+      "source": "Illustrative data",
+      "transition": "push"
+    },
+    {
+      "type": "line",
+      "title": "Demand for AI compute keeps climbing",
+      "points": [{ "label": "2019", "y": 10 }, { "label": "2020", "y": 14 }, { "label": "2021", "y": 22 }, { "label": "2022", "y": 31 }, { "label": "2023", "y": 58 }, { "label": "2024", "y": 96 }, { "label": "2025", "y": 140 }],
+      "annotations": [{ "x": "2023", "text": "ChatGPT moment" }],
+      "camera": "drift",
+      "narration": "Since the generative AI boom, demand for compute has exploded.",
+      "source": "Illustrative index",
+      "transition": "tear"
+    },
+    {
+      "type": "explain",
+      "kicker": "How it works",
+      "headline": "Smaller transistors = __more power__",
+      "body": "Each new generation packs billions more switches into the same tiny square of silicon.",
+      "bullets": ["Faster", "Cheaper per operation", "Less energy"],
+      "media": "search:semiconductor wafer close up",
+      "mediaLabel": "silicon wafer",
+      "camera": "orbit",
+      "narration": "The trick is shrinking transistors, so each generation fits billions more switches on the same square of silicon.",
+      "transition": "whip-up"
+    },
+    {
+      "type": "flow",
+      "title": "From sand to supercomputer",
+      "steps": [{ "label": "Design", "icon": "laptop" }, { "label": "Fabricate", "icon": "building" }, { "label": "Package", "icon": "chip" }, { "label": "Train AI", "icon": "robot" }],
+      "narration": "Design happens in one place, fabrication in another, packaging somewhere else, and the finished chips end up training AI.",
+      "transition": "stack"
+    },
+    {
+      "type": "timeline",
+      "title": "A short history of the chip race",
+      "events": [
+        { "date": "1958", "label": "First integrated circuit" },
+        { "date": "1971", "label": "First microprocessor" },
+        { "date": "1987", "label": "Dedicated foundries arrive" },
+        { "date": "2020s", "label": "AI chip **boom**" }
+      ],
+      "narration": "It took decades to get here: from the first integrated circuit, to the microprocessor, to dedicated foundries, to today's AI boom.",
+      "transition": "wipe-diagonal"
+    },
+    {
+      "type": "compare",
+      "title": "Two strategies",
+      "left": { "title": "Build at home", "icon": "building", "value": 50, "prefix": "$", "suffix": "B", "label": "subsidies to onshore factories" },
+      "right": { "title": "Restrict exports", "icon": "lock", "value": 140, "suffix": "+", "label": "companies on control lists" },
+      "narration": "Governments are trying two strategies at once: pay to build factories at home, and restrict who can buy the best chips.",
+      "source": "Illustrative data",
+      "transition": "glitch"
+    },
+    {
+      "type": "document",
+      "outlet": "The Daily Ledger",
+      "date": "Illustrative clipping",
+      "headline": "New rules tighten ==chip exports==",
+      "body": ["Officials said the measures aim to slow rivals' access to advanced hardware.", "Industry groups warned that ==the rules could raise costs== for everyone.", "Analysts expect further restrictions over the next year."],
+      "stamp": "Escalating",
+      "camera": "tilt-3d",
+      "narration": "Each new rule triggers a response, and the costs ripple through the entire industry.",
+      "transition": "flash"
+    },
+    {
+      "type": "icongrid",
+      "total": 10,
+      "highlight": 9,
+      "title": "9 in 10",
+      "label": "advanced chips depend on ==one supply chain==",
+      "narration": "Nine out of ten advanced chips depend on one fragile supply chain.",
+      "transition": "circle-burst"
+    },
+    {
+      "type": "quote",
+      "text": "Whoever controls the chips, controls the ==future of computing==.",
+      "author": "A common line among analysts",
+      "camera": "rack-focus-in",
+      "narration": "As the saying goes: whoever controls the chips, controls the future of computing.",
+      "transition": "whip-right"
+    },
+    {
+      "type": "list",
+      "title": "What to watch next",
+      "items": ["New factories coming online", "More export rules", "Custom AI chips from big tech"],
+      "narration": "So what should you watch? New factories coming online, more export rules, and custom AI chips from big tech.",
+      "transition": "spin"
+    },
+    {
+      "type": "outro",
+      "headline": "Follow for daily AI explainers",
+      "cta": "Follow",
+      "handle": "@liuantum",
+      "theme": "yellow",
+      "bg": "rays",
+      "narration": "Follow for a new AI explainer every day."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "liuantum-vox-video",
+  "owner": { "name": "Liuantum", "url": "https://github.com/liuantum" },
+  "metadata": { "description": "Vox-style video generation skill for Claude Code and Google Antigravity" },
+  "plugins": [
+    {
+      "name": "vox-video",
+      "source": "./",
+      "description": "One prompt -> finished Vox-style explainer video (MP4) with camera moves, maps, charts, b-roll, stickers, captions, SFX and music.",
+      "version": "1.0.0",
+      "category": "media"
+    }
+  ]
+}
