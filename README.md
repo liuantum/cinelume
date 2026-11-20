@@ -6,7 +6,7 @@
 
 into a polished **MP4** with camera moves, parallax, maps that fly to countries, animated charts,
 hand-drawn highlights, die-cut stickers, b-roll, kinetic karaoke captions, sound effects, a music
-bed and (optionally) a neural voiceover — rendered frame-perfectly in headless Chrome.
+bed and a **built-in neural voiceover** (male/female, US/UK/Indian English, Hindi, Telugu, Tamil… — no extra install) — rendered frame-perfectly in headless Chrome.
 
 <p align="center">
   <img src="docs/demo-short.gif" width="240" alt="demo reel">
@@ -38,7 +38,7 @@ stills the agent previews are exactly what ships, and the result is editable JSO
 | **Marker annotations** | `==highlight==` · `**accent**` · `__underline__` · `[[circle]]` · `~~strike~~` · `{{box}}` drawn on, in sequence, with sound |
 | **B-roll** | your own photos/videos (frame-synced), any URL, or `search:query` → Pexels/Pixabay stock (with a free API key) → otherwise designed illustrated placeholders, never blank frames |
 | **Looks** | 7 themes (paper, dark, yellow, blueprint, red, navy, mint), paper texture, animated film grain, vignette, yellow **duotone** / halftone / B&W / vintage photo treatments |
-| **Audio** | 14 synthesized SFX auto-cued to every event (whooshes, pops, scribbles, dings, booms…), generated lo-fi music bed (or your track) with **auto-ducking**, loudness-normalised mix, optional TTS voiceover (edge-tts / gTTS / macOS say / espeak) |
+| **Audio** | **Built-in neural voiceover** on by default (bundled, no Python/API key; offline fallback to system voices), 14 synthesized SFX auto-cued to every event, generated lo-fi music bed (or your track) with **auto-ducking** under the voice, captions synced to speech, loudness-normalised mix |
 | **Formats** | 16:9, 9:16, 1:1, 4:5 · 720p → 4K · any fps · captions: karaoke / boxed / minimal |
 | **Agent-proof** | JSON validator with actionable errors, auto text-fitting, zoom-aware safe areas, `--stills auto` contact sheet so the agent *looks* at its work before the final render |
 
@@ -68,7 +68,6 @@ Windows: `powershell -ExecutionPolicy Bypass -File install.ps1`
 
 Optional extras:
 ```bash
-pip install edge-tts                 # free natural voiceover  → "meta": {"voice": "edge:en-US-AndrewNeural"}
 export PEXELS_API_KEY=...            # real stock photos/videos for "search:..." media (free key at pexels.com/api)
 export PIXABAY_API_KEY=...           # alternative stock source
 ```
@@ -95,7 +94,9 @@ node render.mjs  ../examples/ai-news-short.json --preview           # fast 540p 
 node render.mjs  ../examples/ai-chip-war.json --out chip.mp4        # final 1080p
 node render.mjs  ../examples/ai-chip-war.json --player              # scrub it live in a browser
 ```
-Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--workers N` · `--crf N` · `--no-audio` · `--chrome PATH`.
+Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--voice indian-male` · `--no-voice` · `--workers N` · `--crf N` · `--no-audio` · `--chrome PATH`.
+
+Voices: `node tts.mjs --list` · try one: `node tts.mjs "Hello" hello.mp3 --voice hindi-female`
 
 A storyboard looks like this:
 

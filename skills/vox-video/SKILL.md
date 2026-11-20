@@ -1,6 +1,6 @@
 ---
 name: vox-video
-description: Turns a single prompt into a finished Vox-style explainer video (MP4) with motion graphics, camera moves, b-roll, maps, animated charts, hand-drawn highlights, stickers, kinetic captions, sound effects and music. Use when the user asks for an explainer video, a YouTube/Instagram/TikTok short or reel, "Vox style" or "Johnny Harris style" animation, a motion-graphics news recap, or an animated data story from a topic, script or article.
+description: Turns a single prompt into a finished Vox-style explainer video (MP4) with built-in neural voiceover, music, sound effects, motion graphics, camera moves, b-roll, maps, animated charts, hand-drawn highlights, stickers and kinetic captions. Use when the user asks for an explainer video, a YouTube/Instagram/TikTok short or reel, "Vox style" or "Johnny Harris style" animation, a motion-graphics news recap, or an animated data story from a topic, script or article.
 ---
 
 # Vox-Style Video Generator
@@ -20,8 +20,8 @@ ffmpeg -version    # need ffmpeg + ffprobe on PATH
 cd "$SKILL_DIR/engine" && [ -d node_modules ] || npm install
 ```
 Chrome/Chromium/Edge is auto-detected. If none is found: `npx playwright install chromium`.
-Optional: `pip install edge-tts` (free neural voiceover), `PEXELS_API_KEY` or `PIXABAY_API_KEY`
-env vars (real stock b-roll). Without them the engine draws designed placeholder art, never a blank.
+Voiceover is built in: `npm install` brings the neural voice engine (no Python, no API key; needs
+internet while rendering). Optional: `PEXELS_API_KEY` or `PIXABAY_API_KEY` env vars (real stock b-roll). Without them the engine draws designed placeholder art, never a blank.
 
 ## 1. Read the prompt → decide the brief (no questions unless truly ambiguous)
 
@@ -31,7 +31,7 @@ env vars (real stock b-roll). Without them the engine draws designed placeholder
 | Length | short: 30–60 s (7–10 scenes) · explainer: 90–180 s (12–20 scenes) | explicit seconds/minutes win |
 | Theme | `paper` (classic Vox cream) | "dark/night" → `dark`; tech/engineering → `blueprint`; bold/brand → `yellow`/`red`/`navy`; health/green → `mint` |
 | Captions | `karaoke` for 9:16, `boxed` for 16:9 | "no captions" → `"none"`; `"minimal"` also available |
-| Voice | none (captions + music carry it) | "voiceover", "narrate", "voice" → `meta.voice: "edge:en-US-AndrewNeural"` (or `auto`) |
+| Voice | **on** (`auto` = US male neural) — every scene's `narration` is spoken | "female" → `female`; Indian accent → `indian-male`/`indian-female`; Hindi → `hindi-male`/`hindi-female`; Telugu/Tamil, UK, AU too (`node engine/tts.mjs --list`); any Edge voice id like `en-US-AvaNeural`; "no voice"/"silent" → `none` |
 | Handle/brand | none | any @handle or channel name → `meta.handle` |
 
 ## 2. Research, then write the script
@@ -138,7 +138,7 @@ was assumed (format, length, voice, which numbers were illustrative) and offer o
 ```json
 {
   "meta": { "title": "…", "format": "9:16", "theme": "paper", "captions": "karaoke",
-            "handle": "@you", "voice": "none", "progress": false },
+            "handle": "@you", "voice": "male", "progress": false },
   "audio": { "music": "auto", "musicVolume": 0.3 },
   "scenes": [
     { "type": "title", "kicker": "Explained", "headline": "Why ==everyone== wants this",
@@ -161,5 +161,5 @@ Complete working examples: `examples/ai-chip-war.json` (16:9, every scene type) 
 | Text too small/large | shorten the text (engine auto-fits) or set `size` (in % of short side) |
 | Map shows wrong area | give `focus: {lon, lat, zoom}` explicitly (zoom 1 = whole world, 8 = a country) |
 | Narration feels rushed | raise `duration` or cut words (validator warns over 3.3 words/s) |
-| No voice | `pip install edge-tts`, set `meta.voice`, or give `voiceover` audio per scene / `audio.voiceover` for one file |
+| No voice in output | voice needs internet; offline it falls back to system voices (macOS `say`, `espeak-ng`). Check the `[vox] voiceover:` log line, or supply `voiceover` audio files |
 | Want silence | `"audio": {"music": "none"}` and `"meta": {"sfx": false}` |

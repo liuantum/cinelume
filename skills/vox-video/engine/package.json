@@ -4,14 +4,22 @@
   "description": "Deterministic Vox-style motion-graphics renderer: storyboard JSON -> MP4",
   "type": "module",
   "main": "render.mjs",
-  "bin": { "vox-render": "render.mjs" },
+  "bin": {
+    "vox-render": "render.mjs"
+  },
   "scripts": {
     "render": "node render.mjs",
     "validate": "node validate.mjs",
     "demo": "node render.mjs ../examples/ai-chip-war.json --preview",
-    "install-browser": "npx playwright install chromium"
+    "install-browser": "npx playwright install chromium",
+    "voices": "node tts.mjs --list"
   },
-  "dependencies": { "playwright-core": "^1.48.0" },
-  "engines": { "node": ">=18" },
+  "dependencies": {
+    "playwright-core": "^1.48.0",
+    "msedge-tts": "^2.1.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "MIT"
 }

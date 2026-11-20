@@ -16,7 +16,8 @@ Times (`at`) are **seconds from the start of the scene**.
 | `theme` | `paper` `dark` `yellow` `blueprint` `red` `navy` `mint` | `paper` | per-scene `theme` overrides |
 | `bg` | background kind (below) | `paper` | default background for all scenes |
 | `captions` | `karaoke` `boxed` `minimal` `none` / `false` | `karaoke` (9:16) / `boxed` | built from each scene's `narration` |
-| `voice` | `none` `auto` `edge[:Voice]` `gtts[:lang]` `say[:Voice]` `espeak` `pyttsx3` | none | auto-TTS for scenes with `narration` and no `voiceover` |
+| `voice` | `auto` `male` `female` `narrator` `news` `uk-male` `uk-female` `indian-male` `indian-female` `hindi-male` `hindi-female` `telugu-*` `tamil-*` `australian-*` `spanish-*` `french-*` `german-*`, any Edge id (`en-US-AvaNeural`), `say:Voice`, `espeak`, `gtts:lang`, or `none` | `auto` | built-in neural TTS speaks every scene's `narration`; scenes stretch to fit the voice; captions sync to it |
+| `voiceRate` | e.g. `+10%`, `-5%` | `+5%` | speaking speed |
 | `handle` | string | – | small watermark top-right |
 | `progress` | bool | false | yellow progress bar at bottom |
 | `transition` | transition name | rotating set | default transition between scenes |
@@ -31,7 +32,7 @@ Times (`at`) are **seconds from the start of the scene**.
 |---|---|---|
 | `music` | `auto` | `auto` (calm lo-fi bed), `auto:tense`, `auto:calm`, `none`, or a file path (looped) |
 | `musicVolume` | 0.35 | auto-ducks under voiceover |
-| `voiceover` | – | ONE audio file for the whole video (then set scene `duration`s to match) |
+| `voiceover` | – | ONE audio file for the whole video (disables TTS; set scene `duration`s to match) |
 | `voiceoverOffset` | 0 | seconds |
 | `sfxVolume` | 0.55 | |
 
@@ -42,7 +43,8 @@ Times (`at`) are **seconds from the start of the scene**.
 | `type` | scene type (below) — required |
 | `duration` | seconds; default = max(type default, words(narration)/2.6 + 1); stretched to fit `voiceover` |
 | `narration` | spoken/caption text for this scene (markup is stripped for captions/TTS) |
-| `voiceover` | audio file for this scene; scene stretches to fit it |
+| `voiceover` | audio file for this scene (overrides TTS); scene stretches to fit it |
+| `voice` | per-scene voice override (e.g. a second speaker) |
 | `camera` | preset name or object (see camera-and-transitions.md) |
 | `transition` | transition **into the next** scene |
 | `theme` | per-scene theme |

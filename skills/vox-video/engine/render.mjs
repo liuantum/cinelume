@@ -35,6 +35,8 @@ if (!pos[0] || opt.help) {
   --crf N / --maxrate MBPS   quality (default crf 20, ~12 Mbps at 1080p)
   --workers N       parallel browser workers (default ${opt.workers})
   --no-audio        skip audio
+  --voice V         voiceover voice: male | female | indian-male | hindi-female | en-US-AvaNeural … (default auto)
+  --no-voice        captions + music only, no speech
   --chrome PATH     Chrome/Chromium executable`);
   process.exit(pos[0] ? 0 : 1);
 }
@@ -129,19 +131,30 @@ async function resolveAssets() {
 }
 
 /* ---------------- voiceover / TTS ---------------- */
-function prepareVoice() {
-  const voice = sb.meta.voice || sb.audio.voice;
-  sb.scenes.forEach((s, i) => {
-    if (!s.voiceover && voice && voice !== 'none' && s.narration) {
-      const out = path.join(cacheDir, `tts-${hash(voice + s.narration)}.mp3`);
-      if (!fs.existsSync(out)) {
-        const py = which('python3') || which('python');
+// Speech is ON by default whenever a scene has `narration`. meta.voice: "none" turns it off.
+async function prepareVoice() {
+  let voice = sb.meta.voice != null ? sb.meta.voice : (sb.audio.voice != null ? sb.audio.voice : 'auto');
+  if (opt.voice) voice = opt.voice;
+  if (opt['no-voice'] || sb.audio.voiceover) voice = 'none'; // a single full-length voiceover file replaces TTS
+  const rate = sb.meta.voiceRate || sb.audio.voiceRate;
+  const todo = sb.scenes.map((s, i) => ({ s, i })).filter(({ s }) => !s.voiceover && s.narration && voice && voice !== 'none' && voice !== false);
+  if (todo.length) {
+    const { synthesize } = await import('./tts.mjs');
+    let made = 0, failed = 0, engineUsed = '';
+    // a few at a time to stay polite to the service
+    for (let k = 0; k < todo.length; k += 4) {
+      await Promise.all(todo.slice(k, k + 4).map(async ({ s, i }) => {
+        const v = s.voice || voice;
         const text = s.narration.replace(/==|\*\*|__|\[\[|\]\]|~~|\{\{|\}\}/g, '');
-        const r = py ? spawnSync(py, [path.join(HERE, '..', 'scripts', 'tts.py'), '--voice', voice, '--out', out, '--text', text], { encoding: 'utf8' }) : { status: 1, stderr: 'python not found' };
-        if (r.status !== 0) { log(`TTS unavailable for scene ${i} (${(r.stderr || '').trim().split('\n').pop()}); continuing without voice`); return; }
-      }
-      s.voiceover = out;
+        const out = path.join(cacheDir, `tts-${hash(v + '|' + (rate || '') + '|' + text)}.mp3`);
+        if (fs.existsSync(out) && fs.statSync(out).size > 1000) { s.voiceover = out; made++; return; }
+        try { const r = await synthesize(text, out, { voice: v, rate }); s.voiceover = r.file; engineUsed = r.engine; made++; }
+        catch (e) { failed++; if (failed === 1) log(`voiceover unavailable (${String(e.message).slice(0, 220)}) — rendering with captions + music only`); }
+      }));
     }
+    if (made) log(`voiceover: ${made}/${todo.length} scenes${engineUsed ? ' via ' + engineUsed : ''}`);
+  }
+  sb.scenes.forEach(s => {
     if (s.voiceover) {
       const f = path.resolve(baseDir, s.voiceover);
       if (fs.existsSync(f)) { const d = probeDur(f); s._vo = f; s.voStart = s.voStart != null ? s.voStart : 0.25; s.voDur = d; s.duration = Math.max(s.duration || 0, d + s.voStart + 0.45); }
@@ -283,7 +296,7 @@ const progress = { done: 0, t0: Date.now(), total: 1, tick() { const p = this.do
 (async () => {
   const T = Date.now();
   log(`${sb.meta.title || path.basename(sbPath)} — ${W}x${H} @${fps}fps, ${sb.scenes.length} scenes`);
-  prepareVoice();
+  await prepareVoice();
   const { assets, credits } = await resolveAssets();
   const browser = await launch();
   try {

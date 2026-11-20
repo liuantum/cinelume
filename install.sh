@@ -45,4 +45,4 @@ if [[ -z "$have_chrome" ]]; then
   (cd "${dests[0]}/engine" && npx --yes playwright install chromium) || say "Could not auto-install Chromium; install Google Chrome or run: npx playwright install chromium"
 fi
 say "done. Ask your agent: \"Make a 45-second Vox-style reel about <topic>\""
-say "optional: pip install edge-tts  (free neural voiceover)   ·   export PEXELS_API_KEY=...  (real stock b-roll)"
+say "voiceover is built in (voices: node <skill>/engine/tts.mjs --list) · optional: export PEXELS_API_KEY=...  (real stock b-roll)"
