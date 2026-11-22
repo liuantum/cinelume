@@ -13,7 +13,7 @@ Times (`at`) are **seconds from the start of the scene**.
 | `format` | `16:9` \| `9:16` \| `1:1` \| `4:5` | `16:9` | CLI `--format` overrides |
 | `resolution` | number | 1080 | short side in px (`--res`) |
 | `fps` | number | 30 | |
-| `theme` | **viral shorts:** `neon` `sunset` `electric` `aurora` `candy` · **cinematic:** `noir` `film` `ivory` `midnight` `ember` `slate` · classic: `paper` `dark` `yellow` `blueprint` `red` `navy` `mint` | `noir` | per-scene `theme` overrides. Cinematic themes switch on the premium layer (serif titles, glass UI, graded photos, letterboxing, light leaks, cinematic score) |
+| `theme` | **Vox edit:** `archive` `newsroom` · **viral shorts:** `neon` `sunset` `electric` `aurora` `candy` · **cinematic:** `noir` `film` `ivory` `midnight` `ember` `slate` · classic: `paper` `dark` `yellow` `blueprint` `red` `navy` `mint` | `noir` | per-scene `theme` overrides. Cinematic themes switch on the premium layer (serif titles, glass UI, graded photos, letterboxing, light leaks, cinematic score) |
 | `grade` | `vivid` `teal-orange` `warm` `cool` `noir` `bleach` `none` | per theme | global colour grade over the whole frame |
 | `letterbox` | `true` / `false` / ratio number (e.g. `2.39`, `1.85`) | auto | auto = bars slide in on `cinematic`, `establishing`, `opening`, `narrative`, `depth` scenes (16:9 only) and out for data scenes; per-scene `letterbox` overrides |
 | `lightLeaks` | number 0–1 / `false` | `0.14` on cinematic themes | ambient warm light drifting across the frame |
@@ -23,7 +23,7 @@ Times (`at`) are **seconds from the start of the scene**.
 | `progress` | bool | true on viral themes | gradient retention bar at the top |
 | `placeholderLabels` | bool | true | show the search query on atmospheric placeholders |
 | `bg` | background kind (below) | `atmos` (cinematic) / `paper` | default background for all scenes |
-| `captions` | `viral` (giant word-by-word pop, each phrase a new colour) `cinema` `subtitle` `karaoke` `boxed` `minimal` `none` / `false` | cinematic: `cinema` (9:16) / `subtitle` (16:9); classic: `karaoke` / `boxed` | built from each scene's `narration`. `cinema` = words brighten as they're spoken; `subtitle` = film subtitles (sit inside the letterbox bar when it's down) |
+| `captions` | `voxedit` (big caption words mid-frame, alternating bold sans / italic serif, `==word==` in narration becomes a red box) `viral` (giant word-by-word pop, each phrase a new colour) `cinema` `subtitle` `karaoke` `boxed` `minimal` `none` / `false` | cinematic: `cinema` (9:16) / `subtitle` (16:9); classic: `karaoke` / `boxed` | built from each scene's `narration`. `cinema` = words brighten as they're spoken; `subtitle` = film subtitles (sit inside the letterbox bar when it's down) |
 | `voice` | offline studio (Kokoro): `studio-female` `studio-male` `studio-hype` `studio-deep` `studio-uk-male` `studio-uk-female` `studio-hindi-male` `studio-hindi-female` `kokoro:<id>` · Edge neural: `hype` `hype-female` `creator` `creator-female` `indian-creator` `indian-creator-female` `storyteller` `storyteller-female` `documentary` (British) `documentary-female` `trailer` `indian-storyteller` `auto` `male` `female` `narrator` `news` `uk-male` `uk-female` `indian-male` `indian-female` `hindi-male` `hindi-female` `telugu-*` `tamil-*` `australian-*` `spanish-*` `french-*` `german-*`, any Edge id (`en-US-AvaNeural`), `say:Voice`, `espeak`, `gtts:lang`, or `none` | `auto` | built-in neural TTS speaks every scene's `narration`; scenes stretch to fit the voice; captions sync to it |
 | `voiceRate` | e.g. `+10%`, `-5%` | `-2%` cinematic / `+5%` classic | speaking speed |
 | `handle` | string | – | small watermark top-right |
@@ -98,6 +98,13 @@ Media objects inside arrays may be `{ "src": "...", "label": "...", "look": "duo
 `look`: `cine` (graded teal/orange film look — default on cinematic themes) `noir` (high-contrast B&W) `warm` `cool` `bleach` · classic: `color` `duotone` `bw` `halftone` `vintage`.
 
 ## Scene types
+
+### story (Vox edit)
+`frame`: `full` | `print` | `polaroid` | `cutout` | `tv` | `clipboard` | omit for a paper-only shot · `media` (use `"cutout:<media>"` for
+background removal — needs `pip install rembg`) · `look` (default `archive`: B&W halftone print) · `year` (bracketed, e.g. "in 1985") ·
+`name` (italic serif label) · `tag` (+`tagAt`) red box label · `text` big words (+`spot`: `true` or a colour) · `note` (typed on the
+clipboard) · `magnifier: true` (or `{ "path": [[x,y],…] }` in 0–1 frame units) · `x`, `y`, `size`, `aspect`, `rot` for prints/cut-outs.
+Default camera `push-in-slow`, default 4.5 s, default motion `vox`.
 
 ### hook (viral shorts)
 `lines[]` (or `text`) — 2–3 short lines that punch in word by word (last line in the theme's first colour; `colorLast: false`

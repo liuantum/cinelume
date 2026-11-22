@@ -12,16 +12,17 @@ export const SCENE_TYPES = {
   donut: ['value'], icongrid: [['highlight', 'value']], map: [['highlight', 'countries', 'focus', 'pins', 'arcs']], photo: [], collage: [['media', 'images']],
   document: [['headline', 'body']], quote: [['text', 'quote']], timeline: ['events'], compare: [['left', 'a']], list: ['items'], chapter: ['title'],
   screen: [], broll: [], explain: [['headline', 'title']], flow: [['steps', 'nodes']], outro: [],
-  hook: [['lines', 'text', 'headline']], cinematic: [['title', 'headline']], establishing: [['location', 'title']], opening: [['title', 'headline']], narrative: [['lines', 'text']], depth: [['headline', 'title']],
+  story: [], hook: [['lines', 'text', 'headline']], cinematic: [['title', 'headline']], establishing: [['location', 'title']], opening: [['title', 'headline']], narrative: [['lines', 'text']], depth: [['headline', 'title']],
 };
 export const CAMERAS = ['static', 'drift', 'push-in', 'push-in-slow', 'pull-out', 'crash-zoom', 'zoom-out-reveal', 'pan-left', 'pan-right', 'tilt-up', 'tilt-down', 'dolly-zoom', 'orbit', 'handheld', 'whip-in', 'rack-focus', 'rack-focus-in', 'shake-hit', 'tilt-3d', 'spiral-in', 'dolly-in', 'dolly-out', 'crane-up', 'crane-down', 'truck-left', 'truck-right', 'parallax', 'steadicam', 'slow-push', 'reveal-pull', 'punch-in', 'zoom-pulse'];
 export const TRANSITIONS = ['cut', 'whip-left', 'whip-right', 'whip-up', 'whip-down', 'zoom-through', 'zoom-out', 'iris', 'circle-burst', 'paper-slide', 'tear', 'push', 'slide-up', 'flash', 'glitch', 'stack', 'spin', 'wipe-diagonal', 'blinds', 'fade', 'dissolve', 'dip-black', 'dip-white', 'light-leak', 'film-burn', 'lens-blur', 'cross-zoom', 'luma', 'slit'];
 export const VIRAL_THEMES = ['neon', 'sunset', 'electric', 'aurora', 'candy'];
-export const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate', ...VIRAL_THEMES];
+export const ARCHIVE_THEMES = ['archive', 'newsroom'];
+export const CINE_THEMES = [...ARCHIVE_THEMES, 'noir', 'film', 'ivory', 'midnight', 'ember', 'slate', ...VIRAL_THEMES];
 export const THEMES = [...CINE_THEMES, 'paper', 'dark', 'yellow', 'blueprint', 'red', 'navy', 'mint'];
-export const CAPTIONS = ['viral', 'cinema', 'subtitle', 'karaoke', 'boxed', 'minimal', 'none'];
-export const GRADES = ['vivid', 'teal-orange', 'warm', 'cool', 'noir', 'bleach', 'none'];
-export const BGS = ['paper', 'texture', 'grid', 'dots', 'lines', 'halftone', 'stripes', 'rays', 'gradient', 'spotlight', 'plain', 'atmos', 'haze', 'black'];
+export const CAPTIONS = ['voxedit', 'viral', 'cinema', 'subtitle', 'karaoke', 'boxed', 'minimal', 'none'];
+export const GRADES = ['archive', 'vivid', 'teal-orange', 'warm', 'cool', 'noir', 'bleach', 'none'];
+export const BGS = ['paper', 'texture', 'grid', 'dots', 'lines', 'halftone', 'stripes', 'rays', 'gradient', 'spotlight', 'plain', 'atmos', 'haze', 'black', 'paper-grid', 'paper-dark'];
 export const FXS = ['none', 'fade', 'pop', 'popBig', 'rise', 'riseBig', 'drop', 'slideL', 'slideR', 'slideU', 'slideD', 'stamp', 'zoom', 'spin', 'blur', 'wipe', 'wipeUp', 'flipX', 'swing', 'typeOn', 'blurIn', 'reveal', 'rise3d', 'settle', 'punch', 'riseFast'];
 
 export function stickerDefs() {
@@ -42,6 +43,7 @@ export function validate(sb, baseDir = '.') {
   if (typeof meta.captions === 'string' && !CAPTIONS.includes(meta.captions)) errors.push(`meta.captions "${meta.captions}" unknown. Use: ${CAPTIONS.join(', ')}`);
   if (meta.grade && !GRADES.includes(meta.grade)) errors.push(`meta.grade "${meta.grade}" unknown. Use: ${GRADES.join(', ')}`);
   let legacyUsed = new Set();
+  if (meta.motion && !['vox', 'cinematic'].includes(meta.motion)) errors.push(`meta.motion "${meta.motion}" must be vox or cinematic`);
   if (meta.format && !['16:9', '9:16', '1:1', '4:5'].includes(meta.format)) errors.push(`meta.format "${meta.format}" must be 16:9, 9:16, 1:1 or 4:5`);
   if (!Array.isArray(sb.scenes) || !sb.scenes.length) errors.push('scenes[] is empty');
   (sb.scenes || []).forEach((s0, i) => {
@@ -67,7 +69,7 @@ export function validate(sb, baseDir = '.') {
     if (s.type === 'kinetic' && (s.lines || []).length > 5) warnings.push(`${at}: more than 5 kinetic lines gets crowded`);
   });
   if (legacyUsed.size) warnings.push(`legacy cartoon stickers used with a cinematic theme: ${[...legacyUsed].join(', ')}. Prefer the premium set (ring, arrow-fine, leader, tag, stat, timestamp, location, pulse, glint, photo, icon-*).`);
-  const cineScenes = (sb.scenes || []).filter(s => ['cinematic', 'establishing', 'depth', 'broll', 'photo'].includes(s.type)).length;
+  const cineScenes = (sb.scenes || []).filter(s => ['cinematic', 'establishing', 'depth', 'broll', 'photo', 'story', 'hook'].includes(s.type)).length;
   if (cineGlobal && (sb.scenes || []).length >= 6 && cineScenes < 2) warnings.push('few footage scenes: a cinematic story usually needs ≥ 1 real-image scene (cinematic / establishing / depth / broll) every 3–4 scenes.');
   if (VIRAL_THEMES.includes(meta.theme)) {
     const sc = sb.scenes || [];

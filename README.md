@@ -2,7 +2,7 @@
 
 # 🎞️ CINELUME
 
-### One prompt → a finished, narrated video. Viral shorts or cinematic films.
+### One prompt → a finished, narrated video. Vox-edit documentaries, viral shorts or cinematic films.
 
 An agent skill for **Claude Code** and **Google Antigravity** that researches, writes, directs, narrates, scores and renders a
 ready-to-post MP4: real imagery, animated captions, beat-synced music and a natural neural voice.
@@ -20,6 +20,7 @@ ready-to-post MP4: real imagery, animated captions, beat-synced music and a natu
 
 Two demos made with Cinelume on one story: **Bengaluru, India's IT capital**, a quiet "pensioners' paradise" that became home to
 more than a million tech workers, starting with a satellite dish that arrived on a bullock cart in 1985.
+Both use the **Vox-edit** style: grid paper, archival black-and-white prints, an old TV, a clipboard, a magnifying glass, bracketed years and red caption boxes.
 Both are fully narrated, scored and captioned. The previews below are silent loops; **click one to watch the MP4 with sound.**
 
 <table>
@@ -28,8 +29,8 @@ Both are fully narrated, scored and captioned. The previews below are silent loo
 
 <a href="docs/bengaluru-9x16.mp4"><img src="docs/preview-9x16.webp" width="260" alt="9:16 viral short preview"></a>
 
-**9:16 · Viral short** · 23 s<br>
-`electric` theme · viral captions · trap beat · studio voice<br>
+**9:16 · Vox-edit reel** · 35 s<br>
+`archive` theme · Vox-edit captions · documentary score · studio voice<br>
 <a href="docs/bengaluru-9x16.mp4"><b>▶ Watch with sound</b></a>
 
 </td>
@@ -37,8 +38,8 @@ Both are fully narrated, scored and captioned. The previews below are silent loo
 
 <a href="docs/bengaluru-16x9.mp4"><img src="docs/preview-16x9.webp" width="560" alt="16:9 cinematic film preview"></a>
 
-**16:9 · Cinematic film** · 72 s<br>
-`noir` theme · letterbox · subtitles · cinematic score · studio voice<br>
+**16:9 · Vox-edit documentary** · 63 s<br>
+`archive` theme · props, map, timeline · documentary score · studio voice<br>
 <a href="docs/bengaluru-16x9.mp4"><b>▶ Watch with sound</b></a>
 
 </td>
@@ -59,14 +60,27 @@ The city backdrops in these demos are generated plates; in normal use Cinelume p
 
 ---
 
-## ✨ Two modes
+## ✨ Three modes
 
 <table>
 <tr>
-<th width="50%">🔥 Viral shorts</th>
-<th width="50%">🎬 Cinematic stories</th>
+<th width="33%">📼 Vox edit</th>
+<th width="33%">🔥 Viral shorts</th>
+<th width="33%">🎬 Cinematic stories</th>
 </tr>
 <tr valign="top">
+<td>
+
+For **documentary reels & explainers**
+- Grid-paper collage world, film grain, vignette
+- Archival B&W prints, **automatic cut-outs** of people & objects
+- Props: **old TV**, **clipboard** with typed notes, taped prints, **magnifying glass** sweep
+- `[in 1985]` year brackets, italic name labels, **red boxes** with yellow serif words, colour spots
+- Big caption words timed to the voice, hand-drawn red circles & underlines
+- Glossy die-cut stickers with the **Vox pop**: bounce, confetti burst, wiggle
+- Themes: `archive` `newsroom`
+
+</td>
 <td>
 
 For **Instagram Reels, YouTube Shorts, TikTok**
