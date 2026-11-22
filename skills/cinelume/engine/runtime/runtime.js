@@ -614,7 +614,7 @@
     if (s.label) { const l = h('div', 'sans-x', { fontSize: (c.portrait ? 5 : 4.4) * u + 'px', maxWidth: '92%' }); box.appendChild(l); c.text(l, s.label, { at: cStart + .4, stagger: .05 }); }
     if (s.sub) { const sb = h('div', 'body', { fontSize: 2.8 * u + 'px', opacity: .75, maxWidth: '80%' }, esc(s.sub)); box.appendChild(sb); c.item(sb, { at: cStart + cDur, fx: 'rise' }); }
     c.add(box);
-    c.postLayout(() => fitText(num, c.safe.w, c.safe.h * .55));
+    c.postLayout(() => { num.textContent = (s.prefix || '') + fmtNum(to, dec, s.separator !== false) + (s.suffix || ''); num.style.display = 'block'; fitText(num, c.safe.w * .96, c.safe.h * .55); num.style.display = 'inline-block'; });
   };
 
   // ---- BAR CHART (horizontal, animated, counting)

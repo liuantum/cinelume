@@ -1,0 +1,27 @@
+{
+  "meta": { "title": "This city codes for the world", "format": "9:16", "theme": "electric", "handle": "@liuantum", "voice": "kokoro:af_heart", "voiceRate": "+6%" },
+  "audio": { "music": "auto:viral" },
+  "scenes": [
+    { "type": "hook", "lines": ["This city", "codes for **the world**"], "media": "bengaluru/skyline-night.jpg", "scrim": 0.45,
+      "narration": "This city writes code for the entire world." },
+
+    { "type": "cinematic", "kicker": "1985 · Bangalore", "title": "It started with a dish on a ==bullock cart==", "media": "bengaluru/city-1985.jpg", "look": "warm",
+      "align": "center", "intro": "none", "source": "Deccan Herald",
+      "narration": "In 1985, India's first private satellite dish for software arrived in Bangalore, on a bullock cart." },
+
+    { "type": "bignumber", "value": 1000000, "suffix": "+", "kicker": "Today", "label": "tech workers in one city",
+      "source": "CBRE, 2025",
+      "stickers": [{ "type": "tag", "text": "Top 12 tech hubs on Earth", "icon": "globe", "x": 50, "y": 20, "at": 1.4 }],
+      "narration": "Today, more than a million tech workers live here." },
+
+    { "type": "bignumber", "value": 41, "suffix": "%", "kicker": "Exports", "label": "of India's software exports come from Karnataka",
+      "source": "Govt. of Karnataka, FY 2025–26",
+      "narration": "Forty one percent of India's software exports come from this one state, almost all of it from Bengaluru." },
+
+    { "type": "depth", "kicker": "Plot twist", "headline": "It used to be a **pensioners' paradise.**", "media": "bengaluru/techpark-dusk.jpg", "align": "center",
+      "narration": "And the plot twist? It used to be called a pensioners' paradise." },
+
+    { "type": "outro", "headline": "Guess the city? **Bengaluru.**", "cta": "Follow for Part 2", "handle": "@liuantum", "media": "bengaluru/metro-night.jpg",
+      "narration": "Yes, it's Bengaluru. Follow for part two." }
+  ]
+}
