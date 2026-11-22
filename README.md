@@ -62,8 +62,8 @@ video now looks and sounds like a film.
 Requirements: **Node 18+**, **ffmpeg**, and Chrome/Chromium/Edge (auto-detected; the installer can download Chromium).
 
 ```bash
-git clone https://github.com/liuantum/vox-video-skill.git
-cd vox-video-skill
+git clone https://github.com/liuantum/cinelume.git
+cd cinelume
 ./install.sh                # Claude Code + Antigravity, available in all projects
 ```
 Windows: `powershell -ExecutionPolicy Bypass -File install.ps1`
@@ -78,7 +78,7 @@ The installer removes an old `vox-video` install if it finds one.
 
 **Claude Code plugin marketplace** (alternative):
 ```
-/plugin marketplace add liuantum/vox-video-skill
+/plugin marketplace add liuantum/cinelume
 /plugin install cinelume@liuantum-cinelume
 ```
 

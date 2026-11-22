@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "One prompt -> a cinematic story film (MP4): real photos & footage, film grading, letterboxing, light leaks, elegant titles, premium annotations, cinematic score and built-in neural narration.",
   "author": { "name": "Liuantum", "url": "https://github.com/liuantum" },
-  "homepage": "https://github.com/liuantum/vox-video-skill",
-  "repository": "https://github.com/liuantum/vox-video-skill",
+  "homepage": "https://github.com/liuantum/cinelume",
+  "repository": "https://github.com/liuantum/cinelume",
   "license": "MIT",
   "keywords": ["video", "cinematic", "documentary", "film", "motion-graphics", "explainer", "reels", "shorts", "storytelling", "skill"]
 }

@@ -92,7 +92,7 @@ async function download(url, dest) {
   if (!r.ok) throw new Error(`HTTP ${r.status} for ${url}`);
   fs.writeFileSync(dest, Buffer.from(await r.arrayBuffer()));
 }
-const UA = 'Cinelume/2.0 (+https://github.com/liuantum/vox-video-skill)';
+const UA = 'Cinelume/2.0 (+https://github.com/liuantum/cinelume)';
 const getJSON = async (url, headers = {}) => { const r = await fetch(url, { headers: { 'User-Agent': UA, ...headers } }); if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); };
 const stripHtml = t => String(t || '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 // Score a candidate photo: right orientation, big enough, close to the frame's aspect ratio.
