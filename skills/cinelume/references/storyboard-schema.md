@@ -13,14 +13,18 @@ Times (`at`) are **seconds from the start of the scene**.
 | `format` | `16:9` \| `9:16` \| `1:1` \| `4:5` | `16:9` | CLI `--format` overrides |
 | `resolution` | number | 1080 | short side in px (`--res`) |
 | `fps` | number | 30 | |
-| `theme` | **cinematic:** `noir` `film` `ivory` `midnight` `ember` `slate` · classic: `paper` `dark` `yellow` `blueprint` `red` `navy` `mint` | `noir` | per-scene `theme` overrides. Cinematic themes switch on the premium layer (serif titles, glass UI, graded photos, letterboxing, light leaks, cinematic score) |
-| `grade` | `teal-orange` `warm` `cool` `noir` `bleach` `none` | per theme | global colour grade over the whole frame |
+| `theme` | **viral shorts:** `neon` `sunset` `electric` `aurora` `candy` · **cinematic:** `noir` `film` `ivory` `midnight` `ember` `slate` · classic: `paper` `dark` `yellow` `blueprint` `red` `navy` `mint` | `noir` | per-scene `theme` overrides. Cinematic themes switch on the premium layer (serif titles, glass UI, graded photos, letterboxing, light leaks, cinematic score) |
+| `grade` | `vivid` `teal-orange` `warm` `cool` `noir` `bleach` `none` | per theme | global colour grade over the whole frame |
 | `letterbox` | `true` / `false` / ratio number (e.g. `2.39`, `1.85`) | auto | auto = bars slide in on `cinematic`, `establishing`, `opening`, `narrative`, `depth` scenes (16:9 only) and out for data scenes; per-scene `letterbox` overrides |
 | `lightLeaks` | number 0–1 / `false` | `0.14` on cinematic themes | ambient warm light drifting across the frame |
+| `bpm` | number | from music | tempo used for beat-synced cuts; set it when you supply your own music file |
+| `beatSync` | bool | true | snap scene cuts to beats (only when a bpm is known) |
+| `beatPulse` | number | `0.022` on viral themes | camera zoom pulse on each kick (0 = off) |
+| `progress` | bool | true on viral themes | gradient retention bar at the top |
 | `placeholderLabels` | bool | true | show the search query on atmospheric placeholders |
 | `bg` | background kind (below) | `atmos` (cinematic) / `paper` | default background for all scenes |
-| `captions` | `cinema` `subtitle` `karaoke` `boxed` `minimal` `none` / `false` | cinematic: `cinema` (9:16) / `subtitle` (16:9); classic: `karaoke` / `boxed` | built from each scene's `narration`. `cinema` = words brighten as they're spoken; `subtitle` = film subtitles (sit inside the letterbox bar when it's down) |
-| `voice` | `storyteller` `storyteller-female` `documentary` (British) `documentary-female` `trailer` `indian-storyteller` `auto` `male` `female` `narrator` `news` `uk-male` `uk-female` `indian-male` `indian-female` `hindi-male` `hindi-female` `telugu-*` `tamil-*` `australian-*` `spanish-*` `french-*` `german-*`, any Edge id (`en-US-AvaNeural`), `say:Voice`, `espeak`, `gtts:lang`, or `none` | `auto` | built-in neural TTS speaks every scene's `narration`; scenes stretch to fit the voice; captions sync to it |
+| `captions` | `viral` (giant word-by-word pop, each phrase a new colour) `cinema` `subtitle` `karaoke` `boxed` `minimal` `none` / `false` | cinematic: `cinema` (9:16) / `subtitle` (16:9); classic: `karaoke` / `boxed` | built from each scene's `narration`. `cinema` = words brighten as they're spoken; `subtitle` = film subtitles (sit inside the letterbox bar when it's down) |
+| `voice` | `hype` `hype-female` `creator` `creator-female` `indian-creator` `indian-creator-female` `storyteller` `storyteller-female` `documentary` (British) `documentary-female` `trailer` `indian-storyteller` `auto` `male` `female` `narrator` `news` `uk-male` `uk-female` `indian-male` `indian-female` `hindi-male` `hindi-female` `telugu-*` `tamil-*` `australian-*` `spanish-*` `french-*` `german-*`, any Edge id (`en-US-AvaNeural`), `say:Voice`, `espeak`, `gtts:lang`, or `none` | `auto` | built-in neural TTS speaks every scene's `narration`; scenes stretch to fit the voice; captions sync to it |
 | `voiceRate` | e.g. `+10%`, `-5%` | `-2%` cinematic / `+5%` classic | speaking speed |
 | `handle` | string | – | small watermark top-right |
 | `progress` | bool | false | yellow progress bar at bottom |
@@ -34,8 +38,9 @@ Times (`at`) are **seconds from the start of the scene**.
 
 | field | default | notes |
 |---|---|---|
-| `music` | `auto` | cinematic scores: `auto:cinematic` (default on cinematic themes), `auto:suspense` (heartbeat pulse), `auto:hopeful`, `auto:epic` (taiko drums), `auto:ambient` · classic beds: `auto:tense`, `auto:calm` · `none` · or a file path (looped) |
+| `music` | `auto` | shorts (beat-synced): `auto:viral` (140 bpm trap, default on viral themes), `auto:upbeat` (118 pop), `auto:phonk` (128), `auto:hype` (150) · cinematic scores: `auto:cinematic` (default on cinematic themes), `auto:suspense` (heartbeat pulse), `auto:hopeful`, `auto:epic` (taiko drums), `auto:ambient` · classic beds: `auto:tense`, `auto:calm` · `none` · or a file path (looped) |
 | `musicVolume` | 0.35 | auto-ducks under voiceover |
+| `voiceFx` | true | broadcast voice chain (EQ, de-ess, compression, limiter); `false` = raw |
 | `voiceover` | – | ONE audio file for the whole video (disables TTS; set scene `duration`s to match) |
 | `voiceoverOffset` | 0 | seconds |
 | `sfxVolume` | 0.55 | |
@@ -93,6 +98,12 @@ Media objects inside arrays may be `{ "src": "...", "label": "...", "look": "duo
 `look`: `cine` (graded teal/orange film look — default on cinematic themes) `noir` (high-contrast B&W) `warm` `cool` `bleach` · classic: `color` `duotone` `bw` `halftone` `vintage`.
 
 ## Scene types
+
+### hook (viral shorts)
+`lines[]` (or `text`) — 2–3 short lines that punch in word by word (last line in the theme's first colour; `colorLast: false`
+to disable), `media` (vivid, darkened by `scrim`, default 0.75), `kicker` (pill), `size`, `upper: false` for sentence case.
+Default camera `punch-in`, default 2.4 s, captions off for this scene (set `"captions": true` to keep them).
+Any scene accepts `"captions": false` to hide captions while its text is on screen.
 
 ### Cinematic scenes (new)
 

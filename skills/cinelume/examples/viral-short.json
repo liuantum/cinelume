@@ -1,0 +1,25 @@
+{
+  "meta": { "title": "The 3-second rule", "format": "9:16", "theme": "neon", "handle": "@liuantum", "voice": "hype" },
+  "audio": { "music": "auto:viral" },
+  "scenes": [
+    { "type": "hook", "lines": ["You have", "**3 seconds.**"], "media": "search-video:crowd scrolling phones city night neon",
+      "narration": "You have three seconds." },
+
+    { "type": "cinematic", "kicker": "The scroll", "title": "That's how long people decide to ==stay==", "media": "search:person holding phone neon light",
+      "align": "center", "intro": "none",
+      "narration": "That is how long people decide whether to stay, or scroll." },
+
+    { "type": "bignumber", "value": 1.7, "suffix": "s", "kicker": "Attention", "label": "to judge a post on mobile", "source": "Illustrative",
+      "stickers": [{ "type": "tag", "text": "Faster than a blink? Almost", "icon": "eye", "x": 50, "y": 22, "at": 1.6 }],
+      "narration": "Some studies say people judge a mobile post in under two seconds." },
+
+    { "type": "depth", "kicker": "Secret #1", "headline": "Lead with **motion.**", "sub": "The eye locks onto movement before words.", "media": "search:dancer motion blur colorful lights",
+      "narration": "Secret number one. Lead with motion. The eye locks on before it reads." },
+
+    { "type": "list", "title": "The formula", "items": ["Hook in 1 second", "Payoff every 3", "Loop the ending"],
+      "narration": "Hook in one second. A payoff every three. And loop the ending." },
+
+    { "type": "outro", "headline": "Watch it **again.**", "cta": "Follow for Part 2", "handle": "@liuantum",
+      "narration": "Now watch it again, and see if you noticed." }
+  ]
+}

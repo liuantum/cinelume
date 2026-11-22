@@ -51,6 +51,14 @@
     ember: { cine: 1, bg: '#110906', ink: '#FBEFE4', accent: '#FF7B3E', hl: '#FFB26B', card: '#1D110B', muted: '#8F7A6B', land: '#24160F', blue: '#E3A35E', teal: '#D9C27A', grain: 'soft-light', glass: 'rgba(32,18,11,.5)', glassline: 'rgba(255,190,140,.18)', grade: 'warm', glow1: '#FF7B3E', glow2: '#B8322A' },
     slate: { cine: 1, bg: '#191C21', ink: '#ECEEF1', accent: '#56D1C4', hl: '#56D1C4', card: '#232830', muted: '#88909B', land: '#262C34', blue: '#76A7E8', teal: '#56D1C4', grain: 'soft-light', glass: 'rgba(30,34,41,.5)', glassline: 'rgba(255,255,255,.13)', grade: 'cool', glow1: '#56D1C4', glow2: '#3A5A8C' },
   };
+  // ---- viral (colourful, high-energy shorts) themes — premium layer + vivid colour + punch motion
+  Object.assign(THEMES, {
+    neon: { cine: 1, viral: 1, bg: '#07060F', ink: '#FFFFFF', accent: '#FF2E88', hl: '#22E4FF', card: '#141129', muted: '#8A86A8', land: '#1A1733', blue: '#7B5CFF', teal: '#22E4FF', grain: 'soft-light', glass: 'rgba(24,18,48,.55)', glassline: 'rgba(255,255,255,.2)', grade: 'vivid', glow1: '#FF2E88', glow2: '#7B5CFF', pal: ['#22E4FF', '#FF2E88', '#B8FF3C', '#FFC83D', '#9B7BFF'] },
+    sunset: { cine: 1, viral: 1, bg: '#140713', ink: '#FFF6EE', accent: '#FF6A3D', hl: '#FFC83D', card: '#26101F', muted: '#A08690', land: '#2A1424', blue: '#B44CFF', teal: '#FF3D7F', grain: 'soft-light', glass: 'rgba(40,14,30,.55)', glassline: 'rgba(255,220,200,.22)', grade: 'vivid', glow1: '#FF6A3D', glow2: '#C2308C', pal: ['#FFC83D', '#FF6A3D', '#FF3D7F', '#C77DFF', '#FFE9A8'] },
+    electric: { cine: 1, viral: 1, bg: '#050B1A', ink: '#F3F8FF', accent: '#2F7BFF', hl: '#C6FF3D', card: '#0E1830', muted: '#7F8DAA', land: '#0F1C38', blue: '#2F7BFF', teal: '#00E5C7', grain: 'soft-light', glass: 'rgba(10,22,48,.55)', glassline: 'rgba(190,220,255,.22)', grade: 'vivid', glow1: '#2F7BFF', glow2: '#00E5C7', pal: ['#C6FF3D', '#2F7BFF', '#00E5C7', '#FF4D9A', '#FFD23D'] },
+    aurora: { cine: 1, viral: 1, bg: '#04100F', ink: '#ECFFFA', accent: '#3DFFB5', hl: '#B08CFF', card: '#0B1E1C', muted: '#7EA39A', land: '#0D2321', blue: '#5CC8FF', teal: '#3DFFB5', grain: 'soft-light', glass: 'rgba(8,30,28,.55)', glassline: 'rgba(200,255,240,.2)', grade: 'vivid', glow1: '#3DFFB5', glow2: '#7B5CFF', pal: ['#3DFFB5', '#B08CFF', '#5CC8FF', '#FFE36E', '#FF7AC6'] },
+    candy: { cine: 1, viral: 1, light: 1, bg: '#FFF1F7', ink: '#1B0F2E', accent: '#FF3D8B', hl: '#FFD23D', card: '#FFFFFF', muted: '#8C7A99', land: '#F6DCEA', blue: '#7B5CFF', teal: '#00B8D9', grain: 'multiply', glass: 'rgba(255,255,255,.72)', glassline: 'rgba(40,0,60,.1)', grade: 'none', glow1: '#FF8AC2', glow2: '#8FD3FF', pal: ['#FF3D8B', '#7B5CFF', '#00B8D9', '#FFB020', '#2BD47D'] },
+  });
   const CINE_SCENES = ['cinematic', 'establishing', 'opening', 'narrative', 'depth'];
   V.THEMES = THEMES;
 
@@ -105,6 +113,8 @@
     flipX: k => ({ ry: lerp(90, 0, E.outBack(k)), op: clamp(k * 4) }),
     swing: k => ({ r: lerp(-30, 0, E.outElastic(k)), op: clamp(k * 5), s: lerp(.8, 1, E.out(k)) }),
     typeOn: k => ({ op: 1, type: k }),
+    punch: k => ({ s: lerp(1.32, 1, E.outExpo(k)), op: clamp(k * 6), blur: (1 - E.outExpo(k)) * 1.8 }),
+    riseFast: (k, u) => ({ ty: (1 - E.outExpo(k)) * 5 * u, op: clamp(k * 4) }),
     blurIn: (k, u) => ({ blur: (1 - E.out(k)) * 4, op: E.out(k), ty: (1 - E.outExpo(k)) * 2.5 * u }),
     reveal: k => ({ clip: `inset(0 ${(1 - E.inOutExpo(k)) * 100}% 0 0)`, blur: (1 - k) * 1.5, op: clamp(k * 3) }),
     rise3d: (k, u) => ({ ty: (1 - E.outExpo(k)) * 8 * u, op: E.out(k), blur: (1 - E.out(k)) * 2.2 }),
@@ -116,7 +126,13 @@
     constructor(el, o, scene) {
       this.el = el; this.o = Object.assign({ at: 0, fx: 'rise', dur: 0.55, idle: null, rot: 0, scale: 1, center: false, seed: Math.random() * 10 }, o || {});
       this.scene = scene;
-      if (scene && scene.cine && !this.o.keep) {
+      if (scene && scene.viral && !this.o.keep) {
+        const o2 = this.o, VMAP = { drop: 'punch', popBig: 'punch', pop: 'punch', stamp: 'punch', spin: 'punch', swing: 'punch', zoom: 'punch', flipX: 'punch', rise: 'riseFast', riseBig: 'riseFast', blur: 'blurIn' };
+        if (VMAP[o2.fx]) o2.fx = VMAP[o2.fx];
+        if (['wiggle', 'bob', 'float'].includes(o2.idle)) o2.idle = 'drift';
+        if (Math.abs(o2.rot) <= 8) o2.rot = 0;
+        if (o2.fx === 'punch' || o2.fx === 'riseFast') o2.dur = Math.min(Math.max(o2.dur, .32), .45);
+      } else if (scene && scene.cine && !this.o.keep) {
         const o2 = this.o, FXMAP = { drop: 'settle', popBig: 'blurIn', pop: 'blurIn', stamp: 'blurIn', spin: 'blurIn', swing: 'blurIn', riseBig: 'rise3d', rise: 'blurIn', flipX: 'blurIn', zoom: 'settle' };
         if (FXMAP[o2.fx]) o2.fx = FXMAP[o2.fx];
         if (['wiggle', 'bob', 'pulse', 'breathe', 'float'].includes(o2.idle)) o2.idle = 'drift';
@@ -186,7 +202,7 @@
     const svg = sv('svg', { class: 'm-svg', width: W2, height: H2, viewBox: `0 0 ${W2} ${H2}` });
     svg.style.left = -pad + 'px'; svg.style.top = -pad + 'px';
     const col = m.el.dataset.color || 'var(--accent)';
-    const isCine = !!m.el.closest('.cine'); const sw = isCine ? Math.max(1.5, fs * 0.03) : Math.max(3, fs * 0.075);
+    const isCine = !!m.el.closest('.cine'), isViral = !!m.el.closest('.viral'); const sw = isViral ? Math.max(3, fs * .055) : isCine ? Math.max(1.5, fs * 0.03) : Math.max(3, fs * 0.075);
     let d;
     const x0 = pad, x1 = pad + w, y0 = pad, y1 = pad + hh;
     if (m.kind === 'ul') d = `M${x0 - fs * .05} ${y1 - hh * .02} C ${x0 + w * .3} ${y1 - hh * .1}, ${x0 + w * .6} ${y1 + hh * .08}, ${x1 + fs * .08} ${y1 - hh * .06}`;
@@ -197,7 +213,8 @@
     m.el.appendChild(svg); m.path = p;
   }
   function animateMark(m, k) {
-    if (m.kind === 'hl') m.el.style.backgroundSize = m.el.closest('.cine') ? `0% 0%, ${E.inOut(k) * 100}% 7%` : `${E.inOut(k) * 100}% 62%`;
+    if (m.kind === 'hl' && m.el.closest('.viral')) m.el.style.backgroundSize = `${E.outExpo(k) * 100}% 88%`;
+    else if (m.kind === 'hl') m.el.style.backgroundSize = m.el.closest('.cine') ? `0% 0%, ${E.inOut(k) * 100}% 7%` : `${E.inOut(k) * 100}% 62%`;
     else if (m.kind === 'ac') m.el.style.color = k > 0 ? '' : 'inherit';
     else if (m.path) drawPath(m.path, E.inOut(k));
   }
@@ -307,9 +324,9 @@
     else if (k === 'spotlight') b.style.background = `radial-gradient(ellipse at 50% 45%, ${th.card} 0%, ${th.bg} 65%)`;
     else if (k === 'black') b.style.background = '#000';
     else if (k === 'atmos' || k === 'haze') {
-      const g1 = th.glow1 || th.accent, g2 = th.glow2 || th.blue, al = th.light ? '40' : (k === 'haze' ? '30' : '22');
+      const g1 = th.glow1 || th.accent, g2 = th.glow2 || th.blue, al = th.viral ? (th.light ? '55' : '50') : th.light ? '40' : (k === 'haze' ? '30' : '22');
       b.style.background = th.light ? `radial-gradient(ellipse at 50% 30%, #fff 0%, ${th.bg} 70%)` : `radial-gradient(ellipse at 50% 40%, ${mixColor(th.bg, th.card, .9)} 0%, ${th.bg} 60%, ${mixColor(th.bg, '#000000', .6)} 100%)`;
-      const blobs = [[g1, 20, 25, 70], [g2, 78, 70, 85], [g1, 60, 10, 55]].map(([col, x, y, sz]) => { const d = h('div', 'abs', { left: x + '%', top: y + '%', width: sz * u + 'px', height: sz * u + 'px', marginLeft: -sz * u / 2 + 'px', marginTop: -sz * u / 2 + 'px', borderRadius: '50%', background: `radial-gradient(circle, ${col}${al} 0%, transparent 65%)` }); b.appendChild(d); return d; });
+      const blobs = (th.viral ? [[g1, 18, 22, 80], [g2, 82, 72, 95], [th.pal[0], 70, 12, 60], [th.pal[2] || g1, 25, 85, 70]] : [[g1, 20, 25, 70], [g2, 78, 70, 85], [g1, 60, 10, 55]]).map(([col, x, y, sz]) => { const d = h('div', 'abs', { left: x + '%', top: y + '%', width: sz * u + 'px', height: sz * u + 'px', marginLeft: -sz * u / 2 + 'px', marginTop: -sz * u / 2 + 'px', borderRadius: '50%', background: `radial-gradient(circle, ${col}${al} 0%, transparent 65%)` }); b.appendChild(d); return d; });
       const dust = h('div', 'fill', { backgroundImage: `radial-gradient(rgba(255,255,255,${th.light ? 0 : .10}) ${u * .08}px, transparent ${u * .14}px)`, backgroundSize: `${u * 7}px ${u * 9}px`, opacity: .6 }); b.appendChild(dust);
       c.onUpdate(lt => { blobs.forEach((d, i) => { d.style.transform = `translate(${Math.sin(lt * .25 + i * 2) * u * 6}px, ${Math.cos(lt * .2 + i) * u * 4}px) scale(${1 + .08 * Math.sin(lt * .3 + i)})`; }); dust.style.backgroundPosition = `${lt * u * .6}px ${-lt * u * 1.2}px`; });
     }
@@ -349,6 +366,8 @@
       case 'rack-focus-in': return mk(t => ({ bgBlur: lerp(1, 0, E.inOut(clamp((t - .2) / (D * .4)))), z: lerp(1.04, 1.08, L(t)) }));
       case 'shake-hit': return mk(t => ({ z: 1.04, shake: t < .8 ? (1 - t / .8) * 2.2 : 0 }));
       case 'tilt-3d': return mk(t => ({ tilt: lerp(18, 4, E.outExpo(clamp(t / 1.4))), z: lerp(1.08, 1.14, L(t)), r: lerp(-3, -1, L(t)) }));
+      case 'punch-in': return mk(t => ({ z: lerp(1.2, 1.03, E.outExpo(clamp(t / .5))) + .03 * L(t), shake: t < .4 ? (1 - t / .4) * .9 : 0 }));
+      case 'zoom-pulse': return mk(t => ({ z: 1.04 + .02 * L(t) }));
       case 'dolly-in': return mk(t => ({ z: lerp(1.0, 1.12, E.inOut(L(t))), y: lerp(.004, -.004, L(t)) }));
       case 'dolly-out': return mk(t => ({ z: lerp(1.14, 1.0, E.inOut(L(t))) }));
       case 'crane-up': return mk(t => ({ y: lerp(.045, -.03, E.inOut(L(t))), z: lerp(1.1, 1.14, L(t)), tilt: lerp(-3, 0, L(t)) }));
@@ -421,8 +440,9 @@
     layers.bg.style.inset = '-12%';
     const ovl = h('div', 'ovl'); wrap.appendChild(ovl); // non-camera overlay (lower thirds, source)
     if (th.cine) wrap.classList.add('cine');
+    if (th.viral) wrap.classList.add('viral');
     const c = {
-      cine: !!th.cine, dl: th.cine ? 'cine' : 'color', dlDuo: th.cine ? 'cine' : 'duotone',
+      cine: !!th.cine, viral: !!th.viral, dl: th.viral ? 'vivid' : th.cine ? 'cine' : 'color', dlDuo: th.cine ? 'cine' : 'duotone',
       s, idx, th, wrap, cam, layers, ovl, items: [], marks: [], updates: [], post: [], medias: [], events: [],
       W: G.W, H: G.H, u: G.u, portrait: G.H > G.W, square: G.H === G.W,
       dur: s.duration,
@@ -430,7 +450,7 @@
       item(el, o) { const it = new Item(el, o, c); c.items.push(it); return it; },
       onUpdate(f) { c.updates.push(f); },
       postLayout(f) { c.post.push(f); },
-      sfx(name, at, vol) { if (th.cine && CINE_SFX[name]) { name = CINE_SFX[name]; vol = (vol || .8) * .8; } c.events.push({ name, at, vol }); },
+      sfx(name, at, vol) { if (th.viral && VIRAL_SFX[name]) { name = VIRAL_SFX[name]; } else if (th.cine && CINE_SFX[name]) { name = CINE_SFX[name]; vol = (vol || .8) * .8; } c.events.push({ name, at, vol }); },
       text(el, text, o) {
         o = Object.assign({ at: .2, stagger: .06, fx: 'rise', markGap: .35 }, o || {});
         const { marks, words } = richInto(el, text);
@@ -475,6 +495,7 @@
     else c.sfx('pop', it.o.at, .7);
     return el;
   }
+  const VIRAL_SFX = { pop: 'bubble', tap: 'bubble', hit: 'drop', impact: 'drop', thud: 'impact-soft', scribble: 'pen', swish: 'swoosh', air: 'swoosh', ding: 'chime', boom: 'drop', braam: 'drop', paper: 'swoosh', bar: 'bubble', 'tick-roll': 'tick-soft', click: 'snap', whoosh: 'swoosh', 'whoosh-soft': 'swoosh', 'whoosh-deep': 'swoosh', riser: 'riser', swell: 'riser' };
   const CINE_SFX = { pop: 'tap', hit: 'impact', thud: 'impact-soft', scribble: 'pen', swish: 'air', ding: 'chime', boom: 'braam', paper: 'air', bar: 'tap', 'tick-roll': 'tick-soft', click: 'tap', whoosh: 'whoosh-deep', 'whoosh-soft': 'air', riser: 'swell' };
   // scale a 0..100 viewBox svg fragment to w x hh pixels (keeps dots round, strokes even)
   function scaleSVG(svg, sx, sy, sw) {
@@ -1096,7 +1117,9 @@
       const box = c.box({ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: u * 2.6 + 'px' });
       if (s.kicker) { const k = h('div', 'tracked', { fontSize: u * 1.9 + 'px', color: 'var(--accent)' }, esc(s.kicker)); box.appendChild(k); c.item(k, { at: .15, fx: 'blurIn' }); }
       const hd = h('div', 'headline', { fontSize: u * (c.portrait ? 10 : 8.4) + 'px', color: s.media ? '#fff' : 'var(--ink)' }); box.appendChild(hd); const r = c.text(hd, s.headline || 'Thanks for watching', { at: .3, fx: 'blurIn', stagger: .08 });
-      if (s.cta) { const b = h('div', 'card', { padding: `${u * 1.3}px ${u * 3.8}px`, borderRadius: u * 10 + 'px', fontFamily: 'Manrope', fontWeight: 800, fontSize: u * 2.9 + 'px', letterSpacing: '.02em', color: 'var(--ink)', display: 'flex', gap: u + 'px', alignItems: 'center' }, `<span style="width:${u * 1.1}px;height:${u * 1.1}px;border-radius:50%;background:var(--accent);box-shadow:0 0 ${u * 1.4}px var(--accent);display:inline-block"></span>${esc(s.cta)}`); box.appendChild(b); c.item(b, { at: r.end + .1, fx: 'blurIn' }); c.sfx('chime', r.end + .1, .5); }
+      if (s.cta && c.viral) { const pal = c.th.pal; const b = h('div', null, { padding: `${u * 1.6}px ${u * 4.4}px`, borderRadius: u * 10 + 'px', fontFamily: 'Manrope', fontWeight: 800, fontSize: u * 3.6 + 'px', color: '#fff', background: `linear-gradient(90deg, ${c.th.accent}, ${pal[0]})`, boxShadow: `0 ${u}px ${u * 4}px ${c.th.accent}66`, textShadow: '0 1px 2px rgba(0,0,0,.25)' }, esc(s.cta)); box.appendChild(b); c.item(b, { at: r.end + .1, fx: 'punch', keep: true, idle: 'pulse' }); c.sfx('drop', r.end + .1, .5);
+        const ar = h('div', null, { width: u * 7 + 'px', height: u * 7 + 'px' }); ar.innerHTML = stickerSVG('icon-trend-up', pal[0], c.th).html; box.appendChild(ar); c.item(ar, { at: r.end + .4, fx: 'punch', keep: true }); c.onUpdate(lt => { ar.style.marginTop = Math.abs(Math.sin(lt * 4)) * -u * 1.2 + 'px'; }); }
+      else if (s.cta) { const b = h('div', 'card', { padding: `${u * 1.3}px ${u * 3.8}px`, borderRadius: u * 10 + 'px', fontFamily: 'Manrope', fontWeight: 800, fontSize: u * 2.9 + 'px', letterSpacing: '.02em', color: 'var(--ink)', display: 'flex', gap: u + 'px', alignItems: 'center' }, `<span style="width:${u * 1.1}px;height:${u * 1.1}px;border-radius:50%;background:var(--accent);box-shadow:0 0 ${u * 1.4}px var(--accent);display:inline-block"></span>${esc(s.cta)}`); box.appendChild(b); c.item(b, { at: r.end + .1, fx: 'blurIn' }); c.sfx('chime', r.end + .1, .5); }
       if (s.handle) { const hn = h('div', 'tracked', { fontSize: u * 1.9 + 'px', opacity: .7 }, esc(s.handle)); box.appendChild(hn); c.item(hn, { at: r.end + .5, fx: 'fade' }); }
       c.add(box);
       flareSweep(c, .5, 2.2).y = c.H * .5;
@@ -1158,6 +1181,25 @@
     return st;
   }
   const yOf = (c, el, box, f) => c.safe.t + (box ? el.offsetTop : 0) + el.offsetHeight * (f == null ? .55 : f);
+
+  // ---- HOOK: the first 1–3 seconds of a short — giant punchy words over a vivid shot
+  SC.hook = (s, c) => {
+    const u = c.u; const lines = s.lines || [s.text || s.headline || ''];
+    if (s.media) { fullMedia(c, s.media, { look: s.look }); scrim(c, 'full', s.scrim != null ? s.scrim : .75); }
+    const box = c.box({ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: u * 1 + 'px' });
+    if (s.kicker) { const k = h('div', 'kicker', null, esc(s.kicker)); box.appendChild(k); c.item(k, { at: .05, fx: 'punch', keep: true, dur: .35 }); }
+    const per = Math.max(.35, Math.min(.9, (c.dur - .6) / lines.length));
+    const pal = c.th.pal || [c.th.accent, c.th.hl];
+    lines.forEach((ln, i) => {
+      const d = h('div', 'headline', { fontSize: (s.size || (c.portrait ? 11.5 : 10)) * u + 'px', width: '100%', color: i === lines.length - 1 && s.colorLast !== false ? pal[0] : (s.media ? '#fff' : 'var(--ink)'), textShadow: s.media || !c.th.light ? `0 ${u * .5}px ${u * 3}px rgba(0,0,0,.55)` : 'none', textTransform: s.upper === false ? 'none' : 'uppercase' });
+      box.appendChild(d);
+      c.text(d, ln, { at: .1 + i * per, stagger: .05, fx: 'punch', markAt: .1 + i * per + .3 });
+      c.sfx(i ? 'snap' : 'drop', .1 + i * per, i ? .5 : .8);
+      c.postLayout(() => fitText(d, c.safe.w, c.safe.h / lines.length * .9));
+    });
+    c.add(box, 'fg');
+    if (s.source) addSource(c, s.source, s.media ? '#fff' : null);
+  };
 
   // ---- CINEMATIC: full-bleed real footage/photo, graded, with an elegant film title
   SC.cinematic = (s, c) => {
@@ -1278,8 +1320,8 @@
   /* =====================================================================
      DEFAULT DURATIONS
      ===================================================================== */
-  const DEF_DUR = { title: 4, kinetic: 4, bignumber: 4.5, bar: 6, line: 6.5, donut: 5, icongrid: 5.5, map: 6.5, photo: 5, collage: 5.5, document: 6, quote: 5.5, timeline: 7, compare: 6, list: 6, chapter: 2.8, screen: 5.5, broll: 4.5, explain: 6, flow: 6, outro: 4, cinematic: 5.5, establishing: 5, opening: 5.5, narrative: 6, depth: 5.5 };
-  const SCENE_CAM = { cinematic: 'dolly-in', establishing: 'truck-right', opening: 'slow-push', narrative: 'steadicam', depth: 'parallax' };
+  const DEF_DUR = { title: 4, kinetic: 4, bignumber: 4.5, bar: 6, line: 6.5, donut: 5, icongrid: 5.5, map: 6.5, photo: 5, collage: 5.5, document: 6, quote: 5.5, timeline: 7, compare: 6, list: 6, chapter: 2.8, screen: 5.5, broll: 4.5, explain: 6, flow: 6, outro: 4, hook: 2.4, cinematic: 5.5, establishing: 5, opening: 5.5, narrative: 6, depth: 5.5 };
+  const SCENE_CAM = { hook: 'punch-in', cinematic: 'dolly-in', establishing: 'truck-right', opening: 'slow-push', narrative: 'steadicam', depth: 'parallax' };
   const words = s => String(s || '').replace(/[=*_\[\]{}~]/g, '').split(/\s+/).filter(Boolean).length;
 
   /* =====================================================================
@@ -1289,10 +1331,11 @@
     const W = opt.W, H = opt.H, u = Math.min(W, H) / 100;
     G = { W, H, u, fps: opt.fps || 30, sb, assets: opt.assets || {}, themeName: (sb.meta && sb.meta.theme) || 'noir', captions: (sb.meta && sb.meta.captions) !== false && (sb.meta && sb.meta.captions) !== 'none', capStyle: null, flash: 0, leakBoost: 0, burn: 0 };
     const M = sb.meta || {};
-    G.cine = !!(THEMES[G.themeName] || {}).cine;
-    G.capStyle = typeof M.captions === 'string' && M.captions !== 'none' ? M.captions : (G.cine ? (H > W ? 'cinema' : 'subtitle') : (H > W ? 'karaoke' : 'boxed'));
+    G.cine = !!(THEMES[G.themeName] || {}).cine; G.viral = !!(THEMES[G.themeName] || {}).viral;
+    G.bpm = M.bpm || null; G.beat = G.bpm ? 60 / G.bpm : 0; G.beatPulse = G.bpm && (M.beatPulse != null ? M.beatPulse : (G.viral ? .022 : 0));
+    G.capStyle = typeof M.captions === 'string' && M.captions !== 'none' ? M.captions : G.viral ? 'viral' : (G.cine ? (H > W ? 'cinema' : 'subtitle') : (H > W ? 'karaoke' : 'boxed'));
     const lbRatio = typeof M.letterbox === 'number' ? M.letterbox : 2.39;
-    G.lbH = W > H ? Math.max(0, Math.round((H - W / lbRatio) / 2)) : 0;
+    G.lbH = W > H && !(G.viral && M.letterbox == null) ? Math.max(0, Math.round((H - W / lbRatio) / 2)) : 0;
     G.lbGlobal = M.letterbox == null ? null : !!M.letterbox;
     const stage = document.getElementById('stage');
     stage.innerHTML = ''; Object.assign(stage.style, { width: W + 'px', height: H + 'px' });
@@ -1306,7 +1349,7 @@
     // scenes
     const scenes = []; let t = 0; const events = [];
     const list = (sb.scenes || []);
-    const autoTrans = G.cine ? ['cross-zoom', 'dissolve', 'luma', 'light-leak', 'whip-left', 'lens-blur', 'dip-black', 'slit', 'cross-zoom', 'film-burn'] : ['whip-left', 'paper-slide', 'zoom-through', 'whip-up', 'iris', 'tear', 'push', 'stack', 'whip-right', 'wipe-diagonal'];
+    const autoTrans = G.viral ? ['whip-left', 'zoom-through', 'cross-zoom', 'whip-up', 'slit', 'light-leak', 'whip-right', 'flash', 'push', 'glitch'] : G.cine ? ['cross-zoom', 'dissolve', 'luma', 'light-leak', 'whip-left', 'lens-blur', 'dip-black', 'slit', 'cross-zoom', 'film-burn'] : ['whip-left', 'paper-slide', 'zoom-through', 'whip-up', 'iris', 'tear', 'push', 'stack', 'whip-right', 'wipe-diagonal'];
     const transSfx = (n, cine) => { const CT = { dissolve: 'air', luma: 'air', 'dip-black': 'swell', 'dip-white': 'swell', 'light-leak': 'shimmer', 'film-burn': 'shimmer', 'lens-blur': 'whoosh-deep', 'cross-zoom': 'whoosh-deep', slit: 'whoosh-deep' }; if (CT[n]) return CT[n]; const base = n.startsWith('whip') || n === 'push' ? 'whoosh' : n === 'flash' || n === 'glitch' ? 'hit' : n === 'paper-slide' || n === 'tear' || n === 'stack' ? 'paper' : 'whoosh-soft'; return cine && CINE_SFX[base] ? CINE_SFX[base] : base; };
     list.forEach((s0, i) => {
       const s = Object.assign({}, s0.data || {}, s0);
@@ -1329,7 +1372,9 @@
       const sc = { s, c, start: t, dur: s.duration, trName, td, cam: cameraFn(s.camera, s.duration), seed: i * 3.7 + 1 };
       scenes.push(sc);
       c.events.forEach(e => events.push({ t: t + e.at, name: e.name, vol: e.vol }));
-      if (trName !== 'cut' && next) events.push({ t: t + s.duration - td * .6, name: transSfx(trName, c.cine), vol: .8 });
+      // beat sync: make the next scene start exactly on a beat of the generated music
+      if (G.beat && next && M.beatSync !== false) { const end = t + s.duration - td; const snapped = Math.ceil(end / G.beat - .001) * G.beat; s.duration += snapped - end; sc.dur = c.dur = s.duration; sc.cam = cameraFn(s.camera, s.duration); }
+      if (trName !== 'cut' && next) { let tn = transSfx(trName, c.cine); if (c.viral && VIRAL_SFX[tn]) tn = VIRAL_SFX[tn]; events.push({ t: t + s.duration - td * .6, name: tn, vol: .8 }); }
       if (s.camera === 'crash-zoom' || s.camera === 'shake-hit') events.push({ t: t + .05, name: c.cine ? 'braam' : 'boom', vol: .7 });
       (s.sfx || []).forEach(e => events.push({ t: t + (e.at || 0), name: e.type || e.name, vol: e.vol || .8 }));
       t += s.duration - (next ? td : 0);
@@ -1341,26 +1386,28 @@
     G.grainEl = grain; G.grainOn = (sb.meta && sb.meta.grain) !== false;
     if ((sb.meta && sb.meta.vignette) !== false) { const vg = h('div'); vg.id = 'vignette'; if (G.cine) vg.style.background = 'radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.5) 100%)'; stage.appendChild(vg); }
     // cinematic overlays: grade, light leaks, film burn, letterbox bars
-    const GRADES = { 'teal-orange': 'linear-gradient(170deg, rgba(0,95,115,.26) 0%, rgba(0,0,0,0) 50%, rgba(255,140,60,.18) 100%)', warm: 'linear-gradient(170deg, rgba(255,190,120,.16), rgba(255,120,60,.10))', cool: 'linear-gradient(170deg, rgba(70,120,220,.18), rgba(20,40,90,.10))', noir: 'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18))', bleach: 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.1))' };
+    const GRADES = { vivid: 'linear-gradient(170deg, rgba(120,60,255,.16) 0%, rgba(0,0,0,0) 50%, rgba(255,60,140,.14) 100%)', 'teal-orange': 'linear-gradient(170deg, rgba(0,95,115,.26) 0%, rgba(0,0,0,0) 50%, rgba(255,140,60,.18) 100%)', warm: 'linear-gradient(170deg, rgba(255,190,120,.16), rgba(255,120,60,.10))', cool: 'linear-gradient(170deg, rgba(70,120,220,.18), rgba(20,40,90,.10))', noir: 'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18))', bleach: 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.1))' };
     G.gradeName = M.grade != null ? M.grade : (THEMES[G.themeName] || {}).grade;
-    if (G.gradeName && G.gradeName !== 'none' && GRADES[G.gradeName]) { const gr = h('div', null, { background: GRADES[G.gradeName], mixBlendMode: 'soft-light' }); gr.id = 'grade'; stage.appendChild(gr); stage.style.filter = G.gradeName === 'noir' ? 'grayscale(.15) contrast(1.06)' : 'contrast(1.04) saturate(1.04)'; }
+    if (G.gradeName && G.gradeName !== 'none' && GRADES[G.gradeName]) { const gr = h('div', null, { background: GRADES[G.gradeName], mixBlendMode: 'soft-light' }); gr.id = 'grade'; stage.appendChild(gr); stage.style.filter = G.gradeName === 'vivid' ? 'saturate(1.12) contrast(1.05)' : G.gradeName === 'noir' ? 'grayscale(.15) contrast(1.06)' : 'contrast(1.04) saturate(1.04)'; }
     G.leakBase = M.lightLeaks === false ? 0 : (typeof M.lightLeaks === 'number' ? M.lightLeaks : (G.cine ? .14 : 0));
     { const lk = h('div'); lk.id = 'leak'; stage.appendChild(lk); G.leakEl = lk; const bn = h('div'); bn.id = 'burn'; stage.appendChild(bn); G.burnEl = bn; }
     G.lbEls = [h('div', 'lbar', { top: 0, height: 0 }), h('div', 'lbar', { bottom: 0, height: 0 })]; G.lbEls.forEach(e => stage.appendChild(e));
     const fl = h('div'); fl.id = 'flash'; stage.appendChild(fl); G.flashEl = fl;
     const cap = h('div', 'cap-' + G.capStyle); cap.id = 'captions'; G.capBase = H > W ? H * .1 : H * .055; cap.style.bottom = G.capBase + 'px';
-    cap.style.fontSize = (G.capStyle === 'subtitle' ? (H > W ? u * 4.2 : u * 3.1) : G.capStyle === 'cinema' ? (H > W ? u * 5.4 : u * 3.8) : (H > W ? u * 6 : u * 4.2)) + 'px'; if (G.capStyle === 'subtitle') cap.style.setProperty('--capw', '72%'); stage.appendChild(cap); G.capEl = cap;
+    if (G.capStyle === 'viral') { G.capBase = H > W ? H * .24 : H * .12; cap.style.bottom = G.capBase + 'px'; }
+    cap.style.fontSize = (G.capStyle === 'viral' ? (H > W ? u * 8.2 : u * 5.6) : G.capStyle === 'subtitle' ? (H > W ? u * 4.2 : u * 3.1) : G.capStyle === 'cinema' ? (H > W ? u * 5.4 : u * 3.8) : (H > W ? u * 6 : u * 4.2)) + 'px'; if (G.capStyle === 'subtitle') cap.style.setProperty('--capw', '72%'); stage.appendChild(cap); G.capEl = cap;
     if (sb.meta && sb.meta.handle) { const wm = h('div', G.cine ? 'tracked' : null, { top: (G.cine && G.lbH && W > H ? u * 1.8 : u * 3) + 'px', right: u * 3.5 + 'px', fontFamily: G.cine ? 'Manrope' : '', fontSize: (G.cine ? u * 1.5 : u * 2.2) + 'px', color: G.cine ? 'rgba(255,255,255,.7)' : 'var(--ink)', mixBlendMode: G.cine ? 'difference' : '' }, esc(sb.meta.handle)); wm.id = 'wm'; stage.appendChild(wm); }
-    if (sb.meta && sb.meta.progress) { const pr = h('div'); pr.id = 'progress'; stage.appendChild(pr); G.progEl = pr; }
+    if (M.progress || (G.viral && M.progress !== false)) { const pr = h('div'); pr.id = 'progress'; if (G.viral) { const pal = THEMES[G.themeName].pal; Object.assign(pr.style, { top: 0, bottom: 'auto', height: u * .55 + 'px', background: `linear-gradient(90deg, ${pal.join(',')})`, boxShadow: `0 0 ${u}px ${pal[0]}` }); } stage.appendChild(pr); G.progEl = pr; }
     // captions model
     G.capChunks = [];
     if (G.captions) scenes.forEach(sc => {
+      if (sc.s.captions === false || (sc.s.type === 'hook' && sc.s.captions == null)) return;
       const txt = String(sc.s.narration || '').replace(/==|\*\*|__|\[\[|\]\]|~~|\{\{|\}\}/g, '');
       const ws = txt.split(/\s+/).filter(Boolean); if (!ws.length) return;
       const vs = sc.start + (sc.s.voStart != null ? sc.s.voStart : .15), ve = sc.start + (sc.s.voDur ? sc.s.voStart + sc.s.voDur : sc.dur - .25);
       const weights = ws.map(w => w.length + 2), tot = weights.reduce((a, b) => a + b, 0);
       let acc = vs; const timed = ws.map((w, i) => { const d = (ve - vs) * weights[i] / tot; const o = { w, t0: acc, t1: acc + d }; acc += d; return o; });
-      const per = G.capStyle === 'subtitle' ? (H > W ? 7 : 11) : G.capStyle === 'cinema' ? (H > W ? 5 : 7) : (H > W ? 4 : 7);
+      const per = G.capStyle === 'viral' ? (H > W ? 3 : 5) : G.capStyle === 'subtitle' ? (H > W ? 7 : 11) : G.capStyle === 'cinema' ? (H > W ? 5 : 7) : (H > W ? 4 : 7);
       for (let i = 0; i < timed.length; i += per) { const chunk = timed.slice(i, i + per); G.capChunks.push({ t0: chunk[0].t0, t1: chunk[chunk.length - 1].t1, words: chunk }); }
     });
     return { duration: G.duration, events: G.events, scenes: scenes.map(sc => ({ start: sc.start, dur: sc.dur, type: sc.s.type, voiceover: sc.s.voiceover || null, voStart: sc.s.voStart != null ? sc.s.voStart : .15 })) };
@@ -1385,6 +1432,7 @@
     for (const name of ['bg', 'mid', 'fg']) {
       const d = parseFloat(L[name].dataset.depth);
       let z = 1 + (cv.z - 1) * d;
+      if (G.beatPulse) { const tg = sc.start + lt, ph = tg % G.beat, bi = Math.round((tg - ph) / G.beat); z *= 1 + G.beatPulse * (bi % 2 ? .45 : 1) * Math.exp(-ph * 10) * (name === 'bg' ? .6 : 1); }
       if (name === 'fg' && cv.fgZ) z *= cv.fgZ; if (name === 'mid' && cv.fgZ) z *= cv.fgZ; if (name === 'bg' && cv.bgZ) z *= cv.bgZ;
       L[name].style.transform = `translate(${-cv.x * W * d + sx}px,${-cv.y * H * d + sy}px) rotate(${cv.r * d + sr}deg) scale(${z})`;
       if (name === 'bg') L[name].style.filter = cv.bgBlur ? `blur(${cv.bgBlur * u * .9}px)` : '';
@@ -1439,7 +1487,11 @@
       const ch = G.capChunks.find(c => t >= c.t0 - .05 && t <= c.t1 + .25);
       if (ch !== G._lastChunk) { G._lastChunk = ch; G.capEl.innerHTML = ch ? `<div class="cap">${ch.words.map((w, i) => `<span class="cw" data-i="${i}">${esc(w.w)}</span>`).join(' ')}</div>` : ''; }
       if (ch) { const spans = G.capEl.querySelectorAll('.cw'); ch.words.forEach((w, i) => { if (!spans[i]) return; spans[i].classList.toggle('on', t >= w.t0 && t < w.t1); spans[i].classList.toggle('done', t >= w.t1); }); const capDiv = G.capEl.firstChild;
-        if (G.capStyle === 'cinema' || G.capStyle === 'subtitle') { const k = E.out(prog(t, ch.t0 - .08, .3)); capDiv.style.transform = `translateY(${(1 - k) * G.u * .8}px)`; capDiv.style.opacity = k; capDiv.style.filter = k < 1 ? `blur(${(1 - k) * G.u * .3}px)` : ''; if (G.capStyle === 'subtitle') capDiv.style.maxWidth = '72%'; }
+        if (G.capStyle === 'viral') {
+          const pal = (THEMES[G.themeName] || {}).pal || ['#FFD21F']; const ci = G.capChunks.indexOf(ch); capDiv.style.setProperty('--capc', pal[ci % pal.length]);
+          ch.words.forEach((w, i) => { const sp = spans[i]; if (!sp) return; const k = prog(t, w.t0 - .03, .16); sp.style.opacity = k > 0 ? 1 : 0; const on = t >= w.t0 && t < w.t1; sp.style.transform = `scale(${lerp(1.45, on ? 1.14 : 1, E.outBack(k))}) rotate(${on ? -2 : 0}deg)`; });
+          capDiv.style.opacity = 1; capDiv.style.transform = '';
+        } else if (G.capStyle === 'cinema' || G.capStyle === 'subtitle') { const k = E.out(prog(t, ch.t0 - .08, .3)); capDiv.style.transform = `translateY(${(1 - k) * G.u * .8}px)`; capDiv.style.opacity = k; capDiv.style.filter = k < 1 ? `blur(${(1 - k) * G.u * .3}px)` : ''; if (G.capStyle === 'subtitle') capDiv.style.maxWidth = '72%'; }
         else { const k = prog(t, ch.t0 - .05, .18); capDiv.style.transform = `translateY(${(1 - E.outBack(k)) * G.u * 2}px) scale(${lerp(.92, 1, E.outBack(k))})`; capDiv.style.opacity = k; } }
     }
     if (pending.length) await Promise.all(pending);

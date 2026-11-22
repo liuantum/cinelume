@@ -12,16 +12,17 @@ export const SCENE_TYPES = {
   donut: ['value'], icongrid: [['highlight', 'value']], map: [['highlight', 'countries', 'focus', 'pins', 'arcs']], photo: [], collage: [['media', 'images']],
   document: [['headline', 'body']], quote: [['text', 'quote']], timeline: ['events'], compare: [['left', 'a']], list: ['items'], chapter: ['title'],
   screen: [], broll: [], explain: [['headline', 'title']], flow: [['steps', 'nodes']], outro: [],
-  cinematic: [['title', 'headline']], establishing: [['location', 'title']], opening: [['title', 'headline']], narrative: [['lines', 'text']], depth: [['headline', 'title']],
+  hook: [['lines', 'text', 'headline']], cinematic: [['title', 'headline']], establishing: [['location', 'title']], opening: [['title', 'headline']], narrative: [['lines', 'text']], depth: [['headline', 'title']],
 };
-export const CAMERAS = ['static', 'drift', 'push-in', 'push-in-slow', 'pull-out', 'crash-zoom', 'zoom-out-reveal', 'pan-left', 'pan-right', 'tilt-up', 'tilt-down', 'dolly-zoom', 'orbit', 'handheld', 'whip-in', 'rack-focus', 'rack-focus-in', 'shake-hit', 'tilt-3d', 'spiral-in', 'dolly-in', 'dolly-out', 'crane-up', 'crane-down', 'truck-left', 'truck-right', 'parallax', 'steadicam', 'slow-push', 'reveal-pull'];
+export const CAMERAS = ['static', 'drift', 'push-in', 'push-in-slow', 'pull-out', 'crash-zoom', 'zoom-out-reveal', 'pan-left', 'pan-right', 'tilt-up', 'tilt-down', 'dolly-zoom', 'orbit', 'handheld', 'whip-in', 'rack-focus', 'rack-focus-in', 'shake-hit', 'tilt-3d', 'spiral-in', 'dolly-in', 'dolly-out', 'crane-up', 'crane-down', 'truck-left', 'truck-right', 'parallax', 'steadicam', 'slow-push', 'reveal-pull', 'punch-in', 'zoom-pulse'];
 export const TRANSITIONS = ['cut', 'whip-left', 'whip-right', 'whip-up', 'whip-down', 'zoom-through', 'zoom-out', 'iris', 'circle-burst', 'paper-slide', 'tear', 'push', 'slide-up', 'flash', 'glitch', 'stack', 'spin', 'wipe-diagonal', 'blinds', 'fade', 'dissolve', 'dip-black', 'dip-white', 'light-leak', 'film-burn', 'lens-blur', 'cross-zoom', 'luma', 'slit'];
-export const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate'];
+export const VIRAL_THEMES = ['neon', 'sunset', 'electric', 'aurora', 'candy'];
+export const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate', ...VIRAL_THEMES];
 export const THEMES = [...CINE_THEMES, 'paper', 'dark', 'yellow', 'blueprint', 'red', 'navy', 'mint'];
-export const CAPTIONS = ['cinema', 'subtitle', 'karaoke', 'boxed', 'minimal', 'none'];
-export const GRADES = ['teal-orange', 'warm', 'cool', 'noir', 'bleach', 'none'];
+export const CAPTIONS = ['viral', 'cinema', 'subtitle', 'karaoke', 'boxed', 'minimal', 'none'];
+export const GRADES = ['vivid', 'teal-orange', 'warm', 'cool', 'noir', 'bleach', 'none'];
 export const BGS = ['paper', 'texture', 'grid', 'dots', 'lines', 'halftone', 'stripes', 'rays', 'gradient', 'spotlight', 'plain', 'atmos', 'haze', 'black'];
-export const FXS = ['none', 'fade', 'pop', 'popBig', 'rise', 'riseBig', 'drop', 'slideL', 'slideR', 'slideU', 'slideD', 'stamp', 'zoom', 'spin', 'blur', 'wipe', 'wipeUp', 'flipX', 'swing', 'typeOn', 'blurIn', 'reveal', 'rise3d', 'settle'];
+export const FXS = ['none', 'fade', 'pop', 'popBig', 'rise', 'riseBig', 'drop', 'slideL', 'slideR', 'slideU', 'slideD', 'stamp', 'zoom', 'spin', 'blur', 'wipe', 'wipeUp', 'flipX', 'swing', 'typeOn', 'blurIn', 'reveal', 'rise3d', 'settle', 'punch', 'riseFast'];
 
 export function stickerDefs() {
   const ctx = { window: {} }; vm.createContext(ctx);
@@ -68,6 +69,12 @@ export function validate(sb, baseDir = '.') {
   if (legacyUsed.size) warnings.push(`legacy cartoon stickers used with a cinematic theme: ${[...legacyUsed].join(', ')}. Prefer the premium set (ring, arrow-fine, leader, tag, stat, timestamp, location, pulse, glint, photo, icon-*).`);
   const cineScenes = (sb.scenes || []).filter(s => ['cinematic', 'establishing', 'depth', 'broll', 'photo'].includes(s.type)).length;
   if (cineGlobal && (sb.scenes || []).length >= 6 && cineScenes < 2) warnings.push('few footage scenes: a cinematic story usually needs ≥ 1 real-image scene (cinematic / establishing / depth / broll) every 3–4 scenes.');
+  if (VIRAL_THEMES.includes(meta.theme)) {
+    const sc = sb.scenes || [];
+    if (sc[0] && sc[0].type !== 'hook') warnings.push('viral short: start with a "hook" scene (≤ 2.5 s) so the first second stops the scroll.');
+    const total = sc.reduce((a, s) => a + (s.duration || 0), 0);
+    sc.forEach((s, i) => { const w = String(s.narration || '').split(/\s+/).filter(Boolean).length; if (w > 26) warnings.push(`scenes[${i}]: ${w} narration words — shorts cut every 2–5 s; split this scene.`); });
+  }
   for (const k of ['voiceover', 'music']) { const v = (sb.audio || {})[k]; if (v && !/^auto/.test(v) && v !== 'none' && !/^https?:/.test(v) && !fs.existsSync(path.resolve(baseDir, v))) warnings.push(`audio.${k} not found: ${v}`); }
   return { errors, warnings };
 }

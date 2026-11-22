@@ -16,7 +16,21 @@ nothing looks like clip-art.
 | **Sound** | generated cinematic score (pads, drone, arpeggio; suspense heartbeat; epic taiko), braams and impacts on chapter cards, swells into transitions, soft taps for UI, typewriter keys for place stamps |
 | **Captions** | `cinema` (words brighten as spoken) in 9:16 · `subtitle` (film subtitles in the letterbox bar) in 16:9 |
 
-## Themes
+## Viral shorts themes
+
+| theme | palette | when |
+|---|---|---|
+| `neon` (viral default) | ink-black, hot pink + cyan + lime | tech, AI, culture, news reels |
+| `electric` | midnight blue, electric blue + acid lime | tech, gaming, finance hype |
+| `sunset` | plum-black, orange → pink → violet | motivation, money, travel, lifestyle |
+| `aurora` | deep green-black, mint + lavender | health, science, nature, calm-but-colourful |
+| `candy` | bright blush white, pink/violet/cyan | fun, food, beauty, kids-safe, light mode |
+
+Viral rules: vivid graded footage, Manrope ExtraBold everywhere, gradient words and numbers, one colour block highlight per
+scene, captions are the hero (centre-low, giant, word by word), motion punches in and settles fast, cuts land on beats.
+Still no cartoon stickers — colour comes from light, gradients and type.
+
+## Cinematic themes
 
 | theme | palette | grade | when |
 |---|---|---|---|

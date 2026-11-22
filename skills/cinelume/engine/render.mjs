@@ -46,7 +46,14 @@ const sb = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
 sb.meta = sb.meta || {}; sb.audio = sb.audio || {};
 const log = (...a) => console.log('[cinelume]', ...a);
 const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate'];
-const isCine = CINE_THEMES.includes(sb.meta.theme || 'noir');
+const VIRAL_THEMES = ['neon', 'sunset', 'electric', 'aurora', 'candy'];
+const isViral = VIRAL_THEMES.includes(sb.meta.theme);
+const isCine = isViral || CINE_THEMES.includes(sb.meta.theme || 'noir');
+// generated music tempo (the runtime snaps cuts to its beats and pulses the camera on the kick)
+const MUSIC = sb.audio.music == null ? (isViral ? 'auto:viral' : isCine ? 'auto:cinematic' : 'auto') : sb.audio.music;
+const MOOD = String(MUSIC).startsWith('auto') ? (String(MUSIC).split(':')[1] || '') : null;
+const BPM = { viral: 140, upbeat: 118, phonk: 128, hype: 150 };
+if (MOOD && BPM[MOOD] && sb.meta.bpm == null) sb.meta.bpm = BPM[MOOD];
 
 const { errors, warnings } = validate(sb, baseDir);
 warnings.forEach(w => log('WARN', w));
@@ -196,7 +203,7 @@ async function prepareVoice() {
   let voice = sb.meta.voice != null ? sb.meta.voice : (sb.audio.voice != null ? sb.audio.voice : 'auto');
   if (opt.voice) voice = opt.voice;
   if (opt['no-voice'] || sb.audio.voiceover) voice = 'none'; // a single full-length voiceover file replaces TTS
-  const rate = sb.meta.voiceRate || sb.audio.voiceRate || (isCine ? '-2%' : undefined);
+  const rate = sb.meta.voiceRate || sb.audio.voiceRate || (isViral ? '+8%' : isCine ? '-2%' : undefined);
   const todo = sb.scenes.map((s, i) => ({ s, i })).filter(({ s }) => !s.voiceover && s.narration && voice && voice !== 'none' && voice !== false);
   if (todo.length) {
     const { synthesize } = await import('./tts.mjs');
@@ -217,7 +224,7 @@ async function prepareVoice() {
   sb.scenes.forEach(s => {
     if (s.voiceover) {
       const f = path.resolve(baseDir, s.voiceover);
-      if (fs.existsSync(f)) { const d = probeDur(f); s._vo = f; s.voStart = s.voStart != null ? s.voStart : 0.25; s.voDur = d; s.duration = Math.max(s.duration || 0, d + s.voStart + 0.45); }
+      if (fs.existsSync(f)) { const d = probeDur(f); s._vo = f; s.voStart = s.voStart != null ? s.voStart : (isViral ? 0.08 : 0.25); s.voDur = d; s.duration = Math.max(s.duration || 0, d + s.voStart + (isViral ? 0.12 : 0.45)); }
     }
   });
 }
@@ -274,11 +281,18 @@ const SFX_DEF = {
   impact: [`aevalsrc='0.95*sin(2*PI*(40+95*exp(-t*17))*t)*exp(-t*4.2)+0.16*(random(0)*2-1)*exp(-t*10)':d=2.0:s=${SR}`, 'lowpass=f=2600,aecho=0.8:0.5:70:0.3,volume=0.9'],
   'impact-soft': [`aevalsrc='0.6*sin(2*PI*(68+65*exp(-t*30))*t)*exp(-t*10)+0.06*(random(0)*2-1)*exp(-t*50)':d=0.45:s=${SR}`, 'lowpass=f=3000,volume=0.8'],
   braam: [`aevalsrc='(0.26*sin(2*PI*55*t)+0.22*sin(2*PI*110.4*t)+0.16*sin(2*PI*82.6*t)+0.12*sin(2*PI*165.2*t)+0.08*sin(2*PI*220.9*t)+0.05*sin(2*PI*331*t))*(1-exp(-t*9))*exp(-t*0.95)*(1+0.15*sin(2*PI*5*t))':d=3.6:s=${SR}`, 'lowpass=f=1100,aecho=0.8:0.7:90|190:0.4|0.25,volume=1.3'],
+  // ---- viral palette
+  bubble: [`aevalsrc='0.5*sin(2*PI*(520+900*exp(-t*55))*t)*exp(-t*30)':d=0.14:s=${SR}`, 'volume=0.8'],
+  snap: [`aevalsrc='0.7*(random(0)*2-1)*exp(-t*260)+0.25*sin(2*PI*1600*t)*exp(-t*90)':d=0.09:s=${SR}`, 'highpass=f=900,volume=0.75'],
+  swoosh: [`anoisesrc=d=0.42:c=pink:a=0.9:r=${SR}`, 'highpass=f=500,lowpass=f=7000,afade=t=in:d=0.2:curve=exp,afade=t=out:st=0.2:d=0.22,volume=1.1'],
+  drop: [`aevalsrc='1.0*sin(2*PI*(36+120*exp(-t*14))*t)*exp(-t*3)+0.25*(random(0)*2-1)*exp(-t*25)':d=1.4:s=${SR}`, 'lowpass=f=3500,volume=0.95'],
   'tick-soft': [`aevalsrc='0.12*sin(2*PI*2300*t)*exp(-mod(t,0.07)*300)*(1-t/1.6)':d=1.6:s=${SR}`, 'volume=0.5'],
 };
-function decodeToF32(file, args = []) {
-  const out = path.join(tmp, 'pcm-' + hash(file + args.join()) + '.f32');
-  if (!fs.existsSync(out)) run(FFMPEG, ['-y', '-v', 'error', ...args, '-i', file, '-ac', '1', '-ar', String(SR), '-f', 'f32le', out]);
+// broadcast voice chain: rumble cut, de-mud, presence lift, gentle de-ess, compression, limiter
+const VOICE_FX = 'highpass=f=75,equalizer=f=250:t=q:w=1.2:g=-2.5,equalizer=f=3200:t=q:w=1.4:g=3,equalizer=f=7000:t=q:w=2:g=-2,equalizer=f=11000:t=h:w=2000:g=2,acompressor=threshold=-21dB:ratio=3.2:attack=6:release=90:makeup=3.5,alimiter=limit=0.93:level=false';
+function decodeToF32(file, args = [], af = null) {
+  const out = path.join(tmp, 'pcm-' + hash(file + args.join() + (af || '')) + '.f32');
+  if (!fs.existsSync(out)) run(FFMPEG, ['-y', '-v', 'error', ...args, '-i', file, ...(af ? ['-af', af] : []), '-ac', '1', '-ar', String(SR), '-f', 'f32le', out]);
   const b = fs.readFileSync(out); return new Float32Array(b.buffer, b.byteOffset, b.length / 4);
 }
 function synthSfx(name) {
@@ -350,14 +364,65 @@ function cineMusic(dur, mood) {
   const fade = Math.min(n, SR * 2.5); for (let i = 0; i < fade; i++) { out[i] *= i / fade; out[n - 1 - i] *= Math.min(1, i / (SR * 1.5)); }
   return out;
 }
+// Beat-driven music for shorts: viral (140 bpm half-time trap: 808, claps, rolling hats, pluck hook),
+// upbeat (118 bpm pop four-on-the-floor), phonk (128, cowbell lead), hype (150 drill-ish). Kick sidechains the music.
+function viralMusic(dur, mood) {
+  const bpm = BPM[mood] || 140, beat = 60 / bpm, bar = beat * 4, n = Math.ceil(dur * SR);
+  const f = m => 440 * Math.pow(2, (m - 69) / 12);
+  const up = mood === 'upbeat', phonk = mood === 'phonk';
+  const prog = up ? [[60, 64, 67], [67, 71, 74], [69, 72, 76], [65, 69, 72]] : phonk ? [[49, 52, 56], [49, 52, 56], [45, 49, 52], [47, 51, 54]] : [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]];
+  const kicks = up ? [0, 1, 2, 3] : [0, 1.75, 2.5];
+  const claps = up ? [1, 3] : [2];
+  const riff = up ? [12, 7, 4, 7, 12, 16, 12, 7] : phonk ? [12, null, 12, 15, null, 12, 10, null] : [12, null, 15, 12, null, 19, 17, 15];
+  const drums = new Float32Array(n), mel = new Float32Array(n);
+  let seed = 3; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647) * 2 - 1;
+  let hpPrev = 0, hpLp = 0;
+  for (let i = 0; i < n; i++) {
+    const t = i / SR, bIdx = Math.floor(t / bar), tb = t - bIdx * bar, ch = prog[bIdx % prog.length];
+    const intro = bIdx === 0 && !up ? .55 : 1;
+    // kick + sidechain
+    let k = 0, sinceKick = 9;
+    for (const p of kicks) { const dt = tb - p * beat; if (dt >= 0) { sinceKick = Math.min(sinceKick, dt); if (dt < .6) k += Math.sin(2 * Math.PI * (44 + 130 * Math.exp(-dt * 32)) * dt) * Math.exp(-dt * (up ? 9 : 6)); } }
+    const sc = 1 - .55 * Math.exp(-sinceKick * 9);
+    // clap / snare
+    let cl = 0; for (const p of claps) { const dt = tb - p * beat; if (dt >= 0 && dt < .35) { const nz = rnd(); cl += (nz * (Math.exp(-dt * 22) + .5 * Math.exp(-Math.abs(dt - .012) * 300) + .4 * Math.exp(-Math.abs(dt - .024) * 300))) * .4 + Math.sin(2 * Math.PI * 190 * dt) * Math.exp(-dt * 35) * .3; } }
+    // hats (8ths, with 16th/32nd rolls at the end of every 2nd bar)
+    const roll = !up && bIdx % 2 === 1 && tb > beat * 3;
+    const step = roll ? beat / 6 : up ? beat : beat / 2, off = up ? beat / 2 : 0;
+    const th = ((tb - off) % step + step) % step;
+    const raw = rnd(); hpLp += (raw - hpLp) * .5; const hp = raw - hpLp;
+    const hat = hp * Math.exp(-th * (up ? 22 : 55)) * (roll ? .13 : .18) * (tb >= off ? 1 : 0);
+    // phonk cowbell
+    let bell = 0; if (phonk) { const st = beat / 2, tt = tb % st, idx = Math.floor(tb / st) % 8, nt = riff[idx]; if (nt != null) { const fr = f(ch[0] + nt + 12); bell = (Math.sign(Math.sin(2 * Math.PI * fr * tt)) * .35 + Math.sign(Math.sin(2 * Math.PI * fr * 1.48 * tt)) * .25) * Math.exp(-tt * 9) * .12; } }
+    drums[i] = (k * .95 + cl * .7 + hat) * intro;
+    // 808 / bass
+    let bass;
+    if (up) { const st = beat / 2, tt = tb % st, on = Math.floor(tb / st) % 2 === 1; bass = on ? Math.sin(2 * Math.PI * f(ch[0] - 24) * tt) * Math.exp(-tt * 7) * .5 : 0; }
+    else { const fr = f(ch[0] - 24); const v = Math.sin(2 * Math.PI * fr * t); bass = Math.tanh(v * 1.8) * .42 * Math.exp(-sinceKick * 1.1) * (sinceKick < 9 ? 1 : 0); }
+    // hook pluck
+    const st = beat / 2, tt = tb % st, idx = Math.floor(tb / st) % 8, nt = phonk ? null : riff[idx];
+    let pl = 0; if (nt != null && bIdx >= (up ? 0 : 1)) { const fr = f(ch[0] + nt); pl = (Math.sin(2 * Math.PI * fr * tt) + .45 * Math.sin(2 * Math.PI * fr * 2 * tt) + .2 * Math.sin(2 * Math.PI * fr * 3 * tt)) * Math.exp(-tt * (up ? 7 : 5.5)) * .1 * (1 - Math.exp(-tt * 500)); }
+    // pad
+    let pad = 0; for (const m of ch) pad += Math.sin(2 * Math.PI * f(m) * t) + .3 * Math.sin(2 * Math.PI * f(m) * 2.004 * t);
+    pad *= .022 * Math.min(1, tb / .3);
+    mel[i] = (bass + pl + pad + bell) * sc;
+  }
+  // light reverb on the melodic bus only (keeps drums punchy)
+  const wet = new Float32Array(n), combs = [1423, 1559, 1747, 1931].map(d => ({ d, b: new Float32Array(d), i: 0 }));
+  for (let i = 0; i < n; i++) { let o = 0; for (const c of combs) { const y = c.b[c.i]; c.b[c.i] = mel[i] + y * .7; c.i = (c.i + 1) % c.d; o += y; } wet[i] = o * .18; }
+  const out = new Float32Array(n);
+  let lpo = 0; for (let i = 0; i < n; i++) { lpo += (Math.tanh((drums[i] + mel[i] + wet[i] * .6) * 1.15) - lpo) * .62; out[i] = lpo * .85; }
+  const fo = Math.min(n, SR * 1.2); for (let i = 0; i < fo; i++) out[n - 1 - i] *= i / fo;
+  return out;
+}
 function buildAudio(info) {
   const dur = info.duration, n = Math.ceil((dur + 0.5) * SR);
   const vo = new Float32Array(n), fx = new Float32Array(n), mus = new Float32Array(n);
   const place = (dst, src, t0, g) => { const o = Math.round(t0 * SR); for (let i = 0; i < src.length && o + i < dst.length; i++) if (o + i >= 0) dst[o + i] += src[i] * g; };
   // voiceover: global file or per scene
   let hasVo = false;
-  if (sb.audio.voiceover && sb.audio.voiceover !== 'none') { const f = /^https?:/.test(sb.audio.voiceover) ? null : path.resolve(baseDir, sb.audio.voiceover); if (f && fs.existsSync(f)) { place(vo, decodeToF32(f), sb.audio.voiceoverOffset || 0, 1); hasVo = true; } }
-  info.scenes.forEach((sc, i) => { const s = sb.scenes[i]; if (s._vo) { place(vo, decodeToF32(s._vo), sc.start + (s.voStart || .25), 1); hasVo = true; } });
+  if (sb.audio.voiceover && sb.audio.voiceover !== 'none') { const f = /^https?:/.test(sb.audio.voiceover) ? null : path.resolve(baseDir, sb.audio.voiceover); if (f && fs.existsSync(f)) { place(vo, decodeToF32(f, [], sb.audio.voiceFx === false ? null : VOICE_FX), sb.audio.voiceoverOffset || 0, 1); hasVo = true; } }
+  info.scenes.forEach((sc, i) => { const s = sb.scenes[i]; if (s._vo) { place(vo, decodeToF32(s._vo, [], sb.audio.voiceFx === false ? null : VOICE_FX), sc.start + (s.voStart != null ? s.voStart : .25), 1); hasVo = true; } });
   // sfx
   if (sb.meta.sfx !== false) {
     const sfxVol = sb.audio.sfxVolume != null ? sb.audio.sfxVolume : 0.55; const cache = {}; let last = {};
@@ -368,18 +433,19 @@ function buildAudio(info) {
     }
   }
   // music
-  const m = sb.audio.music == null ? (isCine ? 'auto:cinematic' : 'auto') : sb.audio.music; const mv = sb.audio.musicVolume != null ? sb.audio.musicVolume : 0.35;
+  const m = MUSIC; const mv = sb.audio.musicVolume != null ? sb.audio.musicVolume : (isViral ? 0.42 : 0.35);
   if (m && m !== 'none') {
     let src = null;
     const mood = String(m).startsWith('auto') ? (String(m).split(':')[1] || (isCine ? 'cinematic' : '')) : null;
-    if (mood && ['cinematic', 'suspense', 'hopeful', 'epic', 'ambient'].includes(mood)) src = cineMusic(dur + 0.5, mood);
+    if (mood && BPM[mood]) src = viralMusic(dur + 0.5, mood);
+    else if (mood && ['cinematic', 'suspense', 'hopeful', 'epic', 'ambient'].includes(mood)) src = cineMusic(dur + 0.5, mood);
     else if (mood != null) src = autoMusic(dur + 0.5, mood);
     else { const f = path.resolve(baseDir, m); if (fs.existsSync(f)) src = decodeToF32(f, ['-stream_loop', '-1', '-t', String(dur + 0.5)]); }
-    if (src) { const fadeN = SR * 1.2; for (let i = 0; i < n && i < src.length; i++) { const g = i > n - fadeN ? (n - i) / fadeN : 1; mus[i] = src[i] * g * mv; } }
+    if (src) { const fadeN = SR * (isViral ? 0.6 : 1.2); for (let i = 0; i < n && i < src.length; i++) { const g = i > n - fadeN ? (n - i) / fadeN : 1; mus[i] = src[i] * g * mv; } }
   }
   // ducking: music follows inverse VO envelope
   const out = new Float32Array(n); let env = 0; const att = 1 - Math.exp(-1 / (SR * 0.03)), rel = 1 - Math.exp(-1 / (SR * 0.35));
-  for (let i = 0; i < n; i++) { const a = Math.abs(vo[i]); env += (a > env ? att : rel) * (a - env); const duck = hasVo ? 1 - Math.min(0.7, env * 6) : 1; out[i] = vo[i] + fx[i] + mus[i] * duck; }
+  for (let i = 0; i < n; i++) { const a = Math.abs(vo[i]); env += (a > env ? att : rel) * (a - env); const duck = hasVo ? 1 - Math.min(isViral ? 0.55 : 0.7, env * 6) : 1; out[i] = vo[i] + fx[i] + mus[i] * duck; }
   let peak = 0; for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(out[i]));
   const g = peak > 0.98 ? 0.98 / peak : 1; if (g !== 1) for (let i = 0; i < n; i++) out[i] *= g;
   const raw = path.join(tmp, 'mix.f32'); fs.writeFileSync(raw, Buffer.from(out.buffer));

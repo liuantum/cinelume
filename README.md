@@ -1,22 +1,44 @@
-# 🎞️ Cinelume — one prompt → a cinematic story film
+# 🎞️ Cinelume — one prompt → a viral short or a cinematic film
 
 **An agent skill for Claude (Claude Code) and Google Antigravity** that turns a single prompt like
 
 > *"Make a 60-second cinematic film about why the world depends on one island for its chips, for @liuantum"*
 
-into a finished **MP4 that feels like a documentary**: real photos and footage, film colour grading, 2.39:1 letterboxing,
+into a finished, ready-to-post MP4 — in one of two modes:
+
+- **🔥 Viral shorts** (Reels / Shorts / TikTok): vivid colour themes, a 1-second hook, giant word-by-word coloured captions,
+  gradient numbers, punch-in motion, cuts that land on the beat of generated trap/pop music, an energetic narrator run
+  through a broadcast voice chain, and a retention progress bar.
+- **🎬 Cinematic stories**: a finished **MP4 that feels like a documentary**: real photos and footage, film colour grading, 2.39:1 letterboxing,
 light leaks and lens flares, elegant serif titles, frosted-glass annotations, fine-line callouts, a generated cinematic
 score with braams and swells, and a **built-in neural narrator** — rendered frame-perfectly in headless Chrome.
 
-<p align="center"><img src="docs/demo.gif" width="560" alt="Cinelume demo"></p>
+<p align="center"><img src="docs/demo-viral.gif" width="230" alt="Viral short demo">&nbsp;&nbsp;<img src="docs/demo.gif" width="560" alt="Cinematic demo"></p>
+
+<p align="center"><img src="docs/gallery-viral.jpg" width="900" alt="Viral short frames"></p>
 
 <p align="center"><img src="docs/gallery-16x9.jpg" width="900" alt="16:9 film frames"></p>
 <p align="center"><img src="docs/gallery-9x16.jpg" width="900" alt="9:16 reel frames"></p>
 
-▶️ Demos: [`docs/demo-film.mp4`](docs/demo-film.mp4) (16:9 short film) · [`docs/demo-reel.mp4`](docs/demo-reel.mp4) (9:16 reel)
+▶️ Demos: [`docs/demo-viral.mp4`](docs/demo-viral.mp4) (9:16 viral short) · [`docs/demo-film.mp4`](docs/demo-film.mp4) (16:9 short film) · [`docs/demo-reel.mp4`](docs/demo-reel.mp4) (9:16 cinematic reel)
 <sub>Demo photos: SpaceX launch photo (CC0), NASA Hubble Deep Field (public domain), coffee photo by Rachel Michetti (CC0). Demos were rendered offline, so they have score + sound design + captions but no narration.</sub>
 
 ---
+
+## 🔥 Viral shorts mode
+
+| | |
+|---|---|
+| **5 colour themes** | `neon` (pink/cyan/lime), `electric` (blue/acid lime), `sunset` (orange→pink→violet), `aurora` (mint/lavender), `candy` (bright light mode) |
+| **Hook scene** | `hook` — 2–3 giant lines punch in word by word over a vivid shot with a bass drop, in the first second |
+| **Captions as the hero** | `viral` captions: huge, outlined, each word pops in as it's spoken, every phrase gets a new colour with a glow |
+| **Colour type** | `**word**` → gradient word · `==word==` → colour block highlight · numbers count up in gradient |
+| **Music that drives the edit** | `auto:viral` (140-bpm trap: 808, claps, hat rolls, pluck hook), `auto:upbeat` (118 pop), `auto:phonk`, `auto:hype` — every cut is snapped to a beat and the camera pulses on the kick |
+| **Voice** | `hype`, `hype-female`, `creator`, `indian-creator`, Hindi/Telugu/Tamil… + a broadcast chain (EQ, de-ess, compressor, limiter) on every voice, tight timing, music ducks under speech |
+| **Retention details** | gradient progress bar, punch-in camera, fast whip/zoom/slit transitions with swooshes, glowing gradient "Follow for Part 2" CTA |
+
+Ask: *"Make a viral 30-second Instagram reel about why sleep makes you smarter, neon theme, for @liuantum."*
+Example: [`skills/cinelume/examples/viral-short.json`](skills/cinelume/examples/viral-short.json)
 
 ## What's new in Cinelume (v2)
 
@@ -72,6 +94,7 @@ Without keys, `search:` still finds openly-licensed photos on Openverse and Wiki
 
 Ask your agent (in Antigravity you can type `/cinelume` to force it):
 
+- *"A viral 30-second YouTube Short about the world's most expensive spice — sunset theme, female voice."*
 - *"Make a 90-second cinematic documentary about the Strait of Hormuz and oil prices."*
 - *"Turn this article into a 9:16 cinematic reel with a British narrator: <paste>"*
 - *"A 2-minute film on the history of the transistor — midnight theme, epic music."*
@@ -141,7 +164,7 @@ prompt ─► agent (SKILL.md: research · story · shot plan · cinematic rules
 skills/cinelume/
 ├── SKILL.md                 # the agent instructions (Claude + Antigravity share the same format)
 ├── references/              # schema, cinematic bible, cameras & transitions, story/shot planning, stickers
-├── examples/                # silicon-island.json (16:9 film), ai-reel-cinematic.json (9:16), classic/ (old style)
+├── examples/                # viral-short.json (9:16 viral), silicon-island.json (16:9 film), ai-reel-cinematic.json (9:16), classic/ (old style)
 ├── scripts/tts.py           # fallback text-to-speech engines
 └── engine/
     ├── render.mjs           # CLI renderer + media search + score generator

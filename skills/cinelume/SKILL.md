@@ -1,6 +1,6 @@
 ---
 name: cinelume
-description: Turns a single prompt into a premium, cinematic story video (MP4) that feels like a documentary or film — real photos and footage, film grading, letterboxing, light leaks, elegant serif titles, glass UI, fine-line annotations, a generated cinematic score and built-in neural narration. Use when the user asks for a cinematic or premium video, a documentary-style short, a story-driven explainer, an Instagram/YouTube/TikTok reel or short, a "Vox style" or "Johnny Harris style" video, a motion-graphics news recap, or an animated data story from a topic, script or article.
+description: Turns a single prompt into a premium video (MP4) — either a colourful, high-energy viral short (Instagram Reels / YouTube Shorts / TikTok) with bold animated captions, beat-synced music and an energetic narrator, or a cinematic story video that feels like a documentary or film — real photos and footage, film grading, letterboxing, light leaks, elegant serif titles, glass UI, fine-line annotations, a generated cinematic score and built-in neural narration. Use when the user asks for a cinematic or premium video, a documentary-style short, a story-driven explainer, an Instagram/YouTube/TikTok reel or short, a "Vox style" or "Johnny Harris style" video, a motion-graphics news recap, or an animated data story from a topic, script or article.
 ---
 
 # Cinelume — cinematic story-video generator
@@ -23,16 +23,38 @@ needs internet while rendering). **Realistic images:** `search:` works with no k
 for the best stock photos/footage ask the user to set any of `PEXELS_API_KEY`, `UNSPLASH_ACCESS_KEY`, `PIXABAY_API_KEY`
 (all free). Without any results the engine draws an atmospheric light-and-bokeh plate, never a cartoon.
 
+## 0.5 Pick the mode
+
+| Mode | When | Themes | Feel |
+|---|---|---|---|
+| **Viral short** | Reels / Shorts / TikTok, "viral", "engaging", "colourful", growth content, daily news reels, any 9:16 under 60 s unless they ask for calm/cinematic | `neon` (default) · `sunset` · `electric` · `aurora` · `candy` (bright/light) | vivid graded footage, giant word-by-word coloured captions, gradient numbers, punch-in motion, camera pulsing on the kick, cuts on the beat, 140-bpm trap / 118-bpm pop music, energetic voice, top progress bar |
+| **Cinematic story** | documentaries, 16:9 explainers, "film", "cinematic", "premium", calm or serious topics | `noir` · `film` · `midnight` · `ember` · `slate` · `ivory` | letterboxed graded film, serif titles, glass annotations, cinematic score, storyteller voice |
+
+### Viral short playbook (retention first)
+- **Second 0–2: `hook` scene.** 2–5 giant words that open a loop: a bold claim, a number, "You're doing X wrong", "Nobody talks about…".
+  Put the hook over the most striking real shot (`search-video:`). The hook's own text replaces captions (no duplication).
+- **A payoff every 2–4 s.** Scenes are short (≤ 20 narration words, usually 6–14). Alternate: real shot → number → real shot → list.
+- **Use colour with meaning:** `**word**` = gradient word, `==word==` = coloured highlight block (1 per scene).
+- **Numbers**: `bignumber` (gradient count-up). **Steps**: `list` (max 3). **People/products**: `depth` / `cinematic` with `align: "center"`.
+- **End with a loop or a reason to follow**: `outro` with a short `cta` ("Follow for Part 2", "Save this"), and a last line that
+  connects back to the hook so the replay feels seamless.
+- Narration: second person, present tense, punchy (8–12 words per sentence max), one idea per line, ~2.8–3 words/s.
+- Voice: `hype` (energetic US male, default) · `hype-female` · `creator` / `creator-female` (relaxed) · `indian-creator` /
+  `indian-creator-female` · Hindi/Telugu/Tamil voices for regional audiences. The engine runs every voice through a
+  broadcast chain (EQ, de-ess, compression, limiter) so it sounds like a good mic.
+- Music: `auto:viral` (trap, default) · `auto:upbeat` (pop) · `auto:phonk` · `auto:hype` (150 bpm). Scenes are snapped so every
+  cut lands on a beat, and the camera pulses on the kick (`meta.beatPulse: 0` to turn off).
+
 ## 1. Brief (decide, don't ask, unless truly ambiguous)
 
 | Decide | Default | Signals |
 |---|---|---|
 | Format | `16:9` | reel / short / TikTok / story / vertical → `9:16`; square → `1:1`; `4:5` |
 | Length | reel 30–60 s (6–9 scenes) · film 90–180 s (12–20 scenes) | explicit time wins |
-| Theme | `noir` | travel/nature/human → `film`; space/AI/night → `midnight`; energy/war/industry → `ember`; finance/science → `slate`; culture/luxury/essay → `ivory`. Only use classic themes (`paper` etc.) if the user asks for the flat "classic" look |
-| Captions | `cinema` (9:16) / `subtitle` (16:9) | "no captions" → `"none"` |
-| Voice | `storyteller` (warm US male) | female → `storyteller-female`; British → `documentary` / `documentary-female`; trailer → `trailer`; Indian English → `indian-storyteller`; Hindi/Telugu/Tamil etc. (`node engine/tts.mjs --list`); silent → `none` |
-| Music | `auto:cinematic` | tense → `auto:suspense`; uplifting → `auto:hopeful`; big → `auto:epic`; calm → `auto:ambient` |
+| Theme | viral shorts → `neon`; cinematic → `noir` | bright/fun/lifestyle → `candy`; motivation/money → `sunset`; tech/AI → `electric` or `neon`; health/nature/calm-but-colourful → `aurora` travel/nature/human → `film`; space/AI/night → `midnight`; energy/war/industry → `ember`; finance/science → `slate`; culture/luxury/essay → `ivory`. Only use classic themes (`paper` etc.) if the user asks for the flat "classic" look |
+| Captions | viral themes → `viral`; cinematic → `cinema` (9:16) / `subtitle` (16:9) | "no captions" → `"none"` |
+| Voice | viral → `hype`; cinematic → `storyteller` (warm US male) | female → `storyteller-female`; British → `documentary` / `documentary-female`; trailer → `trailer`; Indian English → `indian-storyteller`; Hindi/Telugu/Tamil etc. (`node engine/tts.mjs --list`); silent → `none` |
+| Music | viral → `auto:viral`; cinematic → `auto:cinematic` | tense → `auto:suspense`; uplifting → `auto:hopeful`; big → `auto:epic`; calm → `auto:ambient` |
 | Handle | none | any @handle → `meta.handle` |
 
 ## 2. Research, then write a story (not a slideshow)
@@ -48,6 +70,7 @@ for the best stock photos/footage ask the user to set any of `PEXELS_API_KEY`, `
 
 | Beat is… | Scene `type` | Must-have |
 |---|---|---|
+| The first 1–2 s of a short | `hook` | `lines[]` (2–3 short lines, last one coloured) + `media` |
 | Film opener / title card | `opening` | `title` (+`presenter`, `tagline`, `media`) |
 | A place + time ("Hsinchu, 04:12 AM") | `establishing` | `location`, `media` (+`time`, `coords`, `viewfinder`) |
 | A big statement over a real shot | `cinematic` | `title`, `media` (+`kicker`, `sub`, `intro: slit|blur|fade`) |
@@ -131,7 +154,7 @@ theme, any illustrative numbers) and one next step (e.g. "add a PEXELS_API_KEY f
 ```
 Every field: `references/storyboard-schema.md` · look & themes: `references/style-bible.md` ·
 cameras/transitions: `references/camera-and-transitions.md` · stickers: `references/stickers.md`.
-Examples: `examples/silicon-island.json` (16:9 short film) · `examples/ai-reel-cinematic.json` (9:16 reel) ·
+Examples: `examples/viral-short.json` (9:16 viral short) · `examples/silicon-island.json` (16:9 short film) · `examples/ai-reel-cinematic.json` (9:16 reel) ·
 `examples/classic/` (the old flat style, only if asked).
 
 ## Troubleshooting

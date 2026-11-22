@@ -18,6 +18,7 @@ export const VOICE_ALIASES = {
   auto: 'en-US-AndrewNeural', default: 'en-US-AndrewNeural', edge: 'en-US-AndrewNeural',
   male: 'en-US-AndrewNeural', female: 'en-US-AvaNeural', narrator: 'en-US-GuyNeural', news: 'en-US-ChristopherNeural',
   'us-male': 'en-US-AndrewNeural', 'us-female': 'en-US-AvaNeural',
+  hype: 'en-US-AndrewNeural', 'hype-female': 'en-US-EmmaNeural', creator: 'en-US-BrianNeural', 'creator-female': 'en-US-AvaNeural', 'indian-creator': 'en-IN-PrabhatNeural', 'indian-creator-female': 'en-IN-NeerjaNeural',
   storyteller: 'en-US-AndrewNeural', 'storyteller-female': 'en-US-EmmaNeural', documentary: 'en-GB-RyanNeural', 'documentary-female': 'en-GB-SoniaNeural', trailer: 'en-US-ChristopherNeural', 'indian-storyteller': 'en-IN-PrabhatNeural',
   'uk-male': 'en-GB-RyanNeural', 'uk-female': 'en-GB-SoniaNeural',
   'indian-male': 'en-IN-PrabhatNeural', 'indian-female': 'en-IN-NeerjaNeural',
