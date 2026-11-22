@@ -1,182 +1,257 @@
-# 🎞️ Cinelume — one prompt → a viral short or a cinematic film
+<div align="center">
 
-**An agent skill for Claude (Claude Code) and Google Antigravity** that turns a single prompt like
+# 🎞️ CINELUME
 
-> *"Make a 60-second cinematic film about why the world depends on one island for its chips, for @liuantum"*
+### One prompt → a finished, narrated video. Viral shorts or cinematic films.
 
-into a finished, ready-to-post MP4 — in one of two modes:
+An agent skill for **Claude Code** and **Google Antigravity** that researches, writes, directs, narrates, scores and renders a
+ready-to-post MP4: real imagery, animated captions, beat-synced music and a natural neural voice.
 
-- **🔥 Viral shorts** (Reels / Shorts / TikTok): vivid colour themes, a 1-second hook, giant word-by-word coloured captions,
-  gradient numbers, punch-in motion, cuts that land on the beat of generated trap/pop music, an energetic narrator run
-  through a broadcast voice chain, and a retention progress bar.
-- **🎬 Cinematic stories**: a finished **MP4 that feels like a documentary**: real photos and footage, film colour grading, 2.39:1 letterboxing,
-light leaks and lens flares, elegant serif titles, frosted-glass annotations, fine-line callouts, a generated cinematic
-score with braams and swells, and a **built-in neural narrator** — rendered frame-perfectly in headless Chrome.
+[![9:16 Shorts](https://img.shields.io/badge/9%3A16-Reels%20%C2%B7%20Shorts%20%C2%B7%20TikTok-ff2e88?style=for-the-badge)](#-see-it)
+[![16:9 Film](https://img.shields.io/badge/16%3A9-Cinematic%20films-d6ae62?style=for-the-badge)](#-see-it)
+[![Voice](https://img.shields.io/badge/Narration-built--in-22e4ff?style=for-the-badge)](#%EF%B8%8F-voices)
+[![License](https://img.shields.io/badge/License-MIT-7b5cff?style=for-the-badge)](LICENSE)
 
-<p align="center"><img src="docs/demo-viral.gif" width="230" alt="Viral short demo">&nbsp;&nbsp;<img src="docs/demo.gif" width="560" alt="Cinematic demo"></p>
-
-<p align="center"><img src="docs/gallery-viral.jpg" width="900" alt="Viral short frames"></p>
-
-<p align="center"><img src="docs/gallery-16x9.jpg" width="900" alt="16:9 film frames"></p>
-<p align="center"><img src="docs/gallery-9x16.jpg" width="900" alt="9:16 reel frames"></p>
-
-▶️ Demos: [`docs/demo-viral.mp4`](docs/demo-viral.mp4) (9:16 viral short) · [`docs/demo-film.mp4`](docs/demo-film.mp4) (16:9 short film) · [`docs/demo-reel.mp4`](docs/demo-reel.mp4) (9:16 cinematic reel)
-<sub>Demo photos: SpaceX launch photo (CC0), NASA Hubble Deep Field (public domain), coffee photo by Rachel Michetti (CC0). Demos were rendered offline, so they have score + sound design + captions but no narration.</sub>
+</div>
 
 ---
 
-## 🔥 Viral shorts mode
+## 👀 See it
 
-| | |
-|---|---|
-| **5 colour themes** | `neon` (pink/cyan/lime), `electric` (blue/acid lime), `sunset` (orange→pink→violet), `aurora` (mint/lavender), `candy` (bright light mode) |
-| **Hook scene** | `hook` — 2–3 giant lines punch in word by word over a vivid shot with a bass drop, in the first second |
-| **Captions as the hero** | `viral` captions: huge, outlined, each word pops in as it's spoken, every phrase gets a new colour with a glow |
-| **Colour type** | `**word**` → gradient word · `==word==` → colour block highlight · numbers count up in gradient |
-| **Music that drives the edit** | `auto:viral` (140-bpm trap: 808, claps, hat rolls, pluck hook), `auto:upbeat` (118 pop), `auto:phonk`, `auto:hype` — every cut is snapped to a beat and the camera pulses on the kick |
-| **Voice** | `hype`, `hype-female`, `creator`, `indian-creator`, Hindi/Telugu/Tamil… + a broadcast chain (EQ, de-ess, compressor, limiter) on every voice, tight timing, music ducks under speech |
-| **Retention details** | gradient progress bar, punch-in camera, fast whip/zoom/slit transitions with swooshes, glowing gradient "Follow for Part 2" CTA |
+Two demos made with Cinelume on one story: **the Hubble Deep Field**, the "empty" patch of sky that turned out to hold thousands of galaxies.
+Both are fully narrated, scored and captioned. The previews below are silent loops; **click one to watch the MP4 with sound.**
 
-Ask: *"Make a viral 30-second Instagram reel about why sleep makes you smarter, neon theme, for @liuantum."*
-Example: [`skills/cinelume/examples/viral-short.json`](skills/cinelume/examples/viral-short.json)
+<table>
+<tr>
+<td align="center" width="34%">
 
-## What's new in Cinelume (v2)
+<a href="docs/deep-field-9x16.mp4"><img src="docs/preview-9x16.webp" width="260" alt="9:16 viral short preview"></a>
 
-Cinelume is the successor of `vox-video`. The flat "paper & cartoon sticker" explainer look is gone by default — every
-video now looks and sounds like a film.
+**9:16 · Viral short** · 23 s<br>
+`neon` theme · viral captions · trap beat · studio voice<br>
+<a href="docs/deep-field-9x16.mp4"><b>▶ Watch with sound</b></a>
 
-| | |
-|---|---|
-| **Real imagery, automatically** | `search:` / `search-video:` media pull the best-matching photo or footage across **Pexels → Unsplash → Pixabay → Openverse → Wikimedia Commons** (the last two need no API key). Results are scored for orientation, aspect and resolution; credits & licences are written next to the video. No result → an atmospheric light-and-bokeh plate, never a cartoon placeholder |
-| **Film look** | 6 cinematic themes (`noir`, `film`, `midnight`, `ember`, `slate`, `ivory`), global colour grade (teal-orange, warm, cool, noir, bleach), graded photo looks, animated letterbox bars that slide in on story shots, light leaks, lens-flare sweeps, bokeh, vignette, fine grain |
-| **5 new story scenes** | `opening` (film title card) · `establishing` (place + time typed over footage, optional camera viewfinder + REC timecode) · `cinematic` (full-bleed shot + film title, slit/blur reveals) · `narrative` (documentary intertitles) · `depth` (2.5D parallax plate with foreground cut-out and floating particles) |
-| **Premium stickers** | 59 new: fine draw-on annotations (`ring`, `arrow-fine`, `leader` callouts, `corners`, `seal`), frosted-glass chips (`tag`, `stat`, `location`, `timestamp`, live `rec` timecode), light objects (`pulse`, `glint`, `flare`, `pin-glow`), real **photo stickers**, and 35 consistent line icons. The old cartoon set is kept only for classic themes |
-| **Typography** | Cormorant Garamond (titles), Cinzel (film titles & places), Manrope (UI, numbers, captions) — all bundled (OFL) |
-| **Camera & cuts** | +10 film camera moves (dolly, crane, truck, steadicam, parallax, reveal-pull…) and +9 film transitions (dissolve, cross-zoom, luma, light-leak, film-burn, lens-blur, dip-to-black/white, anamorphic slit) |
-| **Sound** | generated **cinematic score** (`auto:cinematic`, `suspense` with heartbeat, `hopeful`, `epic` with taiko, `ambient`) with reverb; braams, impacts, swells, shimmer, typewriter keys; storyteller / documentary / trailer narrator voices |
-| **Captions** | `cinema` (words brighten as they're spoken) and `subtitle` (film subtitles that sit inside the letterbox bar) |
-| **Everything else still works** | all 20 original scene types (maps, charts, timelines, documents, screens…) are restyled automatically on cinematic themes; classic themes and the old storyboards still render unchanged |
+</td>
+<td align="center" width="66%">
 
-## Install
+<a href="docs/deep-field-16x9.mp4"><img src="docs/preview-16x9.webp" width="560" alt="16:9 cinematic film preview"></a>
 
-Requirements: **Node 18+**, **ffmpeg**, and Chrome/Chromium/Edge (auto-detected; the installer can download Chromium).
+**16:9 · Cinematic film** · 46 s<br>
+`noir` theme · letterbox · subtitles · cinematic score · studio voice<br>
+<a href="docs/deep-field-16x9.mp4"><b>▶ Watch with sound</b></a>
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><b>🖼️ Every scene, frame by frame</b></summary>
+<br>
+<p align="center"><img src="docs/frames-9x16.jpg" alt="9:16 frames"></p>
+<p align="center"><img src="docs/frames-16x9.jpg" alt="16:9 frames"></p>
+</details>
+
+**How they were made:** each demo is one storyboard JSON ([9:16](docs/demo-src/deep-field-9x16.json) · [16:9](docs/demo-src/deep-field-16x9.json))
+rendered with `node render.mjs <storyboard>`. Narration, music, sound design, captions, camera moves and transitions are all generated by the engine.
+Facts are from NASA / STScI.
+
+---
+
+## ✨ Two modes
+
+<table>
+<tr>
+<th width="50%">🔥 Viral shorts</th>
+<th width="50%">🎬 Cinematic stories</th>
+</tr>
+<tr valign="top">
+<td>
+
+For **Instagram Reels, YouTube Shorts, TikTok**
+- **1-second hook**: giant words punch in over the strongest shot
+- **Word-by-word captions**, outlined, every phrase in a new colour
+- Gradient numbers, colour-block highlights, glowing CTA
+- **Beat-synced editing**: every cut lands on the beat of generated
+  trap / pop / phonk music, and the camera pulses on the kick
+- Energetic narrator with a broadcast voice chain
+- Retention progress bar, punch-in camera, fast transitions
+- Themes: `neon` `electric` `sunset` `aurora` `candy`
+
+</td>
+<td>
+
+For **documentaries, explainers, brand films**
+- Real photos & footage, film colour grade
+- Animated **2.39:1 letterbox**, light leaks, lens flares
+- Serif & film-title typography, frosted-glass labels
+- Story scenes: `opening`, `establishing`, `cinematic`, `narrative`, `depth` (2.5D parallax)
+- Generated **cinematic score**: pads, drones, braams, swells
+- Storyteller / documentary narrators, film subtitles
+- Themes: `noir` `film` `midnight` `ember` `slate` `ivory`
+
+</td>
+</tr>
+</table>
+
+**Also in the box:** 27 scene types (maps that fly to countries, animated bar/line/donut charts, timelines, compare, lists, flows,
+documents, phone/browser screens, b-roll montages…), 32 camera moves, 29 transitions, 59 premium stickers & line icons,
+automatic real-image search with credits, and a deterministic renderer: what you preview is exactly what ships.
+
+---
+
+## 🚀 Quick start
+
+**Requirements:** Node 18+, ffmpeg, and Chrome / Chromium / Edge (auto-detected; the installer can download Chromium).
 
 ```bash
 git clone https://github.com/liuantum/cinelume.git
 cd cinelume
-./install.sh                # Claude Code + Antigravity, available in all projects
+./install.sh            # installs for Claude Code + Antigravity (all projects)
 ```
-Windows: `powershell -ExecutionPolicy Bypass -File install.ps1`
+
+<details>
+<summary>Other install options</summary>
 
 | target | command | installs to |
 |---|---|---|
+| Windows | `powershell -ExecutionPolicy Bypass -File install.ps1` | same targets as below |
 | Claude Code only | `./install.sh claude` | `~/.claude/skills/cinelume` |
 | Antigravity only | `./install.sh antigravity` | `~/.gemini/config/skills/cinelume` |
-| One project (both agents) | `./install.sh all --project /path/to/repo` | `<repo>/.claude/skills/cinelume` and `<repo>/.agents/skills/cinelume` |
+| One project | `./install.sh all --project /path/to/repo` | `<repo>/.claude/skills/cinelume` + `<repo>/.agents/skills/cinelume` |
 
-The installer removes an old `vox-video` install if it finds one.
-
-**Claude Code plugin marketplace** (alternative):
+Claude Code plugin marketplace:
 ```
 /plugin marketplace add liuantum/cinelume
 /plugin install cinelume@liuantum-cinelume
 ```
+</details>
 
-**Better images & footage (optional, all free):**
+Then just ask your agent:
+
+> 💬 *"Make a viral 30-second reel about why the Hubble Deep Field changed astronomy, neon theme, for @liuantum."*
+>
+> 💬 *"A 60-second cinematic film about the Strait of Hormuz and oil prices, British narrator."*
+>
+> 💬 *"Turn this article into a 9:16 short with a Hindi voice: [paste article]"*
+
+The agent researches → writes a hook-first script → plans shots → writes `storyboard.json` → validates → renders a contact sheet
+and **looks at it** → fixes → renders the MP4 → hands you the video, the editable JSON and the image credits.
+
+---
+
+## 🖼️ Real images, automatically
+
+Write `"media": "search:aerial city night rain"` or `"search-video:…"` and Cinelume finds the best-matching photo or clip for your frame:
+
+**Pexels → Unsplash → Pixabay → Openverse → Wikimedia Commons** (the last two need no key) → otherwise an atmospheric light-and-bokeh plate.
+Results are scored for orientation, aspect and resolution, and every author and licence is written to `<video>.credits.txt`.
+Local files and URLs work too.
+
 ```bash
-export PEXELS_API_KEY=...         # photos + real video footage  (pexels.com/api)
-export UNSPLASH_ACCESS_KEY=...    # premium photography          (unsplash.com/developers)
-export PIXABAY_API_KEY=...        # photos + video               (pixabay.com/api/docs)
+export PEXELS_API_KEY=...        # photos + real footage   (free: pexels.com/api)
+export UNSPLASH_ACCESS_KEY=...   # premium photography     (free: unsplash.com/developers)
+export PIXABAY_API_KEY=...       # photos + video          (free: pixabay.com/api/docs)
 ```
-Without keys, `search:` still finds openly-licensed photos on Openverse and Wikimedia Commons.
 
-## Use
+---
 
-Ask your agent (in Antigravity you can type `/cinelume` to force it):
+## 🎙️ Voices
 
-- *"A viral 30-second YouTube Short about the world's most expensive spice — sunset theme, female voice."*
-- *"Make a 90-second cinematic documentary about the Strait of Hormuz and oil prices."*
-- *"Turn this article into a 9:16 cinematic reel with a British narrator: <paste>"*
-- *"A 2-minute film on the history of the transistor — midnight theme, epic music."*
-- *"Daily AI story reel for @liuantum using these clips: ./footage/*.mp4"*
+Every scene's `narration` is spoken, captions sync to it, and scenes stretch to fit the voice. All voices go through a
+broadcast chain (EQ, de-ess, compression, limiter) and the music ducks under speech.
 
-The agent researches → writes a story (cold open → question → world → rising → turn → resolution) → plans shots →
-writes `storyboard.json` → validates → renders a contact sheet and **looks at it** → fixes → renders the MP4 → hands you
-the video, the editable JSON and the media credits.
+| engine | voices | notes |
+|---|---|---|
+| **Edge neural** (default) | `hype` `hype-female` `creator` `creator-female` `storyteller` `documentary` `trailer` · Indian English, Hindi, Telugu, Tamil, UK, AU, ES, FR, DE… | no setup, needs internet while rendering |
+| **Kokoro studio** (offline) | `studio-male` `studio-female` `studio-hype` `studio-deep` `studio-uk-male` `studio-uk-female` `studio-hindi-male` `studio-hindi-female`, or any `kokoro:<voice>` | the voices in the demos · `pip install kokoro-onnx soundfile` · downloads a ~120 MB model once |
+| your own | `"voiceover": "my-take.mp3"` per scene or for the whole video | |
 
-## Run the engine yourself
+```bash
+node skills/cinelume/engine/tts.mjs --list
+node skills/cinelume/engine/tts.mjs "Hello there" hello.mp3 --voice studio-female
+```
+
+---
+
+## 🛠️ Run the engine yourself
 
 ```bash
 cd skills/cinelume/engine && npm install
-node validate.mjs ../examples/silicon-island.json
-node render.mjs  ../examples/silicon-island.json --stills auto       # PNG per scene + contact-sheet.jpg
-node render.mjs  ../examples/ai-reel-cinematic.json --preview        # fast 540p draft
-node render.mjs  ../examples/silicon-island.json --out island.mp4    # final 1080p
-node render.mjs  ../examples/silicon-island.json --player            # scrub it live in a browser
+node validate.mjs ../../../docs/demo-src/deep-field-9x16.json
+node render.mjs  ../../../docs/demo-src/deep-field-9x16.json --stills auto    # PNG per scene + contact sheet
+node render.mjs  ../examples/viral-short.json --preview                       # fast 540p draft
+node render.mjs  ../examples/silicon-island.json --out film.mp4               # final 1080p
+node render.mjs  ../examples/silicon-island.json --player                     # scrub live in a browser
 ```
-Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--voice documentary` · `--no-voice` · `--workers N` · `--crf N` · `--no-audio` · `--chrome PATH`.
-Voices: `node tts.mjs --list` · try one: `node tts.mjs "Hello" hello.mp3 --voice storyteller`
 
-A storyboard looks like this:
+Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--voice studio-female` · `--no-voice` · `--workers N` · `--crf N` · `--no-audio`
+
+<details>
+<summary><b>What a storyboard looks like</b></summary>
 
 ```json
 {
-  "meta": { "format": "16:9", "theme": "noir", "handle": "@you", "voice": "storyteller" },
-  "audio": { "music": "auto:cinematic" },
+  "meta": { "format": "9:16", "theme": "neon", "handle": "@liuantum", "voice": "hype" },
+  "audio": { "music": "auto:viral" },
   "scenes": [
-    { "type": "opening", "presenter": "Liuantum presents", "title": "The Silicon Island",
-      "tagline": "how one island came to power the world", "media": "search:taiwan coast fog dawn",
-      "transition": "dip-black", "narration": "Every phone you have ever owned begins in one place." },
-    { "type": "establishing", "location": "Hsinchu, Taiwan", "time": "04:12 AM", "viewfinder": true,
-      "media": "search-video:semiconductor factory night aerial",
-      "narration": "At four in the morning, the lights here never go out." },
-    { "type": "bignumber", "value": 92, "suffix": "%", "label": "of leading-edge chip capacity sits in ==Taiwan==",
-      "source": "BCG × SIA, 2021", "stickers": [{ "type": "glint", "x": 71, "y": 30, "size": 6, "at": 2.2 }] },
-    { "type": "depth", "kicker": "The machine", "headline": "Each one is the size of a bus.",
-      "media": "search:lithography machine cleanroom",
-      "stickers": [{ "type": "leader", "text": "EUV scanner", "sub": "Veldhoven, NL", "x": 74, "y": 40, "size": 22, "at": 1.8 }] }
+    { "type": "hook", "lines": ["This black spot", "hides **3,000 galaxies**"], "media": "search:night sky dark",
+      "narration": "This black spot hides three thousand galaxies." },
+    { "type": "bignumber", "value": 10, "suffix": " days", "kicker": "No breaks", "label": "of staring at one spot",
+      "source": "NASA / STScI", "stickers": [{ "type": "tag", "text": "342 exposures", "icon": "camera", "x": 50, "y": 20, "at": 1.4 }],
+      "narration": "For ten days straight. Three hundred and forty two photos." },
+    { "type": "depth", "kicker": "Plot twist", "headline": "Every dot is a **galaxy.**", "media": "search:hubble deep field galaxies",
+      "narration": "Almost every dot you see is a whole galaxy, not a star." },
+    { "type": "outro", "headline": "Now imagine the **whole sky.**", "cta": "Follow for Part 2",
+      "narration": "Now imagine the whole sky. Follow for part two." }
   ]
 }
 ```
-Full reference: [`skills/cinelume/references/storyboard-schema.md`](skills/cinelume/references/storyboard-schema.md)
+Full reference: [`storyboard-schema.md`](skills/cinelume/references/storyboard-schema.md) ·
+look & themes: [`style-bible.md`](skills/cinelume/references/style-bible.md) ·
+stickers: [`stickers.md`](skills/cinelume/references/stickers.md) ·
+camera & transitions: [`camera-and-transitions.md`](skills/cinelume/references/camera-and-transitions.md)
+</details>
 
-## How it works
+<details>
+<summary><b>How it works</b></summary>
 
 ```
-prompt ─► agent (SKILL.md: research · story · shot plan · cinematic rules)
+prompt ─► agent (SKILL.md: research · hook-first script · shot plan · style rules)
             │
             ▼
-      storyboard.json ──► validate.mjs (schema, markup, premium-sticker check, pacing)
+      storyboard.json ──► validate.mjs (schema, markup, stickers, pacing, hook checks)
             │
             ▼
-      render.mjs ──► media: local / URL / Pexels · Unsplash · Pixabay · Openverse · Wikimedia (scored) → video frames
-            │        neural narration per scene → scene timing fits the voice
+      render.mjs ──► media search (Pexels · Unsplash · Pixabay · Openverse · Wikimedia) → scored, credited
+            │        narration per scene (Edge neural / Kokoro studio) → scenes fit the voice → cuts snap to the beat
             ▼
       runtime (HTML/CSS/SVG, deterministic seek(t)) in headless Chrome
-            │  grade · letterbox · light leaks · parallax camera · N parallel workers → x264 segments
+            │  grade · letterbox · light leaks · parallax camera · N parallel workers → x264
             ▼
-      audio: cinematic score + sound design + voice → ducked, loudness-normalised mix
+      audio: generated music + sound design + processed voice → ducked, loudness-normalised (−15 LUFS)
             ▼
-      film.mp4  (+ credits.txt · stills / contact sheet · interactive player)
+      video.mp4  (+ credits.txt · stills / contact sheet · interactive player)
 ```
 
 ```
 skills/cinelume/
-├── SKILL.md                 # the agent instructions (Claude + Antigravity share the same format)
-├── references/              # schema, cinematic bible, cameras & transitions, story/shot planning, stickers
-├── examples/                # viral-short.json (9:16 viral), silicon-island.json (16:9 film), ai-reel-cinematic.json (9:16), classic/ (old style)
-├── scripts/tts.py           # fallback text-to-speech engines
-└── engine/
-    ├── render.mjs           # CLI renderer + media search + score generator
-    ├── validate.mjs         # storyboard validator
-    ├── runtime/             # runtime.js, stickers.js, styles.css, worldmap.js
-    └── assets/fonts/        # OFL fonts (Cormorant Garamond, Cinzel, Manrope, Inter, Anton, IBM Plex Mono…)
+├── SKILL.md            # agent instructions (Claude + Antigravity)
+├── references/         # schema, style bible, camera & transitions, shot planning, stickers
+├── examples/           # viral-short.json, ai-reel-cinematic.json, silicon-island.json, classic/
+├── scripts/            # kokoro_tts.py (studio voice), tts.py (fallback engines)
+└── engine/             # render.mjs, validate.mjs, tts.mjs, runtime/, assets/fonts/
 ```
+</details>
 
-## Responsible use
-The skill tells the agent to source real numbers (or label them *Illustrative*), not to fabricate quotes from real
-people, not to dress invented stories in real outlets' branding, and not to search for or show identifiable private
-people. Every downloaded image/clip keeps its author and licence in `<video>.credits.txt` — keep those credits when you publish.
+---
 
-## License
-MIT © Liuantum. Fonts under SIL OFL 1.1; map data from Natural Earth (public domain).
+## 🤝 Responsible use
+
+The skill tells the agent to source real numbers (or label them *Illustrative*), never fabricate quotes, never dress invented stories
+in real outlets' branding, and avoid images of identifiable private people. Keep the credits in `<video>.credits.txt` when you publish.
+
+## 📜 Credits & license
+
+MIT © [Liuantum](https://github.com/liuantum).
+Demo imagery: *Hubble Deep Field*, R. Williams (STScI), the HDF Team and NASA/ESA. Demo narration: [Kokoro-82M](https://github.com/thewh1teagle/kokoro-onnx) (Apache-2.0).
+Fonts: Cormorant Garamond, Cinzel, Manrope, Inter, Anton, IBM Plex Mono (SIL OFL 1.1). Map data: Natural Earth (public domain).

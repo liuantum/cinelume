@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "title": "This black spot hides 3,000 galaxies",
+    "format": "9:16",
+    "theme": "neon",
+    "handle": "@liuantum",
+    "voice": "kokoro:af_heart",
+    "voiceRate": "+6%"
+  },
+  "audio": {
+    "music": "auto:viral"
+  },
+  "scenes": [
+    {
+      "type": "hook",
+      "lines": [
+        "This black spot",
+        "hides **3,000 galaxies**"
+      ],
+      "media": "empty-sky.jpg",
+      "scrim": 0.3,
+      "narration": "This black spot hides three thousand galaxies."
+    },
+    {
+      "type": "cinematic",
+      "kicker": "1995",
+      "title": "NASA stared at ==nothing==",
+      "media": "empty-sky.jpg",
+      "align": "center",
+      "intro": "none",
+      "narration": "In 1995, NASA pointed Hubble at the emptiest patch of sky it could find."
+    },
+    {
+      "type": "bignumber",
+      "value": 10,
+      "suffix": " days",
+      "kicker": "No breaks",
+      "label": "of staring at one spot",
+      "source": "NASA / STScI",
+      "stickers": [
+        {
+          "type": "tag",
+          "text": "342 exposures",
+          "icon": "camera",
+          "x": 50,
+          "y": 20,
+          "at": 1.4
+        }
+      ],
+      "narration": "For ten days straight. Three hundred and forty two photos."
+    },
+    {
+      "type": "cinematic",
+      "kicker": "The result",
+      "title": "It **exploded** with light",
+      "media": "hdf-full.jpg",
+      "align": "center",
+      "intro": "slit",
+      "narration": "And when the picture came back, it exploded with light."
+    },
+    {
+      "type": "depth",
+      "kicker": "Plot twist",
+      "headline": "Every dot is a **galaxy.**",
+      "media": "hdf-detail.jpg",
+      "align": "center",
+      "narration": "Almost every dot you see is a whole galaxy, not a star."
+    },
+    {
+      "type": "narrative",
+      "media": "hdf-detail-2.jpg",
+      "lines": [
+        "Size of a tennis ball",
+        "**100 metres** away."
+      ],
+      "narration": "And that patch was the size of a tennis ball, seen from a hundred metres away."
+    },
+    {
+      "type": "outro",
+      "headline": "Now imagine the **whole sky.**",
+      "cta": "Follow for Part 2",
+      "handle": "@liuantum",
+      "narration": "Now imagine the whole sky. Follow for part two."
+    }
+  ]
+}

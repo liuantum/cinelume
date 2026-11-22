@@ -1,0 +1,40 @@
+{
+  "meta": { "title": "The Emptiest Spot in the Sky", "format": "16:9", "theme": "noir", "handle": "@liuantum", "voice": "kokoro:am_michael", "voiceRate": "-4%" },
+  "audio": { "music": "auto:cinematic", "musicVolume": 0.3 },
+  "scenes": [
+    { "type": "opening", "presenter": "Liuantum presents", "title": "The Emptiest Spot in the Sky",
+      "tagline": "the photograph that changed how we see the universe", "media": "empty-sky.jpg", "dim": 0.9, "transition": "dip-black",
+      "narration": "In 1995, a team of astronomers made a bet that almost nobody understood." },
+
+    { "type": "establishing", "location": "Ursa Major", "time": "December 18, 1995", "coords": "12h 36m 49s · +62° 12′ 58″",
+      "media": "empty-sky.jpg", "viewfinder": true, "transition": "luma",
+      "narration": "Near the Big Dipper, they chose a patch of sky that looked completely empty." },
+
+    { "type": "narrative", "lines": ["A patch the size of a tennis ball,", "seen from **a hundred metres** away."],
+      "source": "NASA / STScI", "transition": "dissolve",
+      "narration": "A patch the size of a tennis ball, seen from a hundred metres away." },
+
+    { "type": "bignumber", "value": 10, "suffix": " days", "kicker": "The exposure",
+      "label": "342 exposures of one ==empty== patch", "source": "NASA / STScI",
+      "stickers": [{ "type": "rec", "x": 84, "y": 16, "at": 0.4 }], "transition": "dip-black",
+      "narration": "Then they pointed the Hubble Space Telescope at it, and stared. For ten straight days. Three hundred and forty two exposures." },
+
+    { "type": "cinematic", "kicker": "December 1995", "title": "It wasn't empty.", "media": "hdf-full.jpg",
+      "intro": "slit", "align": "center", "transition": "light-leak",
+      "narration": "When the image came back, it wasn't empty." },
+
+    { "type": "depth", "kicker": "The Hubble Deep Field", "headline": "Almost every dot is a galaxy.",
+      "sub": "About 3,000 of them, in one tiny patch of sky.", "media": "hdf-detail.jpg", "source": "NASA / STScI",
+      "stickers": [{ "type": "leader", "text": "One galaxy", "sub": "billions of stars", "x": 78, "y": 58, "size": 18, "at": 2.2 }],
+      "transition": "cross-zoom",
+      "narration": "Almost every point of light is a galaxy. About three thousand of them, each one holding billions of stars." },
+
+    { "type": "narrative", "media": "hdf-detail-2.jpg", "lines": ["Some of that light", "left home **ten billion years** ago."],
+      "source": "NASA", "transition": "film-burn",
+      "narration": "Some of that light left home ten billion years ago. We are seeing galaxies as they were, when the universe was young." },
+
+    { "type": "outro", "kicker": "Made with Cinelume", "headline": "Look closer.", "cta": "One prompt. One film.", "handle": "@liuantum",
+      "media": "hdf-full.jpg",
+      "narration": "One empty patch of sky. Thousands of galaxies. Now imagine the rest of it." }
+  ]
+}
