@@ -1,13 +1,13 @@
 {
-  "name": "liuantum-vox-video",
+  "name": "liuantum-cinelume",
   "owner": { "name": "Liuantum", "url": "https://github.com/liuantum" },
-  "metadata": { "description": "Vox-style video generation skill for Claude Code and Google Antigravity" },
+  "metadata": { "description": "Cinelume — cinematic story-video generation skill for Claude Code and Google Antigravity" },
   "plugins": [
     {
-      "name": "vox-video",
+      "name": "cinelume",
       "source": "./",
-      "description": "One prompt -> finished Vox-style explainer video (MP4) with camera moves, maps, charts, b-roll, stickers, captions, SFX and music.",
-      "version": "1.0.0",
+      "description": "One prompt -> a cinematic story film (MP4): real photos & footage, film grading, letterboxing, light leaks, serif titles, glass annotations, cinematic score and neural narration.",
+      "version": "2.0.0",
       "category": "media"
     }
   ]
