@@ -1,0 +1,30 @@
+{
+  "meta": { "title": "The Quiet Race", "format": "9:16", "theme": "film", "handle": "@liuantum", "voice": "storyteller" },
+  "audio": { "music": "auto:suspense", "musicVolume": 0.3 },
+  "scenes": [
+    { "type": "cinematic", "kicker": "AI · Tonight", "title": "The quiet race for power", "media": "search-video:data center server lights",
+      "intro": "blur", "transition": "cross-zoom",
+      "narration": "There is a race happening right now, and most people cannot see it." },
+
+    { "type": "establishing", "location": "Northern Virginia", "time": "11:48 PM", "media": "search:data center exterior night",
+      "transition": "luma",
+      "narration": "It is happening here, in buildings with no windows." },
+
+    { "type": "narrative", "lines": ["Every answer an AI gives", "is paid for in ==electricity.=="],
+      "media": "search:power lines sunset", "transition": "light-leak",
+      "narration": "Every answer an AI gives you is paid for in electricity." },
+
+    { "type": "bignumber", "value": 10, "suffix": "x", "kicker": "Illustrative", "label": "more energy than a web search",
+      "source": "Illustrative", "transition": "dissolve",
+      "stickers": [{ "type": "stat", "value": "↑", "sub": "demand", "x": 80, "y": 20, "size": 6, "at": 2 }],
+      "narration": "A single AI answer can use many times the energy of a normal search." },
+
+    { "type": "depth", "kicker": "The new oil", "headline": "Power is the new bottleneck.", "media": "search:power plant cooling tower night",
+      "transition": "lens-blur",
+      "stickers": [{ "type": "tag", "text": "Grid capacity", "icon": "bolt", "x": 50, "y": 22, "at": 1.4 }],
+      "narration": "Chips were the bottleneck. Now it is power." },
+
+    { "type": "outro", "headline": "Follow the energy.", "cta": "Follow for daily AI stories", "handle": "@liuantum",
+      "narration": "If you want to know who wins, follow the energy." }
+  ]
+}

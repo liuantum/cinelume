@@ -1,0 +1,58 @@
+{
+  "meta": { "title": "The Silicon Island", "format": "16:9", "theme": "noir", "handle": "@liuantum", "voice": "storyteller" },
+  "audio": { "music": "auto:cinematic", "musicVolume": 0.32 },
+  "scenes": [
+    { "type": "opening", "presenter": "Liuantum presents", "title": "The Silicon Island",
+      "tagline": "how one island came to power the modern world",
+      "media": "search:taiwan coast fog dawn", "duration": 6.5, "transition": "dip-black",
+      "narration": "Every phone, every car, every AI model you have ever used begins in one place." },
+
+    { "type": "establishing", "location": "Hsinchu, Taiwan", "time": "04:12 AM", "coords": "24.80° N · 120.97° E",
+      "media": "search-video:semiconductor factory night aerial", "viewfinder": true, "transition": "luma",
+      "narration": "At four in the morning, the lights in Hsinchu never go out." },
+
+    { "type": "narrative", "media": "search:cleanroom engineer yellow light",
+      "lines": ["Inside these walls,", "machines carve circuits", "**thinner than a strand of DNA.**"],
+      "transition": "cross-zoom",
+      "narration": "Inside these walls, machines carve circuits thinner than a strand of DNA." },
+
+    { "type": "bignumber", "value": 92, "suffix": "%", "kicker": "The bottleneck",
+      "label": "of leading-edge chip capacity sits in ==Taiwan==", "source": "BCG × SIA, 2021",
+      "camera": "dolly-in", "transition": "light-leak",
+      "stickers": [{ "type": "glint", "x": 71, "y": 30, "size": 6, "at": 2.2 }],
+      "narration": "Ninety-two percent of the world's most advanced chip capacity sits on this one island." },
+
+    { "type": "map", "title": "One island. Every supply chain.", "highlight": ["Taiwan"],
+      "focus": { "lon": 121, "lat": 23.7, "zoom": 6 },
+      "pins": [{ "lon": 120.97, "lat": 24.8, "label": "Hsinchu" }], "transition": "lens-blur",
+      "stickers": [{ "type": "pulse", "x": 52, "y": 46, "size": 9, "at": 1.4 }],
+      "narration": "A single island, a hundred and eighty kilometres off the coast of China." },
+
+    { "type": "depth", "kicker": "The machine", "headline": "Each one is the size of a bus.",
+      "sub": "EUV lithography scanners, built in the Netherlands, print the smallest features.",
+      "media": "search:semiconductor lithography machine", "transition": "dissolve",
+      "stickers": [{ "type": "leader", "text": "EUV scanner", "sub": "Veldhoven, NL", "x": 74, "y": 40, "size": 22, "at": 1.8 }],
+      "narration": "The machines that print them are the size of a bus, and only one company on earth makes them." },
+
+    { "type": "chapter", "number": 2, "title": "The Weight of It", "transition": "dip-black",
+      "narration": "Which raises a question nobody likes to ask." },
+
+    { "type": "cinematic", "kicker": "The stakes", "title": "If the island stops, the world stops.",
+      "sub": "Cars, phones, data centres — almost nothing modern is built without these chips.",
+      "media": "search-video:container ship ocean aerial sunset", "intro": "slit", "transition": "film-burn",
+      "stickers": [{ "type": "location", "text": "Taiwan Strait", "x": 82, "y": 22, "at": 1.6 }],
+      "narration": "If the island stops, the world stops. Cars, phones, data centres. Almost nothing modern is built without it." },
+
+    { "type": "timeline", "title": "Forty years in the making",
+      "events": [
+        { "date": "1987", "label": "TSMC is founded" },
+        { "date": "2020", "label": "5 nm chips enter mass production" },
+        { "date": "2022", "label": "3 nm production begins" }
+      ], "transition": "luma",
+      "narration": "It took forty years, from a single foundry in nineteen eighty-seven, to the most precise factories ever built." },
+
+    { "type": "outro", "kicker": "A Cinelume story", "headline": "The future is printed in silicon.",
+      "cta": "Follow for the next story", "handle": "@liuantum", "media": "search:microchip macro gold light",
+      "narration": "The future, it turns out, is printed in silicon." }
+  ]
+}
