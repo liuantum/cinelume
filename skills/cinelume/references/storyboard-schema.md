@@ -208,3 +208,16 @@ Documentary intertitles: serif `lines[]` (or `text`) surface one by one; `media`
 
 ## Default durations (seconds)
 title 4 · kinetic 4 · bignumber 4.5 · bar 6 · line 6.5 · donut 5 · icongrid 5.5 · map 6.5 · photo 5 · collage 5.5 · document 6 · quote 5.5 · timeline 7 · compare 6 · list 6 · chapter 2.8 · screen 5.5 · broll 4.5 · explain 6 · flow 6 · outro 4
+
+## Scene cast & actions (character stickers)
+
+Any scene may add `cast` (array of characters) and `actions` (timed directions). Full field list in
+[`stickers.md`](stickers.md#characters--stickers-that-act-out-the-story).
+
+```json
+{ "type": "story", "duration": 5,
+  "cast": [{ "id": "eng", "role": "engineer", "x": 26, "y": 94, "size": 40, "enter": "walk", "from": "left" }],
+  "actions": [{ "who": "eng", "do": "say", "at": 1.3, "text": "We need a satellite link!" }] }
+```
+`who` must match a cast `id`; `at` is seconds from scene start. Captions move to the top while a cast is on screen
+(`captionsAt: "bottom"` to keep them low).

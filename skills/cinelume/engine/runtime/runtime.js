@@ -16,6 +16,7 @@
   const E = {
     linear: p => p,
     in: p => p * p * p,
+    inQuad: p => p * p,
     out: p => 1 - Math.pow(1 - p, 3),
     inOut: p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2),
     outExpo: p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p)),
@@ -165,6 +166,18 @@
         if (o.idle === 'spin') r += it * 25;
         if (o.idle === 'drift') { ty += Math.sin(it * .9 + o.seed) * 0.35 * u; tx += Math.cos(it * .7 + o.seed) * 0.25 * u; }
         if (o.idle === 'bob') { ty += Math.sin(it * 2 + o.seed) * 0.6 * u; r += Math.sin(it * 1.3 + o.seed) * 1.5; }
+        if (o.idle === 'bounce') { ty -= Math.abs(Math.sin(it * 3.2 + o.seed)) * 1.4 * u; s *= 1 + Math.max(0, -Math.cos(it * 6.4 + o.seed * 2)) * .02; }
+        if (o.idle === 'shake') { tx += Math.sin(it * 38 + o.seed) * .28 * u; r += Math.sin(it * 31 + o.seed) * 1.6; }
+        if (o.idle === 'sway') r += Math.sin(it * 1.4 + o.seed) * 6;
+        if (o.idle === 'roll') { ty += Math.abs(Math.sin(it * 9 + o.seed)) * -.22 * u; r += Math.sin(it * 4.5 + o.seed) * .9; }
+      }
+      // sticker paths: keyframes of offsets (in % of the frame) from the sticker's resting position
+      if (o.path && o.path.length) {
+        const P = o.path; let dx = P[0].dx, dy = P[0].dy, moving = false;
+        for (let i = 1; i < P.length; i++) { const a = P[i - 1], b = P[i]; if (t >= b.t) { dx = b.dx; dy = b.dy; continue; } if (t > a.t) { const kk = (E[b.ease] || E.inOut)((t - a.t) / Math.max(.01, b.t - a.t)); dx = lerp(a.dx, b.dx, kk); dy = lerp(a.dy, b.dy, kk); moving = true; } break; }
+        tx += dx * G.W / 100; ty += dy * G.H / 100;
+        if (moving && o.rollWhileMoving) { ty -= Math.abs(Math.sin(t * 10 + o.seed)) * .3 * u; r += Math.sin(t * 5 + o.seed) * 1.2; }
+        if (t < P[0].t && o.fx === 'none') op = 0;
       }
       const pre = o.center ? 'translate(-50%,-50%) ' : '';
       this.el.style.transform = `${pre}translate(${tx}px,${ty}px) rotate(${r}deg) scale(${s})${f.ry ? ` perspective(800px) rotateY(${f.ry}deg)` : ''}`;
@@ -497,6 +510,8 @@
 
   function addSticker(c, st) {
     if (typeof st === 'string') st = { type: st };
+    if (st.type === 'character') return addCharacter(c, st, c.s.actions);
+    if (st.type === 'image' || st.type === 'cutout') return addImageSticker(c, st);
     const u = G.u;
     if (c.cine && VX_MAP[st.type] && (c.vox || !(window.CINE_STICKERS || {})['icon-' + st.type])) st = Object.assign({}, st, { type: VX_MAP[st.type] });
     const S = (window.CINE_STICKERS || {})[st.type] || {};
@@ -511,8 +526,9 @@
     if (st.text) { const tx = h('div', 'stxt' + (S.font === 'marker' ? ' marker' : ''), { fontSize: (st.textSize || (S.wide ? .34 : .22)) * hh + 'px', color: st.textColor || (S.txt === 'K' ? '#141414' : '#fff'), padding: S.wide ? '0 12%' : '14%' }, esc(st.text)); if (S.font === 'marker') tx.style.fontFamily = 'Marker'; el.appendChild(tx); }
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx: st.fx || (S.draw ? 'none' : 'popBig'), dur: st.dur || .5, rot: st.rot != null ? st.rot : (S.draw ? 0 : ((idHash(st.type + st.x) % 17) - 8)), idle: st.idle !== undefined ? st.idle : (S.draw ? null : 'wiggle'), out: st.out });
+    if (st.flip && el.firstElementChild) el.firstElementChild.style.transform = 'scaleX(-1)';
     if (S.draw) { it.draws = [...el.querySelectorAll('path')]; it.o.drawDur = st.dur || .6; c.sfx('scribble', it.o.at, .5); }
-    else { c.sfx('pop', it.o.at, .7); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 80, st.y != null ? st.y : 25, size, it.o.at, st.layer || 'fg'); }
+    else if (stickerMotion(it, st, st.x != null ? st.x : 80, st.y != null ? st.y : 25)) { c.sfx('pop', it.o.at, .7); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 80, st.y != null ? st.y : 25, size, it.o.at, st.layer || 'fg'); }
     return el;
   }
   const ARCHIVE_SFX = { tap: 'paper', air: 'whoosh-soft', bubble: 'pop', impact: 'thud', 'impact-soft': 'thud', pen: 'scribble', swell: 'riser', 'whoosh-deep': 'whoosh', chime: 'ding' };
@@ -525,6 +541,186 @@
       .replace(/ r="([\d.]+)"/g, (m, v) => ` r="${(+v * Math.min(sx, sy)).toFixed(2)}"`).replace(/stroke-width="([\d.]+)"/g, (m, v) => `stroke-width="${(+v * sw).toFixed(2)}"`);
   }
   const tc = t => { const f = Math.floor((t % 1) * 24), ss = Math.floor(t) % 60, mm = Math.floor(t / 60) % 60; return `00:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}:${String(f).padStart(2, '0')}`; };
+  /* =====================================================================
+     CHARACTERS — original Vox-style cut-out paper people that act out the story.
+     { type:'character', role, x, y, size, enter, pose, talk, flip, head, name, actions:[…] }
+     roles: engineer founder founder-f worker scientist student farmer official doctor person person-f
+     actions: walk(to,dur) wave point(dir) cheer think shock jump say(text,dur) face(mood) exit(to)
+     ===================================================================== */
+  const SKINS = { light: '#F1C7A5', fair: '#E0A97E', medium: '#C68642', tan: '#A66A3F', brown: '#8D5524', deep: '#5C3A21' };
+  const ROLES = {
+    engineer: { outfit: '#3B5BDB', style: 'hoodie', pants: '#2B2F3A', hair: 'short', prop: 'laptop' },
+    founder: { outfit: '#1F2937', style: 'blazer', pants: '#1F2937', hair: 'short', prop: 'phone' },
+    'founder-f': { outfit: '#7C3AED', style: 'blazer', pants: '#2B2F3A', hair: 'long', prop: 'phone' },
+    worker: { outfit: '#4B5563', style: 'vest', pants: '#334155', hair: 'hardhat', prop: null },
+    scientist: { outfit: '#F8FAFC', style: 'labcoat', pants: '#334155', hair: 'short', glasses: true, prop: 'clipboard' },
+    doctor: { outfit: '#F8FAFC', style: 'labcoat', pants: '#0E7490', hair: 'bun', prop: 'clipboard' },
+    student: { outfit: '#10B981', style: 'tee', pants: '#1E3A8A', hair: 'curly', prop: 'backpack' },
+    farmer: { outfit: '#B45309', style: 'shirt', pants: '#57534E', hair: 'strawhat', beard: true, prop: null },
+    official: { outfit: '#111827', style: 'suit', pants: '#111827', hair: 'short', prop: null, glasses: true },
+    person: { outfit: '#EF4444', style: 'tee', pants: '#1F2937', hair: 'short', prop: null },
+    'person-f': { outfit: '#F59E0B', style: 'tee', pants: '#1F2937', hair: 'ponytail', prop: null },
+  };
+  function charSVG(o) {
+    const sk = SKINS[o.skin] || o.skin || SKINS.medium, hc = o.hairColor || '#1B120C', oc = o.outfit, pc = o.pants, shoe = o.shoes || '#141414';
+    const dark = 'rgba(0,0,0,.12)';
+    let torso = `<path d="M58 302 L63 192 Q100 172 137 192 L142 302 Z" fill="${oc}"/>`;
+    if (o.style === 'hoodie') torso += `<path d="M78 182 Q100 206 122 182" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="5"/><path d="M92 196 L90 226 M108 196 L110 226" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M74 262 H126 V290 H74Z" fill="rgba(0,0,0,.14)" rx="6"/>`;
+    if (o.style === 'blazer' || o.style === 'suit') torso += `<path d="M86 180 L100 230 L114 180 Z" fill="#F8FAFC"/><path d="M84 182 L98 240 L74 300 L63 300 L66 196Z M116 182 L102 240 L126 300 L137 300 L134 196Z" fill="rgba(0,0,0,.18)"/>` + (o.style === 'suit' ? `<path d="M100 188 L94 200 L100 252 L106 200Z" fill="#C2271E"/>` : '');
+    if (o.style === 'labcoat') torso += `<path d="M86 180 L100 214 L114 180 Z" fill="#60A5FA"/><path d="M100 214 V300" stroke="rgba(0,0,0,.18)" stroke-width="3"/><path d="M84 182 L98 230 L80 300 M116 182 L102 230 L120 300" fill="none" stroke="rgba(0,0,0,.15)" stroke-width="3"/><rect x="112" y="232" width="16" height="18" rx="2" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="2"/>`;
+    if (o.style === 'vest') torso += `<path d="M70 196 L96 186 L96 300 L62 300Z M130 196 L104 186 L104 300 L138 300Z" fill="#FF7A1A"/><path d="M64 248 H96 M104 248 H136 M63 270 H96 M104 270 H137" stroke="#E5E7EB" stroke-width="6"/>`;
+    if (o.style === 'shirt') torso += `<path d="M86 180 L100 200 L114 180" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="4"/><path d="M100 200 V300" stroke="rgba(0,0,0,.18)" stroke-width="2"/><circle cx="100" cy="226" r="2.5" fill="rgba(0,0,0,.3)"/><circle cx="100" cy="256" r="2.5" fill="rgba(0,0,0,.3)"/>`;
+    if (o.style === 'tee') torso += `<path d="M84 182 Q100 198 116 182" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="4"/>`;
+    torso += `<path d="M120 190 L137 192 L142 302 L118 302Z" fill="${dark}"/>`;
+    const backpack = o.prop === 'backpack' ? `<rect x="40" y="200" width="30" height="80" rx="10" fill="#F59E0B"/><rect x="130" y="200" width="30" height="80" rx="10" fill="#F59E0B"/>` : '';
+    const leg = (id, x) => `<g id="${id}"><rect x="${x}" y="296" width="25" height="100" rx="10" fill="${pc}"/><path d="M${x - 4} 412 Q${x - 4} 392 ${x + 12} 390 Q${x + 30} 390 ${x + 32} 412Z" fill="${shoe}"/></g>`;
+    const arm = (id, sx, hx, side) => {
+      let prop = '';
+      if (side === 'R' && o.prop === 'laptop') prop = `<g transform="translate(${hx - 30} 268)"><rect x="0" y="0" width="58" height="38" rx="4" fill="#9CA3AF" stroke="#374151" stroke-width="3"/><rect x="5" y="5" width="48" height="28" rx="2" fill="#60A5FA"/><rect x="-6" y="36" width="70" height="7" rx="3" fill="#6B7280"/></g>`;
+      if (side === 'R' && o.prop === 'phone') prop = `<rect x="${hx - 2}" y="270" width="16" height="28" rx="3" fill="#111827" stroke="#9CA3AF" stroke-width="2"/>`;
+      if (side === 'R' && o.prop === 'clipboard') prop = `<g transform="translate(${hx - 30} 262)"><rect width="36" height="46" rx="3" fill="#B45309"/><rect x="4" y="6" width="28" height="36" fill="#FFF"/><path d="M8 16H28M8 24H28M8 32H22" stroke="#9CA3AF" stroke-width="2"/></g>`;
+      if (side === 'R' && o.prop === 'briefcase') prop = `<g transform="translate(${hx - 22} 292)"><rect width="44" height="32" rx="4" fill="#78350F"/><path d="M14 0 V-6 H30 V0" fill="none" stroke="#78350F" stroke-width="4"/></g>`;
+      if (side === 'R' && o.prop === 'megaphone') prop = `<g transform="translate(${hx - 4} 270)"><path d="M0 8 L40 -8 L40 40 L0 24Z" fill="#E5E7EB" stroke="#374151" stroke-width="3"/><rect x="-10" y="6" width="12" height="20" fill="#C2271E"/></g>`;
+      if (side === 'R' && o.prop === 'sign') prop = `<g transform="translate(${hx - 4} 140)"><rect x="-3" y="40" width="7" height="140" fill="#92400E"/><rect x="-44" y="0" width="96" height="58" rx="3" fill="#FFF7E0" stroke="#92400E" stroke-width="3"/><text x="4" y="36" text-anchor="middle" font-family="Manrope,Inter" font-weight="800" font-size="18" fill="#C2271E">${esc(String(o.propText || '').slice(0, 12))}</text></g>`;
+      if (side === 'R' && o.prop === 'coffee') prop = `<g transform="translate(${hx - 8} 274)"><path d="M0 0 H20 L17 26 H3Z" fill="#FFF" stroke="#78350F" stroke-width="2"/><rect y="8" width="20" height="8" fill="#B45309"/></g>`;
+      return `<g id="${id}"><path d="M${sx} 196 Q${(sx + hx) / 2 + (side === 'L' ? -6 : 6)} 244 ${hx} 286" fill="none" stroke="${oc === '#F8FAFC' ? '#E5E7EB' : oc}" stroke-width="24" stroke-linecap="round"/><circle cx="${hx}" cy="290" r="12" fill="${sk}"/>${prop}</g>`;
+    };
+    let hair = '', hairBack = '';
+    const H = o.hair;
+    const topShort = `<path d="M40 104 Q38 40 100 36 Q162 40 160 104 Q154 70 100 64 Q46 70 40 104Z" fill="${hc}"/>`;
+    if (H === 'short') hair = topShort;
+    if (H === 'long') { hairBack = `<path d="M38 100 Q34 40 100 34 Q166 40 162 100 L166 190 Q140 196 128 170 L72 170 Q60 196 34 190Z" fill="${hc}"/>`; hair = `<path d="M40 104 Q42 46 100 40 Q150 44 160 96 Q120 60 70 74 Q52 84 40 104Z" fill="${hc}"/>`; }
+    if (H === 'bun') hair = topShort + `<circle cx="100" cy="32" r="20" fill="${hc}"/>`;
+    if (H === 'ponytail') { hairBack = `<path d="M150 70 Q190 90 176 160 Q166 120 146 100Z" fill="${hc}"/>`; hair = topShort; }
+    if (H === 'curly') hair = [[48, 82], [62, 58], [84, 44], [108, 42], [132, 50], [150, 72], [156, 96], [44, 102]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="20" fill="${hc}"/>`).join('');
+    if (H === 'bald') hair = `<path d="M40 112 Q40 96 46 90 M160 112 Q160 96 154 90" stroke="${hc}" stroke-width="10" fill="none" stroke-linecap="round"/>`;
+    if (H === 'hardhat') hair = topShort + `<path d="M34 92 Q36 26 100 24 Q164 26 166 92Z" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/><rect x="24" y="86" width="152" height="12" rx="6" fill="#EAB308"/><rect x="94" y="26" width="12" height="62" fill="#CA8A04" opacity=".6"/>`;
+    if (H === 'strawhat') hair = topShort + `<ellipse cx="100" cy="76" rx="92" ry="18" fill="#E7C27D" stroke="#B48A3C" stroke-width="3"/><path d="M50 74 Q54 22 100 20 Q146 22 150 74Z" fill="#E7C27D" stroke="#B48A3C" stroke-width="3"/><rect x="50" y="62" width="100" height="10" fill="#B45309"/>`;
+    if (H === 'cap') hair = topShort + `<path d="M40 86 Q42 30 100 28 Q158 30 160 86Z" fill="${o.capColor || '#C2271E'}"/><path d="M100 80 Q150 74 186 92 Q150 96 100 92Z" fill="${o.capColor || '#C2271E'}"/>`;
+    const glasses = o.glasses ? `<g fill="none" stroke="#111827" stroke-width="4"><circle cx="78" cy="110" r="15"/><circle cx="122" cy="110" r="15"/><path d="M93 110 H107 M63 106 L44 100 M137 106 L156 100"/></g>` : '';
+    const beard = o.beard ? `<path d="M52 128 Q56 176 100 180 Q144 176 148 128 Q132 150 100 150 Q68 150 52 128Z" fill="${hc}"/>` : '';
+    const head = o.headUrl ? `<image href="${o.headUrl}" x="30" y="18" width="140" height="160" preserveAspectRatio="xMidYMax meet"/>`
+      : `<g id="face">${hairBack}<circle cx="40" cy="114" r="13" fill="${sk}"/><circle cx="160" cy="114" r="13" fill="${sk}"/><ellipse cx="100" cy="108" rx="62" ry="66" fill="${sk}"/><path d="M130 60 Q166 90 158 140 Q150 170 120 172 Q150 130 130 60Z" fill="rgba(0,0,0,.08)"/>${beard}<circle cx="68" cy="132" r="9" fill="#F87171" opacity=".35"/><circle cx="132" cy="132" r="9" fill="#F87171" opacity=".35"/>
+        <g id="eyes"><ellipse cx="78" cy="110" rx="7" ry="9" fill="#21140C"/><ellipse cx="122" cy="110" rx="7" ry="9" fill="#21140C"/><circle cx="80" cy="107" r="2.4" fill="#fff"/><circle cx="124" cy="107" r="2.4" fill="#fff"/></g>
+        <path id="browL" d="M64 88 Q78 82 90 88" fill="none" stroke="${hc}" stroke-width="5" stroke-linecap="round"/><path id="browR" d="M110 88 Q122 82 136 88" fill="none" stroke="${hc}" stroke-width="5" stroke-linecap="round"/>
+        <path id="m-smile" d="M84 140 Q100 154 116 140" fill="none" stroke="#5A2A1A" stroke-width="5" stroke-linecap="round"/>
+        <path id="m-open" d="M84 138 Q100 166 116 138Z" fill="#5A1E14" style="display:none"/>
+        <ellipse id="m-o" cx="100" cy="146" rx="9" ry="12" fill="#5A1E14" style="display:none"/>
+        <path id="m-flat" d="M88 145 H112" stroke="#5A2A1A" stroke-width="5" stroke-linecap="round" style="display:none"/>
+        <path id="m-sad" d="M86 150 Q100 138 114 150" fill="none" stroke="#5A2A1A" stroke-width="5" stroke-linecap="round" style="display:none"/>
+        ${hair}${glasses}</g>`;
+    return `<svg viewBox="-30 -10 260 430" style="width:100%;height:100%;overflow:visible">${backpack}${leg('legL', 72)}${leg('legR', 103)}${arm('armL', 64, 50, 'L')}${torso}${arm('armR', 136, 150, 'R')}<rect x="90" y="160" width="20" height="26" fill="${sk}"/><g id="head">${head}</g></svg>`;
+  }
+  function addCharacter(c, spec, sceneActions) {
+    const u = G.u, P = c.portrait;
+    const base = Object.assign({}, ROLES[spec.role] || ROLES.person, spec);
+    if (spec.head) { const a = G.assets[spec.head]; if (a && a.type === 'image') base.headUrl = a.url; }
+    const hPx = c.H * (spec.size || (P ? 30 : 46)) / 100, wPx = hPx * 260 / 430;
+    const el = h('div', 'abs cutout', { width: wPx + 'px', height: hPx + 'px', left: 0, top: 0, zIndex: 18, transformOrigin: '50% 100%' });
+    el.innerHTML = charSVG(base);
+    const q = id => el.querySelector('#' + id);
+    const parts = { legL: q('legL'), legR: q('legR'), armL: q('armL'), armR: q('armR'), head: q('head'), eyes: q('eyes'), browL: q('browL'), browR: q('browR') };
+    const mouths = ['smile', 'open', 'o', 'flat', 'sad'].reduce((m, k) => (m[k] = q('m-' + k), m), {});
+    const shadow = h('div', 'abs', { width: wPx * .7 + 'px', height: wPx * .1 + 'px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(0,0,0,.35), transparent 70%)', zIndex: 17 });
+    const layer = spec.layer || 'fg';
+    c.add(shadow, layer); c.add(el, layer);
+    let bubble = null;
+    const at0 = spec.at != null ? spec.at : .2;
+    const x0 = spec.x != null ? spec.x : 50, yb = spec.y != null ? spec.y : (P ? 74 : 92);
+    const enter = spec.enter || (c.vox ? 'pop' : 'rise');
+    const fromX = spec.from === 'right' ? 115 : -15;
+    const acts = [].concat(spec.actions || [], (sceneActions || []).filter(a => a.who && a.who === spec.id)).map(a => Object.assign({ dur: a.do === 'walk' || a.do === 'exit' ? 1.2 : a.do === 'say' ? 2.4 : 1.2 }, a)).sort((a, b) => a.at - b.at);
+    if (enter === 'walk') acts.unshift({ at: at0, do: 'walk', from: fromX, to: x0, dur: 1.2 });
+    const say = acts.filter(a => a.do === 'say');
+    say.forEach(a => {
+      const b = h('div', 'abs', { background: '#fff', color: '#141414', fontFamily: 'Manrope, Inter, sans-serif', fontWeight: 800, fontSize: u * (P ? 3 : 2.4) + 'px', lineHeight: 1.2, padding: `${u * .9}px ${u * 1.4}px`, borderRadius: u * 2 + 'px', maxWidth: (P ? c.W * .6 : c.W * .3) + 'px', boxShadow: '0 6px 18px rgba(0,0,0,.3)', zIndex: 30, opacity: 0, textAlign: 'center' }, esc(a.text || ''));
+      const tail = h('div', 'abs', { left: '50%', bottom: -u * 1.2 + 'px', width: 0, height: 0, borderLeft: `${u}px solid transparent`, borderRight: `${u}px solid transparent`, borderTop: `${u * 1.4}px solid #fff`, transform: 'translateX(-50%)' });
+      b.appendChild(tail); c.add(b, 'fg'); a._b = b; c.sfx('pop', a.at, .4);
+    });
+    const vs = c.s.voStart != null ? c.s.voStart : .2, ve = c.s.voDur ? vs + c.s.voDur : c.dur - .3;
+    const seed = idHash(spec.id || spec.role || 'p') % 97;
+    if (enter === 'pop') { c.sfx('pop', at0, .6); popBurst(c, x0, yb - (hPx / c.H * 100) * .5, wPx, at0, layer); }
+    c.onUpdate(lt => {
+      // position from walk actions
+      let x = x0, walking = false, op = lt >= at0 ? 1 : 0, sc = 1, dy = 0, shake = 0;
+      if (enter === 'walk' && lt < at0) x = fromX;
+      for (const a of acts) {
+        if (a.do === 'walk' || a.do === 'exit') {
+          const from = a.from != null ? a.from : x, to = a.do === 'exit' ? (a.to === 'left' ? -20 : a.to === 'right' ? 120 : (a.to != null ? a.to : 120)) : a.to;
+          if (lt >= a.at + a.dur) x = to; else if (lt >= a.at) { x = lerp(from, to, E.inOut((lt - a.at) / a.dur)); walking = true; }
+        }
+      }
+      if (enter === 'pop') { const k = prog(lt, at0, .5); sc = k <= 0 ? 0 : E.outBack(k) ; }
+      if (enter === 'rise') { const k = E.outExpo(prog(lt, at0, .7)); dy += (1 - k) * c.H * .15; op = clamp(k * 3); }
+      if (enter === 'drop') { const k = prog(lt, at0, .6); dy += k < 1 ? -(1 - E.outBack(k)) * c.H * .3 : 0; op = k > 0 ? 1 : 0; }
+      const act = n => acts.find(a => a.do === n && lt >= a.at && lt < a.at + a.dur);
+      // limbs
+      const t = lt * 9;
+      let aL = 10 + Math.sin(lt * 1.6 + seed) * 3, aR = -10 - Math.sin(lt * 1.6 + seed) * 3, lL = 0, lR = 0, hRot = Math.sin(lt * 1.1 + seed) * 2, brow = 0, mouth = spec.mood === 'sad' ? 'sad' : spec.mood === 'neutral' ? 'flat' : 'smile';
+      if (walking) { lL = Math.sin(t) * 24; lR = -Math.sin(t) * 24; aL = 10 - Math.sin(t) * 22; aR = -10 - Math.sin(t) * 22; dy -= Math.abs(Math.sin(t)) * hPx * .02; }
+      const pose = spec.pose;
+      if (pose === 'wave' || act('wave')) { aR = -150 + Math.sin(lt * 12) * 18; }
+      if (pose === 'point' || act('point')) { const a = act('point'); aR = (a && a.dir === 'up') ? -165 : -95; }
+      if (pose === 'cheer' || act('cheer')) { aL = 128 + Math.sin(lt * 10) * 10; aR = -128 - Math.sin(lt * 10) * 10; dy -= Math.abs(Math.sin(lt * 7)) * hPx * .05; mouth = 'open'; }
+      if (pose === 'think' || act('think')) { aR = -138; hRot = 7; brow = 1; mouth = 'flat'; }
+      const sh = act('shock') || (pose === 'shock' ? { at: at0, dur: 99 } : null);
+      if (sh) { const k = lt - sh.at; dy -= Math.max(0, Math.sin(Math.min(k, .5) * Math.PI / .5)) * hPx * .1; shake = Math.sin(lt * 60) * u * .4 * Math.exp(-k * 2); aL = 60; aR = -60; brow = -1; mouth = 'o'; }
+      const jp = act('jump'); if (jp) dy -= Math.sin(clamp((lt - jp.at) / .6) * Math.PI) * hPx * .18;
+      const fc = acts.filter(a => a.do === 'face' && lt >= a.at).pop(); if (fc && !sh) mouth = fc.mood === 'sad' ? 'sad' : fc.mood === 'angry' ? 'flat' : fc.mood === 'shock' ? 'o' : fc.mood === 'happy' ? 'smile' : mouth; if (fc && fc.mood === 'angry') brow = -2;
+      // talking: lip flap during say actions, or during the scene narration when talk:true
+      const talking = say.some(a => lt >= a.at && lt < a.at + a.dur) || (spec.talk && lt >= vs && lt < ve);
+      if (talking && mouth !== 'o') mouth = noise1(lt * 9, seed) > 0 ? 'open' : 'smile';
+      const flip = spec.flip ? -1 : 1;
+      if (parts.legL) parts.legL.setAttribute('transform', `rotate(${lL} 84 300)`);
+      if (parts.legR) parts.legR.setAttribute('transform', `rotate(${lR} 116 300)`);
+      if (parts.armL) parts.armL.setAttribute('transform', `rotate(${aL} 64 196)`);
+      if (parts.armR) parts.armR.setAttribute('transform', `rotate(${aR} 136 196)`);
+      if (parts.head) parts.head.setAttribute('transform', `rotate(${hRot} 100 168)`);
+      if (parts.eyes) { const bl = ((lt + seed * .13) % 3.4) < .12; parts.eyes.setAttribute('transform', `translate(0 110) scale(1 ${bl ? .12 : sh ? 1.25 : 1}) translate(0 -110)`); }
+      if (parts.browL) { parts.browL.setAttribute('transform', `translate(0 ${brow === -1 ? -8 : 0}) rotate(${brow === -2 ? 14 : brow === 1 ? -8 : 0} 78 86)`); parts.browR.setAttribute('transform', `translate(0 ${brow === -1 || brow === 1 ? -8 : 0}) rotate(${brow === -2 ? -14 : 0} 122 86)`); }
+      for (const k in mouths) if (mouths[k]) mouths[k].style.display = k === mouth ? '' : 'none';
+      const px = x / 100 * c.W - wPx / 2 + shake, py = yb / 100 * c.H - hPx + dy;
+      const breath = 1 + Math.sin(lt * 2.2 + seed) * .006;
+      el.style.transform = `translate(${px}px, ${py}px) scale(${flip * sc}, ${sc * breath})`;
+      el.style.opacity = op;
+      shadow.style.transform = `translate(${x / 100 * c.W - wPx * .35}px, ${yb / 100 * c.H - wPx * .05}px) scale(${sc * (1 + dy / hPx * .6)})`; shadow.style.opacity = op * .8;
+      say.forEach(a => { const k = prog(lt, a.at, .25), out = prog(lt, a.at + a.dur - .2, .2); const b = a._b; b.style.opacity = k * (1 - out); b.style.left = clamp(x / 100 * c.W - b.offsetWidth / 2, c.W * .03, c.W * .97 - b.offsetWidth) + 'px'; b.style.top = (yb / 100 * c.H - hPx - b.offsetHeight - u * 1.6 + dy) + 'px'; b.style.transform = `scale(${lerp(.6, 1, E.outBack(k))})`; });
+    });
+    if (spec.name) { const nm = h('div', 'abs', { left: x0 + '%', top: yb + 1.5 + '%', transform: 'translateX(-50%)', background: c.th.accent, color: '#fff', fontFamily: 'Manrope', fontWeight: 800, fontSize: u * 2 + 'px', padding: `${u * .3}px ${u * 1}px`, borderRadius: u * .6 + 'px', whiteSpace: 'nowrap', zIndex: 19 }, esc(spec.name)); c.add(nm, layer); c.item(nm, { at: at0 + .4, fx: 'pop', keep: true, center: false }); }
+    return el;
+  }
+  // a real photo (or your own PNG) as a die-cut sticker; "cutout:…" removes the background first
+  function addImageSticker(c, st) {
+    const u = G.u, a = G.assets[st.media || st.src];
+    // nothing found (offline / no match): say it with a glossy label sticker instead of an empty box
+    if ((!a || a.type === 'missing') && /^(sticker|pack):/i.test(st.media || '')) {
+      const txt = st.label || st.query || (a && a.label) || String(st.media).replace(/^[a-z]+:(?:(?:emoji|clipart|photo|any):)?/i, '');
+      return addSticker(c, Object.assign({}, st, { type: 'vx-label', text: txt, media: null, size: Math.max(6, (st.size || 16) * .45) }));
+    }
+    const hh = (st.size || 16) * u;
+    const el = h('div', 'stk cutout', { left: (st.x != null ? st.x : 50) + '%', top: (st.y != null ? st.y : 40) + '%', height: hh + 'px', zIndex: 20 });
+    if (a && a.type === 'image') { const im = h('img', st.look ? 'look-' + st.look : null, { height: '100%', width: 'auto', display: 'block', transform: st.flip ? 'scaleX(-1)' : '' }); im.src = a.url; el.appendChild(im); }
+    else { el.style.width = hh + 'px'; el.appendChild(Object.assign(c.media(st.media || st.src, {}), { style: 'position:absolute;inset:0' })); }
+    c.add(el, st.layer || 'fg');
+    const it = c.item(el, { at: st.at != null ? st.at : .6, fx: st.fx || (c.vox || !c.cine ? 'popBig' : 'blurIn'), rot: st.rot != null ? st.rot : (idHash(String(st.media)) % 9) - 4, idle: st.idle !== undefined ? st.idle : (c.vox ? 'wiggle' : 'drift'), out: st.out, center: true, keep: true });
+    const pops = stickerMotion(it, st, st.x != null ? st.x : 50, st.y != null ? st.y : 40);
+    if (pops) { c.sfx('pop', it.o.at, .6); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 50, st.y != null ? st.y : 40, hh, it.o.at, st.layer || 'fg'); }
+    return el;
+  }
+
+  // Sticker motion: "from" (drive/slide in from off-screen), "moves" / "to" (travel), "exit" (leave), "flip"
+  function stickerMotion(it, st, x, y) {
+    const o = it.o, at = o.at, edge = (side, px, py) => side === 'left' ? [-(px + 40), 0] : side === 'right' ? [100 - px + 40, 0] : side === 'top' ? [0, -(py + 40)] : side === 'bottom' ? [0, 100 - py + 40] : [0, 0];
+    const P = [];
+    if (st.from) { const [dx, dy] = edge(st.from, x, y); const d = st.travel || 1.2; P.push({ t: at, dx, dy }, { t: at + d, dx: 0, dy: 0, ease: 'out' }); o.fx = 'none'; o.arrive = at + d; }
+    else P.push({ t: at, dx: 0, dy: 0 });
+    const moves = (st.moves || (st.to ? [st.to] : [])).slice().sort((a, b) => (a.at || 0) - (b.at || 0));
+    moves.forEach(m => { const prev = P[P.length - 1]; const t0 = Math.max(m.at != null ? m.at : prev.t + .2, prev.t); P.push({ t: t0, dx: prev.dx, dy: prev.dy }, { t: t0 + (m.dur || 1), dx: (m.x != null ? m.x : x + prev.dx) - x, dy: (m.y != null ? m.y : y + prev.dy) - y, ease: m.ease || 'inOut' }); });
+    if (st.exit) { const prev = P[P.length - 1]; const t0 = Math.max(st.exitAt != null ? st.exitAt : prev.t + 1.5, prev.t); const [ex, ey] = edge(typeof st.exit === 'string' ? st.exit : 'right', x + prev.dx, y + prev.dy); P.push({ t: t0, dx: prev.dx, dy: prev.dy }, { t: t0 + (st.travel || 1.1), dx: prev.dx + ex, dy: prev.dy + ey, ease: 'inQuad' }); }
+    if (P.length > 1) { o.path = P; o.rollWhileMoving = st.roll !== false; it.scene.sfx(st.from ? 'whoosh-soft' : 'swish', at, .4); }
+    return !st.from;
+  }
+
   // Vox "pop": confetti dashes + dots radiate from a sticker as it lands
   function popBurst(c, x, y, size, at, layer) {
     const u = G.u, pal = c.th.pal || [c.th.accent, c.th.hl, c.th.blue || '#2D6FB7', c.th.teal || '#1E9C8F'];
@@ -590,7 +786,7 @@
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx, dur, rot: st.rot || 0, idle, out: st.out, center, keep: true, scale: st.scale || 1 });
     if (draws) { it.draws = draws; it.o.drawDur = dur; it.o.dur = .01; }
-    else if (c.vox && S.kind !== 'glow' && S.kind !== 'line') popBurst(c, x, y, (st.size || 8) * u, it.o.at, st.layer || 'fg');
+    else if (stickerMotion(it, st, x, y) && c.vox && S.kind !== 'glow' && S.kind !== 'line') popBurst(c, x, y, (st.size || 8) * u, it.o.at, st.layer || 'fg');
     c.sfx(snd, it.o.at, snd === 'pen' ? .35 : .5);
     return el;
   }
@@ -1483,6 +1679,7 @@
       c.wrap.appendChild(c.ovl);
       c.layers.bg.appendChild(buildBg(s.bg || (sb.meta && sb.meta.bg) || (c.th.archive ? 'paper-grid' : c.th.cine ? 'atmos' : 'paper'), c));
       SC[s.type](s, c);
+      (s.cast || []).forEach(ch => addCharacter(c, ch, s.actions));
       (s.stickers || []).forEach(st => addSticker(c, st));
       if (s.lowerThird && !['photo', 'broll'].includes(s.type)) addLowerThird(c, s.lowerThird);
       stage.appendChild(c.wrap);
@@ -1610,7 +1807,9 @@
     if (G.captions) {
       const ch = G.capChunks.find(c => t >= c.t0 - .05 && t <= c.t1 + .25);
       if (ch !== G._lastChunk) { G._lastChunk = ch; const ci = G.capChunks.indexOf(ch); G.capEl.innerHTML = ch ? `<div class="cap${G.capStyle === 'voxedit' && ci % 3 === 2 ? ' alt' : ''}">${ch.words.map((w, i) => `<span class="cw${w.box ? ' box' : ''}" data-i="${i}">${esc(w.w)}</span>`).join(' ')}</div>` : ''; }
-      if (ch) { const spans = G.capEl.querySelectorAll('.cw'); ch.words.forEach((w, i) => { if (!spans[i]) return; spans[i].classList.toggle('on', t >= w.t0 && t < w.t1); spans[i].classList.toggle('done', t >= w.t1); }); const capDiv = G.capEl.firstChild;
+      if (ch) { const scA = G.scenes[active[active.length - 1]]; const top = scA && (scA.s.captionsAt === 'top' || (scA.s.captionsAt == null && (scA.s.cast || []).length && G.capStyle !== 'subtitle'));
+        if (top) { G.capEl.style.top = (G.H > G.W ? G.H * .12 : G.H * .08) + 'px'; G.capEl.style.bottom = 'auto'; } else { G.capEl.style.top = 'auto'; if (!G.lbH) G.capEl.style.bottom = G.capBase + 'px'; }
+        const spans = G.capEl.querySelectorAll('.cw'); ch.words.forEach((w, i) => { if (!spans[i]) return; spans[i].classList.toggle('on', t >= w.t0 && t < w.t1); spans[i].classList.toggle('done', t >= w.t1); }); const capDiv = G.capEl.firstChild;
         if (G.capStyle === 'voxedit') {
           ch.words.forEach((w, i) => { const sp = spans[i]; if (!sp) return; const k = prog(t, w.t0 - .04, .22); sp.style.opacity = k > 0 ? 1 : 0; sp.style.transform = `translateY(${(1 - E.outExpo(k)) * G.u * 1.6}px) scale(${lerp(1.18, 1, E.outExpo(k))})`; sp.style.filter = k < 1 ? `blur(${(1 - k) * G.u * .25}px)` : ''; });
           capDiv.style.opacity = 1; capDiv.style.transform = '';

@@ -10,6 +10,7 @@ import crypto from 'crypto';
 import { spawn, spawnSync } from 'child_process';
 import { fileURLToPath, pathToFileURL } from 'url';
 import { validate } from './validate.mjs';
+import { findSticker, builtinFor } from './sticker-search.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const RUNTIME = path.join(HERE, 'runtime', 'index.html');
@@ -43,6 +44,25 @@ if (!pos[0] || opt.help) {
 const sbPath = path.resolve(pos[0]);
 const baseDir = path.dirname(sbPath);
 const sb = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
+// sticker shorthand: { "type": "pack:rocket" } → an image sticker from your sticker pack
+// { "type": "find:bullock cart" } / "find:…" / { "type": "sticker", "query": "…" } → built-in sticker if one fits, else found online
+const SRC_WORDS = ['emoji', 'clipart', 'photo', 'any'];
+function findShorthand(st, q) {
+  q = String(q || '').trim(); let source = st.source;
+  const m = q.match(/^(emoji|clipart|photo|any):(.+)$/i); if (m) { source = m[1].toLowerCase(); q = m[2].trim(); }
+  const b = (!source || source === 'any') && builtinFor(q);
+  if (b) return Object.assign({}, st, { type: b, query: q });
+  return Object.assign({}, st, { type: 'image', media: 'sticker:' + (source && SRC_WORDS.includes(source) ? source + ':' : '') + q, query: q, label: st.label });
+}
+for (const sc of sb.scenes || []) (sc.stickers || []).forEach((st, i) => {
+  if (typeof st === 'string') st = { type: st };
+  if (!st || typeof st !== 'object') return;
+  if (/^pack:/.test(st.type || '')) sc.stickers[i] = Object.assign({}, st, { type: 'image', media: st.type });
+  else if (/^(find|sticker):/i.test(st.type || '')) sc.stickers[i] = findShorthand(st, st.type.replace(/^(find|sticker):/i, ''));
+  else if (st.type === 'sticker' || st.type === 'find') sc.stickers[i] = findShorthand(st, st.query || st.text || '');
+  else if ((st.type === 'image' || st.type === 'cutout') && /^find:/i.test(st.media || '')) sc.stickers[i] = Object.assign({}, st, { media: 'sticker:' + st.media.slice(5) });
+  else if (typeof sc.stickers[i] === 'string') sc.stickers[i] = st;
+});
 sb.meta = sb.meta || {}; sb.audio = sb.audio || {};
 const log = (...a) => console.log('[cinelume]', ...a);
 const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate'];
@@ -79,7 +99,7 @@ const hash = s => crypto.createHash('sha1').update(String(s)).digest('hex').slic
 const IMG = /\.(png|jpe?g|webp|gif|avif|svg|bmp)$/i, VID = /\.(mp4|mov|webm|mkv|m4v|avi)$/i;
 
 /* ---------------- asset resolution ---------------- */
-const MEDIA_KEYS = new Set(['media', 'image', 'video', 'src', 'clips', 'images']);
+const MEDIA_KEYS = new Set(['media', 'image', 'video', 'src', 'clips', 'images', 'head']);
 function collectMedia(o, out) {
   if (Array.isArray(o)) o.forEach(x => collectMedia(x, out));
   else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) {
@@ -174,9 +194,17 @@ async function resolveAssets() {
   for (const ref0 of refs) {
     let file = null, label = null, ref = ref0;
     const wantCut = /^cutout:/i.test(ref0); if (wantCut) ref = ref0.slice(7);
+    // sticker packs: "pack:<name>" → <storyboard>/stickers/<name>.png|webp|svg|jpg, then ~/.cinelume/stickers/
+    if (/^pack:/i.test(ref)) { const nm = ref.slice(5); const dirs = [path.join(baseDir, 'stickers'), path.join(process.env.HOME || process.env.USERPROFILE || '', '.cinelume', 'stickers'), process.env.CINELUME_STICKERS || ''].filter(Boolean); let hit = null; for (const d of dirs) for (const ext of ['', '.png', '.webp', '.svg', '.jpg', '.jpeg']) { const f = path.join(d, nm + ext); if (!hit && fs.existsSync(f) && fs.statSync(f).isFile()) hit = f; } if (hit) ref = hit; else log(`sticker pack "${nm}" not found in ${dirs.join(' or ')}`); }
     try {
-      const m = ref.match(/^(pexels|pixabay|unsplash|openverse|wikimedia|search)(-video)?:(.+)$/i);
-      if (m) {
+      const sm = ref.match(/^sticker:(?:(emoji|clipart|photo|any):)?(.+)$/i);
+      const m = !sm && ref.match(/^(pexels|pixabay|unsplash|openverse|wikimedia|search)(-video)?:(.+)$/i);
+      if (sm) {
+        label = sm[2].trim();
+        const r = await findSticker(label, { source: (sm[1] || 'any').toLowerCase(), baseDir, cacheDir, log, noBuiltin: true, photoSearch: q => stockSearch('search', q, false) });
+        if (r && r.file) { file = r.file; if (r.credit) credits.push(r.credit); }
+        else log('no sticker found online for', JSON.stringify(label), '— showing it as a label sticker');
+      } else if (m) {
         label = m[3].trim(); const wantVideo = !!m[2];
         const key = path.join(cacheDir, 'stock-' + hash(ref));
         const cached = ['.jpg', '.mp4'].map(e => key + e).find(f => fs.existsSync(f));

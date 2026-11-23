@@ -16,6 +16,8 @@ export const SCENE_TYPES = {
 };
 export const CAMERAS = ['static', 'drift', 'push-in', 'push-in-slow', 'pull-out', 'crash-zoom', 'zoom-out-reveal', 'pan-left', 'pan-right', 'tilt-up', 'tilt-down', 'dolly-zoom', 'orbit', 'handheld', 'whip-in', 'rack-focus', 'rack-focus-in', 'shake-hit', 'tilt-3d', 'spiral-in', 'dolly-in', 'dolly-out', 'crane-up', 'crane-down', 'truck-left', 'truck-right', 'parallax', 'steadicam', 'slow-push', 'reveal-pull', 'punch-in', 'zoom-pulse'];
 export const TRANSITIONS = ['cut', 'whip-left', 'whip-right', 'whip-up', 'whip-down', 'zoom-through', 'zoom-out', 'iris', 'circle-burst', 'paper-slide', 'tear', 'push', 'slide-up', 'flash', 'glitch', 'stack', 'spin', 'wipe-diagonal', 'blinds', 'fade', 'dissolve', 'dip-black', 'dip-white', 'light-leak', 'film-burn', 'lens-blur', 'cross-zoom', 'luma', 'slit'];
+export const ROLES = ['engineer', 'founder', 'founder-f', 'worker', 'scientist', 'doctor', 'student', 'farmer', 'official', 'person', 'person-f'];
+export const ACTIONS = ['walk', 'exit', 'wave', 'point', 'cheer', 'think', 'shock', 'jump', 'say', 'face'];
 export const VIRAL_THEMES = ['neon', 'sunset', 'electric', 'aurora', 'candy'];
 export const ARCHIVE_THEMES = ['archive', 'newsroom'];
 export const CINE_THEMES = [...ARCHIVE_THEMES, 'noir', 'film', 'ivory', 'midnight', 'ember', 'slate', ...VIRAL_THEMES];
@@ -25,6 +27,17 @@ export const GRADES = ['archive', 'vivid', 'teal-orange', 'warm', 'cool', 'noir'
 export const BGS = ['paper', 'texture', 'grid', 'dots', 'lines', 'halftone', 'stripes', 'rays', 'gradient', 'spotlight', 'plain', 'atmos', 'haze', 'black', 'paper-grid', 'paper-dark'];
 export const FXS = ['none', 'fade', 'pop', 'popBig', 'rise', 'riseBig', 'drop', 'slideL', 'slideR', 'slideU', 'slideD', 'stamp', 'zoom', 'spin', 'blur', 'wipe', 'wipeUp', 'flipX', 'swing', 'typeOn', 'blurIn', 'reveal', 'rise3d', 'settle', 'punch', 'riseFast'];
 
+export const IDLES = ['wiggle', 'float', 'breathe', 'pulse', 'spin', 'drift', 'bob', 'bounce', 'shake', 'sway', 'roll'];
+export const EDGES = ['left', 'right', 'top', 'bottom'];
+let _motionErrors = null;
+function checkMotion(st, at) {
+  const E = _motionErrors; if (!E) return;
+  if (st.idle && !IDLES.includes(st.idle)) E.push(`${at}: idle "${st.idle}" unknown (${IDLES.join(', ')})`);
+  if (st.from && !EDGES.includes(st.from)) E.push(`${at}: from must be left, right, top or bottom`);
+  if (st.exit && st.exit !== true && !EDGES.includes(st.exit)) E.push(`${at}: exit must be left, right, top or bottom`);
+  if (st.source && !['any', 'emoji', 'clipart', 'photo'].includes(st.source)) E.push(`${at}: source must be any, emoji, clipart or photo`);
+  [].concat(st.moves || [], st.to ? [st.to] : []).forEach((m, i) => { if (!m || typeof m !== 'object' || (m.x == null && m.y == null)) E.push(`${at}: moves[${i}] needs x and/or y (%)`); else if (m.at != null && typeof m.at !== 'number') E.push(`${at}: moves[${i}].at must be seconds`); });
+}
 export function stickerDefs() {
   const ctx = { window: {} }; vm.createContext(ctx);
   vm.runInContext(fs.readFileSync(path.join(HERE, 'runtime', 'stickers.js'), 'utf8'), ctx);
@@ -33,7 +46,7 @@ export function stickerDefs() {
 export function stickerNames() { return Object.keys(stickerDefs()); }
 
 export function validate(sb, baseDir = '.') {
-  const errors = [], warnings = [];
+  const errors = [], warnings = []; _motionErrors = errors;
   const defs = stickerDefs(); const stickers = new Set(Object.keys(defs));
   const premium = Object.keys(defs).filter(k => !defs[k].legacy);
   if (!sb || typeof sb !== 'object') return { errors: ['storyboard is not an object'], warnings };
@@ -55,7 +68,7 @@ export function validate(sb, baseDir = '.') {
     if (s.theme && !THEMES.includes(s.theme)) errors.push(`${at}: theme "${s.theme}" unknown`);
     if (s.bg && !BGS.includes(s.bg)) warnings.push(`${at}: bg "${s.bg}" unknown, falls back to plain colour`);
     const cine = CINE_THEMES.includes(s.theme || meta.theme || 'noir');
-    (s.stickers || []).forEach((st, j) => { const t = typeof st === 'string' ? st : st.type; if (!stickers.has(t)) errors.push(`${at}: stickers[${j}] type "${t}" unknown. Premium set: ${premium.join(', ')}`); else if (cine && defs[t].legacy) legacyUsed.add(t); if (t === 'photo' && !(st.media || st.src)) errors.push(`${at}: stickers[${j}] photo sticker needs media`); if (st.fx && !FXS.includes(st.fx)) errors.push(`${at}: stickers[${j}] fx "${st.fx}" unknown`); });
+    (s.stickers || []).forEach((st, j) => { const t = typeof st === 'string' ? st : st.type; if (t === 'character') { checkChar(st, `${at}: stickers[${j}]`); return; } if (typeof st === 'object' && st) checkMotion(st, `${at}: stickers[${j}]`); if (/^(find|sticker):/i.test(t || '')) { if (!t.replace(/^(find|sticker):((emoji|clipart|photo|any):)?/i, '').trim()) errors.push(`${at}: stickers[${j}] ${t} needs something to search for, e.g. "find:bullock cart"`); return; } if (t === 'sticker' || t === 'find') { if (!st.query) errors.push(`${at}: stickers[${j}] needs "query"`); return; } if (/^pack:/.test(t || '')) return; if (t === 'image' || t === 'cutout') { if (!(st.media || st.src)) errors.push(`${at}: stickers[${j}] ${t} sticker needs media`); return; } if (!stickers.has(t)) errors.push(`${at}: stickers[${j}] type "${t}" unknown. Premium set: ${premium.join(', ')}`); else if (cine && defs[t].legacy) legacyUsed.add(t); if (t === 'photo' && !(st.media || st.src)) errors.push(`${at}: stickers[${j}] photo sticker needs media`); if (st.fx && !FXS.includes(st.fx)) errors.push(`${at}: stickers[${j}] fx "${st.fx}" unknown`); });
     for (const k of ['headline', 'text', 'title', 'label', 'caption', 'narration']) {
       const v = s[k]; if (typeof v !== 'string') continue;
       for (const [o, c] of [['==', '=='], ['**', '**'], ['[[', ']]'], ['~~', '~~'], ['{{', '}}']]) { const n1 = v.split(o).length - 1, n2 = v.split(c).length - 1; if (o === c ? n1 % 2 : n1 !== n2) errors.push(`${at}: unbalanced "${o}" markup in ${k}`); }
@@ -68,6 +81,17 @@ export function validate(sb, baseDir = '.') {
     if (s.voiceover && !/^https?:/.test(s.voiceover) && !fs.existsSync(path.resolve(baseDir, s.voiceover))) warnings.push(`${at}: voiceover file not found: ${s.voiceover}`);
     if (s.type === 'kinetic' && (s.lines || []).length > 5) warnings.push(`${at}: more than 5 kinetic lines gets crowded`);
   });
+  (sb.scenes || []).forEach((s, i) => {
+    (s.cast || []).forEach((ch, j) => checkChar(ch, `scenes[${i}].cast[${j}]`));
+    const ids = new Set((s.cast || []).map(ch => ch.id).concat((s.stickers || []).filter(x => x && x.type === 'character').map(x => x.id)));
+    (s.actions || []).forEach((a, j) => { if (!ACTIONS.includes(a.do)) errors.push(`scenes[${i}].actions[${j}].do "${a.do}" unknown. Use: ${ACTIONS.join(', ')}`); if (!ids.has(a.who)) errors.push(`scenes[${i}].actions[${j}].who "${a.who}" doesn't match any cast id`); if (typeof a.at !== 'number') errors.push(`scenes[${i}].actions[${j}] needs a numeric "at"`); });
+  });
+  function checkChar(ch, at) {
+    if (ch.role && !ROLES.includes(ch.role)) errors.push(`${at}: role "${ch.role}" unknown. Use: ${ROLES.join(', ')}`);
+    if (ch.enter && !['pop', 'walk', 'rise', 'drop', 'none'].includes(ch.enter)) errors.push(`${at}: enter must be pop, walk, rise, drop or none`);
+    if (ch.pose && !['idle', 'wave', 'point', 'cheer', 'think', 'shock'].includes(ch.pose)) errors.push(`${at}: pose must be idle, wave, point, cheer, think or shock`);
+    (ch.actions || []).forEach((a, k) => { if (!ACTIONS.includes(a.do)) errors.push(`${at}.actions[${k}].do "${a.do}" unknown`); });
+  }
   if (legacyUsed.size) warnings.push(`legacy cartoon stickers used with a cinematic theme: ${[...legacyUsed].join(', ')}. Prefer the premium set (ring, arrow-fine, leader, tag, stat, timestamp, location, pulse, glint, photo, icon-*).`);
   const cineScenes = (sb.scenes || []).filter(s => ['cinematic', 'establishing', 'depth', 'broll', 'photo', 'story', 'hook'].includes(s.type)).length;
   if (cineGlobal && (sb.scenes || []).length >= 6 && cineScenes < 2) warnings.push('few footage scenes: a cinematic story usually needs ≥ 1 real-image scene (cinematic / establishing / depth / broll) every 3–4 scenes.');

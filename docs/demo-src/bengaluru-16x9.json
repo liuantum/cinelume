@@ -1,48 +1,367 @@
 {
-  "meta": { "title": "The City That Codes", "format": "16:9", "theme": "archive", "handle": "@liuantum", "voice": "kokoro:am_michael", "voiceRate": "-2%" },
-  "audio": { "music": "auto:suspense", "musicVolume": 0.32 },
+  "meta": {
+    "title": "The City That Codes",
+    "format": "16:9",
+    "theme": "archive",
+    "handle": "@liuantum",
+    "voice": "kokoro:am_michael",
+    "voiceRate": "-2%"
+  },
+  "audio": {
+    "music": "auto:suspense",
+    "musicVolume": 0.32
+  },
   "scenes": [
-    { "type": "story", "frame": "full", "media": "bengaluru/city-1985.jpg", "year": "Bangalore, 1985", "name": "a pensioners' paradise",
-      "narration": "In 1985, Bangalore was a quiet city of gardens and retirees. People called it a pensioners' paradise." },
-
-    { "type": "story", "frame": "clipboard", "media": "bengaluru/city-1985.jpg",
+    {
+      "type": "story",
+      "frame": "full",
+      "media": "bengaluru/city-1985.jpg",
+      "year": "Bangalore, 1985",
+      "narration": "In 1985, Bangalore was a quiet city of gardens."
+    },
+    {
+      "type": "story",
+      "cast": [
+        {
+          "id": "grandpa",
+          "role": "person",
+          "hair": "bald",
+          "hairColor": "#D9D9D9",
+          "glasses": true,
+          "outfit": "#E5E7EB",
+          "style": "shirt",
+          "skin": "tan",
+          "x": 38,
+          "y": 96,
+          "size": 60,
+          "pose": "wave",
+          "at": 0.2
+        },
+        {
+          "id": "grandma",
+          "role": "person-f",
+          "hair": "bun",
+          "hairColor": "#CFCFCF",
+          "outfit": "#C2271E",
+          "skin": "medium",
+          "x": 62,
+          "y": 96,
+          "size": 57,
+          "at": 0.5,
+          "flip": true
+        }
+      ],
+      "actions": [
+        {
+          "who": "grandma",
+          "do": "say",
+          "at": 1.0,
+          "text": "Such a peaceful city!",
+          "dur": 2.4
+        }
+      ],
+      "stickers": [
+        {
+          "type": "vx-note",
+          "text": "pensioners' paradise",
+          "x": 84,
+          "y": 38,
+          "size": 20,
+          "rot": -5,
+          "at": 0.4
+        }
+      ],
+      "narration": "Retirees loved it. People called it a pensioners' paradise."
+    },
+    {
+      "type": "story",
+      "frame": "clipboard",
+      "media": "bengaluru/city-1985.jpg",
       "note": "1985 — Miller's Road. Texas Instruments opens India's first multinational R&D centre.",
       "source": "Texas Instruments",
-      "narration": "Then Texas Instruments opened India's first multinational research centre, on Miller's Road." },
-
-    { "type": "story", "frame": "print", "media": "bengaluru/city-1985.jpg", "tag": "on a bullock cart", "tagAt": 2.6, "rot": 2,
+      "narration": "Then Texas Instruments opened India's first multinational research centre, on Miller's Road."
+    },
+    {
+      "type": "story",
+      "cast": [
+        {
+          "id": "eng",
+          "role": "engineer",
+          "skin": "fair",
+          "x": 30,
+          "y": 96,
+          "size": 60,
+          "enter": "walk",
+          "from": "left",
+          "at": 0.1
+        }
+      ],
+      "actions": [
+        {
+          "who": "eng",
+          "do": "say",
+          "at": 1.4,
+          "text": "We need a satellite link to Dallas!",
+          "dur": 2.4
+        },
+        {
+          "who": "eng",
+          "do": "shock",
+          "at": 4.2,
+          "dur": 1.5
+        }
+      ],
+      "stickers": [
+        {
+          "type": "vx-cart",
+          "x": 70,
+          "y": 70,
+          "size": 36,
+          "at": 3.3
+        },
+        {
+          "type": "vx-dish",
+          "x": 66,
+          "y": 50,
+          "size": 18,
+          "at": 3.7
+        },
+        {
+          "type": "arrow-curve",
+          "x": 52,
+          "y": 38,
+          "size": 16,
+          "rot": 60,
+          "at": 4.2,
+          "color": "#C2271E"
+        }
+      ],
       "source": "Deccan Herald",
-      "narration": "To talk to America, it needed a satellite dish. The dish arrived on a ==bullock cart.==" },
-
-    { "type": "timeline", "title": "How a quiet city changed",
+      "narration": "To talk to America, it needed a satellite dish. And the dish arrived on a ==bullock cart.=="
+    },
+    {
+      "type": "timeline",
+      "title": "How a quiet city changed",
       "events": [
-        { "date": "1983", "label": "Infosys moves to Bangalore" },
-        { "date": "1985", "label": "Texas Instruments opens India's first multinational R&D centre" },
-        { "date": "2025", "label": "Tech workforce crosses 1 million" }
-      ], "source": "Infosys · TI · CBRE",
-      "narration": "Infosys had already moved here in 1983. Forty years later, the city's tech workforce crossed one million." },
-
-    { "type": "story", "frame": "tv", "media": "bengaluru/techpark-dusk.jpg",
-      "narration": "Tech parks rose across Whitefield, Electronic City and Manyata, glass towers where the fields used to be." },
-
-    { "type": "bignumber", "value": 1000000, "suffix": "+", "kicker": "One city", "label": "tech workers in [[Bengaluru]]",
+        {
+          "date": "1983",
+          "label": "Infosys moves to Bangalore"
+        },
+        {
+          "date": "1985",
+          "label": "Texas Instruments opens India's first multinational R&D centre"
+        },
+        {
+          "date": "2025",
+          "label": "Tech workforce crosses 1 million"
+        }
+      ],
+      "source": "Infosys · TI · CBRE",
+      "narration": "Infosys had already moved here in 1983. Forty years later, the city's tech workforce crossed one million."
+    },
+    {
+      "type": "story",
+      "frame": "tv",
+      "media": "bengaluru/techpark-dusk.jpg",
+      "narration": "Tech parks rose across Whitefield, Electronic City and Manyata, glass towers where the fields used to be.",
+      "stickers": [
+        {
+          "type": "vx-office",
+          "x": 14,
+          "y": 40,
+          "size": 18,
+          "at": 1.2
+        },
+        {
+          "type": "vx-laptop",
+          "x": 86,
+          "y": 60,
+          "size": 15,
+          "at": 1.5
+        }
+      ]
+    },
+    {
+      "type": "bignumber",
+      "value": 1000000,
+      "suffix": "+",
+      "kicker": "One city",
+      "label": "tech workers in [[Bengaluru]]",
       "source": "CBRE Global Tech Talent Guidebook, 2025",
-      "narration": "Over one million tech workers. One of the largest tech talent pools in Asia." },
-
-    { "type": "story", "frame": "full", "media": "bengaluru/skyline-night.jpg", "magnifier": true, "text": "41% of India's software exports",
+      "narration": "Over one million tech workers. One of the largest tech talent pools in Asia.",
+      "cast": [
+        {
+          "id": "w0",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 8,
+          "y": 99,
+          "size": 26,
+          "at": 1.0
+        },
+        {
+          "id": "w1",
+          "role": "founder-f",
+          "skin": "fair",
+          "x": 22,
+          "y": 99,
+          "size": 26,
+          "at": 1.18,
+          "pose": "wave"
+        },
+        {
+          "id": "w2",
+          "role": "student",
+          "skin": "brown",
+          "x": 36,
+          "y": 99,
+          "size": 26,
+          "at": 1.3599999999999999,
+          "pose": "cheer"
+        },
+        {
+          "id": "w3",
+          "role": "scientist",
+          "skin": "light",
+          "x": 50,
+          "y": 99,
+          "size": 26,
+          "at": 1.54
+        },
+        {
+          "id": "w4",
+          "role": "worker",
+          "skin": "tan",
+          "x": 64,
+          "y": 99,
+          "size": 26,
+          "at": 1.72
+        },
+        {
+          "id": "w5",
+          "role": "founder",
+          "skin": "deep",
+          "x": 78,
+          "y": 99,
+          "size": 26,
+          "at": 1.9
+        },
+        {
+          "id": "w6",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 92,
+          "y": 99,
+          "size": 26,
+          "at": 2.08,
+          "pose": "wave"
+        }
+      ]
+    },
+    {
+      "type": "story",
+      "frame": "full",
+      "media": "bengaluru/skyline-night.jpg",
+      "magnifier": true,
+      "text": "41% of India's software exports",
       "source": "Govt. of Karnataka, FY 2025–26",
-      "narration": "Today, Karnataka produces forty one percent of India's software exports, and nearly all of it comes from Bengaluru." },
-
-    { "type": "map", "title": "Written in Bengaluru. Used everywhere.", "focus": { "lon": 30, "lat": 30, "zoom": 1.6 },
-      "highlight": ["India"], "pins": [{ "lon": 77.59, "lat": 12.97, "label": "Bengaluru" }],
-      "arcs": [{ "from": [77.59, 12.97], "to": [-122.4, 37.8] }, { "from": [77.59, 12.97], "to": [-0.12, 51.5] }, { "from": [77.59, 12.97], "to": [-74, 40.7] }],
+      "narration": "Today, Karnataka produces forty one percent of India's software exports, and nearly all of it comes from Bengaluru."
+    },
+    {
+      "type": "map",
+      "title": "Written in Bengaluru. Used everywhere.",
+      "focus": {
+        "lon": 30,
+        "lat": 30,
+        "zoom": 1.6
+      },
+      "highlight": [
+        "India"
+      ],
+      "pins": [
+        {
+          "lon": 77.59,
+          "lat": 12.97,
+          "label": "Bengaluru"
+        }
+      ],
+      "arcs": [
+        {
+          "from": [
+            77.59,
+            12.97
+          ],
+          "to": [
+            -122.4,
+            37.8
+          ]
+        },
+        {
+          "from": [
+            77.59,
+            12.97
+          ],
+          "to": [
+            -0.12,
+            51.5
+          ]
+        },
+        {
+          "from": [
+            77.59,
+            12.97
+          ],
+          "to": [
+            -74,
+            40.7
+          ]
+        }
+      ],
       "source": "RBI: US & Canada are the top destination for India's software exports",
-      "narration": "Most of that software flows to America and Europe, into the apps and banks people use every day." },
-
-    { "type": "story", "text": "the city that **codes.**", "spot": "#2F5D8C",
-      "narration": "From a bullock cart, to the city that codes the world." },
-
-    { "type": "outro", "headline": "Bengaluru.", "cta": "Follow for the next story", "handle": "@liuantum",
-      "narration": "Bengaluru. Follow for the next story." }
+      "narration": "Most of that software flows to America and Europe, into the apps and banks people use every day."
+    },
+    {
+      "type": "story",
+      "text": "the city that **codes.**",
+      "spot": "#2F5D8C",
+      "narration": "From a bullock cart, to the city that codes the world.",
+      "stickers": [
+        {
+          "type": "vx-rocket",
+          "x": 76,
+          "y": 28,
+          "size": 14,
+          "rot": 14,
+          "at": 1.0
+        },
+        {
+          "type": "vx-india",
+          "x": 24,
+          "y": 30,
+          "size": 13,
+          "rot": -8,
+          "at": 1.2
+        }
+      ]
+    },
+    {
+      "type": "outro",
+      "headline": "Bengaluru.",
+      "cta": "Follow for the next story",
+      "handle": "@liuantum",
+      "narration": "Bengaluru. Follow for the next story.",
+      "cast": [
+        {
+          "id": "fin",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 82,
+          "y": 98,
+          "size": 44,
+          "pose": "wave",
+          "at": 0.6
+        }
+      ]
+    }
   ]
 }
