@@ -1,0 +1,38 @@
+{
+  "meta": { "title": "How a pensioners' paradise became India's tech capital", "format": "9:16", "theme": "archive", "handle": "@liuantum", "voice": "kokoro:am_michael", "voiceRate": "+4%" },
+  "audio": { "music": "auto:suspense", "musicVolume": 0.34 },
+  "scenes": [
+    { "type": "story", "frame": "full", "media": "bengaluru/city-1985.jpg", "year": "in 1985",
+      "narration": "In 1985, Bangalore was a quiet city of gardens." },
+
+    { "type": "story", "text": "a pensioners' **paradise.**",
+      "narration": "People called it a pensioners' paradise." },
+
+    { "type": "story", "frame": "clipboard", "media": "bengaluru/city-1985.jpg",
+      "note": "1985 — Miller's Road, Bangalore. Texas Instruments opens India's first multinational R&D centre.",
+      "source": "Texas Instruments",
+      "narration": "Then an American chip company did something nobody expected." },
+
+    { "type": "story", "frame": "print", "media": "bengaluru/city-1985.jpg", "tag": "bullock cart", "tagAt": 2.2, "rot": -3,
+      "stickers": [{ "type": "circle", "x": 50, "y": 38, "size": 30, "at": 2.6, "color": "#C2271E" }],
+      "source": "Deccan Herald",
+      "narration": "It brought in a satellite dish to link Bangalore to the world, and the dish arrived on a ==bullock cart.==" },
+
+    { "type": "story", "frame": "tv", "media": "bengaluru/techpark-dusk.jpg",
+      "narration": "Infosys had already moved here. Then came the tech parks." },
+
+    { "type": "bignumber", "value": 1000000, "suffix": "+", "kicker": "Today", "label": "tech workers in ==one city==",
+      "source": "CBRE, 2025",
+      "narration": "Today, more than a million tech workers live in this one city." },
+
+    { "type": "story", "frame": "full", "media": "bengaluru/skyline-night.jpg", "magnifier": true, "text": "41% of India's software exports",
+      "source": "Govt. of Karnataka, FY 2025–26",
+      "narration": "Its state now produces forty one percent of India's software exports." },
+
+    { "type": "story", "text": "the city that **codes.**", "spot": "#2F5D8C",
+      "narration": "From a bullock cart, to the city that codes the world." },
+
+    { "type": "outro", "headline": "Bengaluru.", "cta": "Follow for Part 2", "handle": "@liuantum",
+      "narration": "Bengaluru. Follow for part two." }
+  ]
+}

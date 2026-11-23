@@ -59,6 +59,11 @@
     aurora: { cine: 1, viral: 1, bg: '#04100F', ink: '#ECFFFA', accent: '#3DFFB5', hl: '#B08CFF', card: '#0B1E1C', muted: '#7EA39A', land: '#0D2321', blue: '#5CC8FF', teal: '#3DFFB5', grain: 'soft-light', glass: 'rgba(8,30,28,.55)', glassline: 'rgba(200,255,240,.2)', grade: 'vivid', glow1: '#3DFFB5', glow2: '#7B5CFF', pal: ['#3DFFB5', '#B08CFF', '#5CC8FF', '#FFE36E', '#FF7AC6'] },
     candy: { cine: 1, viral: 1, light: 1, bg: '#FFF1F7', ink: '#1B0F2E', accent: '#FF3D8B', hl: '#FFD23D', card: '#FFFFFF', muted: '#8C7A99', land: '#F6DCEA', blue: '#7B5CFF', teal: '#00B8D9', grain: 'multiply', glass: 'rgba(255,255,255,.72)', glassline: 'rgba(40,0,60,.1)', grade: 'none', glow1: '#FF8AC2', glow2: '#8FD3FF', pal: ['#FF3D8B', '#7B5CFF', '#00B8D9', '#FFB020', '#2BD47D'] },
   });
+  // ---- archive / Vox-edit documentary themes (paper collage, archival photos, props)
+  Object.assign(THEMES, {
+    archive: { cine: 1, archive: 1, light: 1, bg: '#D9D1C1', ink: '#17140F', accent: '#C2271E', hl: '#F2C437', card: '#EDE6D8', muted: '#857B6B', land: '#C9BFA9', blue: '#2F5D8C', teal: '#2E7D6E', grain: 'multiply', glass: 'rgba(250,245,235,.78)', glassline: 'rgba(0,0,0,.14)', grade: 'archive', glow1: '#E9C88C', glow2: '#9C8A6A', pal: ['#F2C437', '#C2271E', '#2F5D8C', '#2E7D6E'] },
+    newsroom: { cine: 1, archive: 1, bg: '#23201B', ink: '#F1EADC', accent: '#D23A2A', hl: '#F2C437', card: '#2E2A23', muted: '#8F8676', land: '#38332B', blue: '#6E9CCB', teal: '#5BAE9C', grain: 'soft-light', glass: 'rgba(40,36,30,.6)', glassline: 'rgba(255,240,220,.16)', grade: 'archive', glow1: '#E9C88C', glow2: '#6B5A3C', pal: ['#F2C437', '#D23A2A', '#6E9CCB', '#5BAE9C'] },
+  });
   const CINE_SCENES = ['cinematic', 'establishing', 'opening', 'narrative', 'depth'];
   V.THEMES = THEMES;
 
@@ -78,16 +83,19 @@
   let G = null; // {W,H,u,fps,sb,scenes,events,duration,assets,theme}
   let pending = [];
   let GID = 0;
+  // classic sticker names → modern glossy Vox stickers (so "fire", "face-shock", "burst"… always look current)
+  const VX_MAP = { fire: 'vx-fire', lightning: 'vx-bolt', star: 'vx-star', sparkle: 'vx-star', heart: 'vx-heart', rocket: 'vx-rocket', dollar: 'vx-money', money: 'vx-money', 'chart-up': 'vx-up', 'chart-down': 'vx-down', globe: 'vx-globe', chip: 'vx-chip', brain: 'vx-brain', bulb: 'vx-bulb', trophy: 'vx-trophy', clock: 'vx-clock', lock: 'vx-lock', 'face-shock': 'vx-wow', 'face-mindblown': 'vx-mindblown', 'face-cool': 'vx-cool', 'face-think': 'vx-think', 'face-smile': 'vx-laugh', 'face-money': 'vx-money', 'face-fire': 'vx-fire', 'face-sad': 'vx-think', burst: 'vx-burst', badge: 'vx-burst', label: 'vx-label', banner: 'vx-label', bubble: 'vx-bubble', note: 'vx-note', tape: 'vx-tape', exclaim: 'vx-wow', warning: 'vx-bolt', flag: 'vx-india', target: 'vx-target' };
 
   /* ---------------- stickers ---------------- */
   function stickerSVG(type, color, th) {
     const S = window.CINE_STICKERS || {};
-    if (th.cine && S['icon-' + type] && (!S[type] || S[type].legacy)) type = 'icon-' + type;
+    if (th.cine && th.vox && S[VX_MAP[type]]) type = VX_MAP[type];
+    else if (th.cine && !(th.vox && S[type] && S[type].marker) && S['icon-' + type] && (!S[type] || S[type].legacy)) type = 'icon-' + type;
     const def = S[type] || (th.cine ? S['icon-spark'] : S.star);
     const C = color || th.accent;
     const svg = def.svg.replace(/"C"/g, `"${C}"`).replace(/"K"/g, `"${th.ink === '#F3EEE4' || th.ink === '#EAF2FF' || th.ink === '#F6F1E7' || th.ink === '#FFF6EC' ? '#141414' : th.ink}"`).replace(/"H"/g, `"${th.hl}"`).replace(/"W"/g, '"#FFFFFF"');
     const vb = def.wide ? '0 0 100 100' : '0 0 100 100';
-    return { html: `<svg viewBox="${vb}" preserveAspectRatio="${def.wide && !def.kind ? 'none' : 'xMidYMid meet'}">${(svg || '').replace(/id="(\w+)"/g, (m, a) => `id="${a}${++GID}"`).replace(/url\(#(\w+)\)/g, (m, a) => `url(#${a}${GID})`)}</svg>`, def };
+    return { html: `<svg viewBox="${vb}" preserveAspectRatio="${def.wide && (!def.kind || def.kind === 'vox') ? 'none' : 'xMidYMid meet'}">${((gid) => (svg || '').replace(/id="(\w+)"/g, (m, a) => `id="${a}_${gid}"`).replace(/url\(#(\w+)\)/g, (m, a) => `url(#${a}_${gid})`))(++GID)}</svg>`, def };
   }
 
   /* ---------------- element animation presets ---------------- */
@@ -126,7 +134,8 @@
     constructor(el, o, scene) {
       this.el = el; this.o = Object.assign({ at: 0, fx: 'rise', dur: 0.55, idle: null, rot: 0, scale: 1, center: false, seed: Math.random() * 10 }, o || {});
       this.scene = scene;
-      if (scene && scene.viral && !this.o.keep) {
+      if (scene && scene.vox) { /* Vox motion: keep pop / bounce / stamp / wiggle exactly as authored */ }
+      else if (scene && scene.viral && !this.o.keep) {
         const o2 = this.o, VMAP = { drop: 'punch', popBig: 'punch', pop: 'punch', stamp: 'punch', spin: 'punch', swing: 'punch', zoom: 'punch', flipX: 'punch', rise: 'riseFast', riseBig: 'riseFast', blur: 'blurIn' };
         if (VMAP[o2.fx]) o2.fx = VMAP[o2.fx];
         if (['wiggle', 'bob', 'float'].includes(o2.idle)) o2.idle = 'drift';
@@ -202,7 +211,8 @@
     const svg = sv('svg', { class: 'm-svg', width: W2, height: H2, viewBox: `0 0 ${W2} ${H2}` });
     svg.style.left = -pad + 'px'; svg.style.top = -pad + 'px';
     const col = m.el.dataset.color || 'var(--accent)';
-    const isCine = !!m.el.closest('.cine'), isViral = !!m.el.closest('.viral'); const sw = isViral ? Math.max(3, fs * .055) : isCine ? Math.max(1.5, fs * 0.03) : Math.max(3, fs * 0.075);
+    const isCine = !!m.el.closest('.cine') && !m.el.closest('.archive'), isViral = !!m.el.closest('.viral') || !!m.el.closest('.archive');
+    if (m.el.closest('.archive') && !m.el.dataset.color) m.el.dataset.color = 'var(--accent)'; const sw = isViral ? Math.max(3, fs * .055) : isCine ? Math.max(1.5, fs * 0.03) : Math.max(3, fs * 0.075);
     let d;
     const x0 = pad, x1 = pad + w, y0 = pad, y1 = pad + hh;
     if (m.kind === 'ul') d = `M${x0 - fs * .05} ${y1 - hh * .02} C ${x0 + w * .3} ${y1 - hh * .1}, ${x0 + w * .6} ${y1 + hh * .08}, ${x1 + fs * .08} ${y1 - hh * .06}`;
@@ -213,7 +223,8 @@
     m.el.appendChild(svg); m.path = p;
   }
   function animateMark(m, k) {
-    if (m.kind === 'hl' && m.el.closest('.viral')) m.el.style.backgroundSize = `${E.outExpo(k) * 100}% 88%`;
+    if (m.kind === 'hl' && m.el.closest('.archive')) m.el.style.backgroundSize = `${E.outExpo(k) * 100}% 100%`;
+    else if (m.kind === 'hl' && m.el.closest('.viral')) m.el.style.backgroundSize = `${E.outExpo(k) * 100}% 88%`;
     else if (m.kind === 'hl') m.el.style.backgroundSize = m.el.closest('.cine') ? `0% 0%, ${E.inOut(k) * 100}% 7%` : `${E.inOut(k) * 100}% 62%`;
     else if (m.kind === 'ac') m.el.style.color = k > 0 ? '' : 'inherit';
     else if (m.path) drawPath(m.path, E.inOut(k));
@@ -323,6 +334,11 @@
     else if (k === 'gradient') b.style.background = `radial-gradient(circle at 30% 20%, ${th.card}, ${th.bg} 70%)`;
     else if (k === 'spotlight') b.style.background = `radial-gradient(ellipse at 50% 45%, ${th.card} 0%, ${th.bg} 65%)`;
     else if (k === 'black') b.style.background = '#000';
+    else if (k === 'paper-grid' || k === 'paper-dark') {
+      b.style.backgroundColor = th.bg;
+      b.style.backgroundImage = `url(${paperTexture()}), linear-gradient(${th.ink}14 1px, transparent 1px), linear-gradient(90deg, ${th.ink}14 1px, transparent 1px), radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.25), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(80,50,20,.18), transparent 55%)`;
+      b.style.backgroundSize = `512px 512px, ${u * 4.2}px ${u * 4.2}px, ${u * 4.2}px ${u * 4.2}px, 100% 100%, 100% 100%`;
+    }
     else if (k === 'atmos' || k === 'haze') {
       const g1 = th.glow1 || th.accent, g2 = th.glow2 || th.blue, al = th.viral ? (th.light ? '55' : '50') : th.light ? '40' : (k === 'haze' ? '30' : '22');
       b.style.background = th.light ? `radial-gradient(ellipse at 50% 30%, #fff 0%, ${th.bg} 70%)` : `radial-gradient(ellipse at 50% 40%, ${mixColor(th.bg, th.card, .9)} 0%, ${th.bg} 60%, ${mixColor(th.bg, '#000000', .6)} 100%)`;
@@ -431,6 +447,7 @@
   /* ---------------- scene context ---------------- */
   function makeCtx(s, idx) {
     const th = Object.assign({}, THEMES[s.theme || G.themeName] || THEMES.paper, s.colors || {});
+    th.vox = (s.motion || G.motion) === 'vox';
     const wrap = h('div', 'scene');
     for (const k in th) wrap.style.setProperty('--' + k, th[k]);
     wrap.style.setProperty('--u', G.u + 'px');
@@ -441,8 +458,10 @@
     const ovl = h('div', 'ovl'); wrap.appendChild(ovl); // non-camera overlay (lower thirds, source)
     if (th.cine) wrap.classList.add('cine');
     if (th.viral) wrap.classList.add('viral');
+    if (th.vox) wrap.classList.add('vox');
+    if (th.archive) wrap.classList.add('archive');
     const c = {
-      cine: !!th.cine, viral: !!th.viral, dl: th.viral ? 'vivid' : th.cine ? 'cine' : 'color', dlDuo: th.cine ? 'cine' : 'duotone',
+      cine: !!th.cine, viral: !!th.viral, vox: !!th.vox, archive: !!th.archive, dl: th.archive ? 'archive' : th.viral ? 'vivid' : th.cine ? 'cine' : 'color', dlDuo: th.cine ? 'cine' : 'duotone',
       s, idx, th, wrap, cam, layers, ovl, items: [], marks: [], updates: [], post: [], medias: [], events: [],
       W: G.W, H: G.H, u: G.u, portrait: G.H > G.W, square: G.H === G.W,
       dur: s.duration,
@@ -450,7 +469,7 @@
       item(el, o) { const it = new Item(el, o, c); c.items.push(it); return it; },
       onUpdate(f) { c.updates.push(f); },
       postLayout(f) { c.post.push(f); },
-      sfx(name, at, vol) { if (th.viral && VIRAL_SFX[name]) { name = VIRAL_SFX[name]; } else if (th.cine && CINE_SFX[name]) { name = CINE_SFX[name]; vol = (vol || .8) * .8; } c.events.push({ name, at, vol }); },
+      sfx(name, at, vol) { if (th.archive && ARCHIVE_SFX[name]) { name = ARCHIVE_SFX[name]; } else if (th.viral && VIRAL_SFX[name]) { name = VIRAL_SFX[name]; } else if (th.cine && CINE_SFX[name]) { name = CINE_SFX[name]; vol = (vol || .8) * .8; } c.events.push({ name, at, vol }); },
       text(el, text, o) {
         o = Object.assign({ at: .2, stagger: .06, fx: 'rise', markGap: .35 }, o || {});
         const { marks, words } = richInto(el, text);
@@ -479,9 +498,10 @@
   function addSticker(c, st) {
     if (typeof st === 'string') st = { type: st };
     const u = G.u;
+    if (c.cine && VX_MAP[st.type] && (c.vox || !(window.CINE_STICKERS || {})['icon-' + st.type])) st = Object.assign({}, st, { type: VX_MAP[st.type] });
     const S = (window.CINE_STICKERS || {})[st.type] || {};
-    if (S.kind) return addPremiumSticker(c, st, S);
-    if (c.cine && st.rot == null) st = Object.assign({}, st, { rot: 0 });
+    if (S.kind && S.kind !== 'vox') return addPremiumSticker(c, st, S);
+    if (c.cine && !c.vox && st.rot == null) st = Object.assign({}, st, { rot: 0 });
     const size = (st.size || (S.wide ? 22 : 12)) * u;
     const el = h('div', 'stk' + (st.outline === false || S.draw ? '' : ' cutout'));
     const w = size * (S.wide ? (st.aspect || 2.4) : 1), hh = size;
@@ -492,9 +512,10 @@
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx: st.fx || (S.draw ? 'none' : 'popBig'), dur: st.dur || .5, rot: st.rot != null ? st.rot : (S.draw ? 0 : ((idHash(st.type + st.x) % 17) - 8)), idle: st.idle !== undefined ? st.idle : (S.draw ? null : 'wiggle'), out: st.out });
     if (S.draw) { it.draws = [...el.querySelectorAll('path')]; it.o.drawDur = st.dur || .6; c.sfx('scribble', it.o.at, .5); }
-    else c.sfx('pop', it.o.at, .7);
+    else { c.sfx('pop', it.o.at, .7); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 80, st.y != null ? st.y : 25, size, it.o.at, st.layer || 'fg'); }
     return el;
   }
+  const ARCHIVE_SFX = { tap: 'paper', air: 'whoosh-soft', bubble: 'pop', impact: 'thud', 'impact-soft': 'thud', pen: 'scribble', swell: 'riser', 'whoosh-deep': 'whoosh', chime: 'ding' };
   const VIRAL_SFX = { pop: 'bubble', tap: 'bubble', hit: 'drop', impact: 'drop', thud: 'impact-soft', scribble: 'pen', swish: 'swoosh', air: 'swoosh', ding: 'chime', boom: 'drop', braam: 'drop', paper: 'swoosh', bar: 'bubble', 'tick-roll': 'tick-soft', click: 'snap', whoosh: 'swoosh', 'whoosh-soft': 'swoosh', 'whoosh-deep': 'swoosh', riser: 'riser', swell: 'riser' };
   const CINE_SFX = { pop: 'tap', hit: 'impact', thud: 'impact-soft', scribble: 'pen', swish: 'air', ding: 'chime', boom: 'braam', paper: 'air', bar: 'tap', 'tick-roll': 'tick-soft', click: 'tap', whoosh: 'whoosh-deep', 'whoosh-soft': 'air', riser: 'swell' };
   // scale a 0..100 viewBox svg fragment to w x hh pixels (keeps dots round, strokes even)
@@ -504,12 +525,25 @@
       .replace(/ r="([\d.]+)"/g, (m, v) => ` r="${(+v * Math.min(sx, sy)).toFixed(2)}"`).replace(/stroke-width="([\d.]+)"/g, (m, v) => `stroke-width="${(+v * sw).toFixed(2)}"`);
   }
   const tc = t => { const f = Math.floor((t % 1) * 24), ss = Math.floor(t) % 60, mm = Math.floor(t / 60) % 60; return `00:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}:${String(f).padStart(2, '0')}`; };
+  // Vox "pop": confetti dashes + dots radiate from a sticker as it lands
+  function popBurst(c, x, y, size, at, layer) {
+    const u = G.u, pal = c.th.pal || [c.th.accent, c.th.hl, c.th.blue || '#2D6FB7', c.th.teal || '#1E9C8F'];
+    const wrap = h('div', 'abs', { left: x + '%', top: y + '%', width: 0, height: 0, zIndex: 19, pointerEvents: 'none' });
+    const n = 9, rr = rng(Math.round(x * 31 + y * 17 + at * 7)), parts = [];
+    for (let i = 0; i < n; i++) {
+      const ang = (i / n) * Math.PI * 2 + rr() * .4, dash = i % 3 !== 0;
+      const p = h('div', 'abs', { left: 0, top: 0, width: (dash ? size * .16 : size * .07) + 'px', height: (dash ? u * .55 : size * .07) + 'px', borderRadius: u + 'px', background: pal[i % pal.length], transformOrigin: '0 50%', opacity: 0 });
+      wrap.appendChild(p); parts.push({ p, ang, dist: size * (.62 + rr() * .3), dash });
+    }
+    c.add(wrap, layer || 'fg');
+    c.onUpdate(lt => { const k = prog(lt, at + .06, .5); parts.forEach(q => { if (k <= 0 || k >= 1) { q.p.style.opacity = 0; return; } const d = q.dist * E.outExpo(k); q.p.style.opacity = 1 - E.in(k); q.p.style.transform = `translate(${Math.cos(q.ang) * d}px, ${Math.sin(q.ang) * d}px) rotate(${q.dash ? q.ang * 180 / Math.PI : 0}deg) scale(${1 - k * .5})`; }); });
+  }
   function addPremiumSticker(c, st, S) {
     S = S || (window.CINE_STICKERS || {})[st.type] || {};
     const u = G.u, th = c.th, col = st.color || th.accent;
     const x = st.x != null ? st.x : 80, y = st.y != null ? st.y : 25;
     const el = h('div', 'stk'); el.style.setProperty('--gc', col); el.style.zIndex = 20;
-    let fx = st.fx || 'blurIn', idle = st.idle !== undefined ? st.idle : 'drift', snd = 'tap', center = true, draws = null, dur = st.dur || .8;
+    let fx = st.fx || (c.vox ? 'popBig' : 'blurIn'), idle = st.idle !== undefined ? st.idle : (c.vox ? 'wiggle' : 'drift'), snd = c.vox ? 'pop' : 'tap', center = true, draws = null, dur = st.dur || (c.vox ? .5 : .8);
     const place = (w, hh) => Object.assign(el.style, { left: x + '%', top: y + '%' }, w != null ? { width: w + 'px' } : {}, hh != null ? { height: hh + 'px' } : {});
     if (S.kind === 'glass') {
       el.classList.add('glass');
@@ -539,7 +573,7 @@
       el.classList.add('photo-stk'); const sz = (st.size || 18) * u; const asp = st.aspect || 1; place(sz * asp, sz);
       el.style.borderRadius = st.shape === 'rounded' ? u * 1.6 + 'px' : st.shape === 'square' ? '0' : '50%';
       const holder = h('div', 'fill look-' + (st.look || c.dl)); const m = c.media(st.media || st.src, { label: st.label }); Object.assign(m.style, { position: 'absolute', inset: 0 }); holder.appendChild(m); el.appendChild(holder);
-      c.onUpdate(lt => updateMedia(m, lt, c.dur)); fx = st.fx || 'settle'; snd = 'impact-soft';
+      c.onUpdate(lt => updateMedia(m, lt, c.dur)); fx = st.fx || (c.vox ? 'popBig' : 'settle'); snd = c.vox ? 'pop' : 'impact-soft';
       if (st.label) addPremiumSticker(c, { type: 'tag', text: st.label, x, y: y + (st.size || 18) * u / c.H * 100 * .62, size: 4.2, at: (st.at != null ? st.at : .8) + .35 });
     } else if (S.kind === 'glow') {
       el.classList.add('glow'); const sz = (st.size || (S.wide ? 30 : 8)) * u; const w = S.wide ? sz : sz, hh = S.wide ? sz / (st.aspect || 6) : sz; place(w, hh);
@@ -556,6 +590,7 @@
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx, dur, rot: st.rot || 0, idle, out: st.out, center, keep: true, scale: st.scale || 1 });
     if (draws) { it.draws = draws; it.o.drawDur = dur; it.o.dur = .01; }
+    else if (c.vox && S.kind !== 'glow' && S.kind !== 'line') popBurst(c, x, y, (st.size || 8) * u, it.o.at, st.layer || 'fg');
     c.sfx(snd, it.o.at, snd === 'pen' ? .35 : .5);
     return el;
   }
@@ -604,7 +639,7 @@
     const box = c.box({ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', gap: u * 1.5 + 'px' });
     if (s.kicker) { const k = h('div', 'kicker', null, esc(s.kicker)); box.appendChild(k); c.item(k, { at: .1, fx: 'fade' }); }
     const num = h('div', 'headline num', { fontSize: (s.size || (c.portrait ? 26 : 24)) * u * (c.cine ? .82 : 1) + 'px', color: s.color || 'var(--ink)', lineHeight: .95, whiteSpace: 'nowrap' });
-    const numWrap = h('span', 'm-hl', { backgroundSize: '0% 62%' }); numWrap.appendChild(num); num.style.display = 'inline-block';
+    const numWrap = h('span', c.archive ? null : 'm-hl', { backgroundSize: '0% 62%' }); numWrap.appendChild(num); num.style.display = 'inline-block';
     box.appendChild(numWrap);
     const from = s.from || 0, to = Number(s.value != null ? s.value : 100), dec = s.decimals != null ? s.decimals : (String(to).includes('.') ? String(to).split('.')[1].length : 0);
     const cStart = .3, cDur = Math.min(s.countDur || 1.8, c.dur * .5);
@@ -614,7 +649,7 @@
     if (s.label) { const l = h('div', 'sans-x', { fontSize: (c.portrait ? 5 : 4.4) * u + 'px', maxWidth: '92%' }); box.appendChild(l); c.text(l, s.label, { at: cStart + .4, stagger: .05 }); }
     if (s.sub) { const sb = h('div', 'body', { fontSize: 2.8 * u + 'px', opacity: .75, maxWidth: '80%' }, esc(s.sub)); box.appendChild(sb); c.item(sb, { at: cStart + cDur, fx: 'rise' }); }
     c.add(box);
-    c.postLayout(() => fitText(num, c.safe.w, c.safe.h * .55));
+    c.postLayout(() => { num.textContent = (s.prefix || '') + fmtNum(to, dec, s.separator !== false) + (s.suffix || ''); num.style.display = 'block'; fitText(num, c.safe.w * .96, c.safe.h * .55); num.style.display = 'inline-block'; });
   };
 
   // ---- BAR CHART (horizontal, animated, counting)
@@ -1123,6 +1158,7 @@
       if (s.handle) { const hn = h('div', 'tracked', { fontSize: u * 1.9 + 'px', opacity: .7 }, esc(s.handle)); box.appendChild(hn); c.item(hn, { at: r.end + .5, fx: 'fade' }); }
       c.add(box);
       flareSweep(c, .5, 2.2).y = c.H * .5;
+      if (c.vox && !c.archive && s.stickers === undefined) [['vx-star', 16, 24, 9], ['vx-heart', 84, 30, 9], ['vx-fire', 18, 70, 10], ['vx-laugh', 82, 68, 11]].forEach(([t, x, y, sz], i) => addSticker(c, { type: t, x, y: c.portrait ? Math.min(y, 70) : y, size: sz, at: .7 + i * .18 }));
       c.postLayout(() => fitText(hd, c.safe.w, c.safe.h * .45));
       return;
     }
@@ -1181,6 +1217,90 @@
     return st;
   }
   const yOf = (c, el, box, f) => c.safe.t + (box ? el.offsetTop : 0) + el.offsetHeight * (f == null ? .55 : f);
+
+  // ---- STORY: the Vox-edit documentary shot — archival photo or cut-out on paper, with props
+  //      frame: full | print | cutout | tv | clipboard ; extras: year, name, tag, text (+spot), magnifier
+  SC.story = (s, c) => {
+    const u = c.u, frame = s.frame || (s.media ? 'print' : 'none'), src = s.media || s.image || s.video;
+    const P = c.portrait;
+    let mediaBox = null, hold = null;
+    if (src && frame === 'full') { hold = fullMedia(c, src, { look: s.look }); const vg = h('div', 'fill', { background: 'radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 35%, rgba(0,0,0,.65) 100%)' }); c.add(vg, 'bg'); mediaBox = hold; }
+    else if (src && frame === 'cutout') {
+      const a = G.assets[src]; const ch = c.H * (s.size || (P ? .62 : .82)) / 100 * 100;
+      const cw = ch * (s.aspect || .8); const el = h('div', 'abs', { left: `calc(${s.x != null ? s.x : 50}% - ${cw / 2}px)`, bottom: (s.y != null ? s.y : 0) + '%', height: ch + 'px', width: cw + 'px' });
+      if (a && a.type === 'image') { const im = h('img', 'look-' + (s.look || c.dl), { width: '100%', height: '100%', objectFit: 'contain', objectPosition: 'bottom', filter: (s.look === 'color' ? '' : 'grayscale(1) contrast(1.2) brightness(1.02) ') + `drop-shadow(0 ${u * 1.2}px ${u * 2.4}px rgba(0,0,0,.45))` }); im.src = a.url; el.appendChild(im); }
+      else el.appendChild(Object.assign(c.media(src, { label: s.mediaLabel }), { style: 'position:absolute;inset:0' }));
+      c.add(el, 'mid'); c.item(el, { at: .05, fx: s.fx || 'riseBig', dur: .7, keep: true }); c.sfx('paper', .05, .5); mediaBox = el;
+    } else if (src && (frame === 'print' || frame === 'polaroid')) {
+      const fw = P ? c.W * .78 : Math.min(c.W * .5, c.H * .95), fh = fw * (s.aspect ? 1 / s.aspect : (P ? 1.15 : .7));
+      const fr = h('div', 'abs', { width: fw + 'px', height: fh + 'px', left: (c.W - fw) / 2 + (s.x ? (s.x - 50) / 100 * c.W : 0) + 'px', top: (P ? c.H * .2 : (c.H - fh) / 2) + 'px', background: '#F4EFE4', padding: u * (frame === 'polaroid' ? 1.4 : .9) + 'px', paddingBottom: u * (frame === 'polaroid' ? 7 : .9) + 'px', boxShadow: `0 ${u * 1.4}px ${u * 3.4}px rgba(0,0,0,.4)` });
+      const lk = h('div', 'img look-' + (s.look || c.dl), { width: '100%', height: '100%', position: 'relative', overflow: 'hidden' });
+      const m = c.media(src, { label: s.mediaLabel }); Object.assign(m.style, { position: 'absolute', inset: 0 }); lk.appendChild(m); fr.appendChild(lk);
+      [[-4, 8, -28], [96, 6, 32]].forEach(([l, t2, r]) => fr.appendChild(h('div', 'tape', { left: l + '%', top: -u * 1.2 + 'px', transform: `rotate(${r}deg)`, width: u * 8 + 'px', display: 'block' })));
+      c.add(fr, 'mid'); c.item(fr, { at: .05, fx: s.fx || 'drop', rot: s.rot != null ? s.rot : -2, dur: .7, keep: true }); c.sfx('thud', .3, .5); c.onUpdate(lt => updateMedia(m, lt, c.dur)); mediaBox = fr;
+    } else if (frame === 'tv') {
+      const tw = P ? c.W * .86 : Math.min(c.W * .56, c.H * 1.0), th2 = tw * .78;
+      const tv = h('div', 'abs', { width: tw + 'px', height: th2 + 'px', left: (c.W - tw) / 2 + 'px', top: (P ? c.H * .24 : (c.H - th2) / 2) + 'px', borderRadius: u * 2.4 + 'px', background: 'linear-gradient(160deg, #6B4A2E, #3B2716 60%, #2A1B0F)', boxShadow: `0 ${u * 2}px ${u * 5}px rgba(0,0,0,.55), inset 0 ${u * .4}px ${u * .6}px rgba(255,220,170,.25)`, padding: u * 2.4 + 'px', paddingRight: tw * .24 + 'px' });
+      const scr = h('div', null, { position: 'relative', width: '100%', height: '100%', borderRadius: u * 3.5 + 'px', overflow: 'hidden', background: '#111', boxShadow: `inset 0 0 ${u * 3}px rgba(0,0,0,.9)` });
+      if (src) { const lk = h('div', 'img look-' + (s.look || c.dl), { position: 'absolute', inset: 0 }); const m = c.media(src, { label: s.mediaLabel }); Object.assign(m.style, { position: 'absolute', inset: 0 }); lk.appendChild(m); scr.appendChild(lk); c.onUpdate(lt => updateMedia(m, lt, c.dur)); }
+      const scan = h('div', 'fill', { backgroundImage: `repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 2px, transparent 2px 4px)`, mixBlendMode: 'multiply' }); scr.appendChild(scan);
+      const glare = h('div', 'fill', { background: 'radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.22), transparent 55%)' }); scr.appendChild(glare);
+      tv.appendChild(scr);
+      const panel = h('div', 'abs', { right: tw * .04 + 'px', top: '12%', width: tw * .15 + 'px', bottom: '12%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: u * 2 + 'px' });
+      for (let i = 0; i < 2; i++) panel.appendChild(h('div', null, { width: tw * .1 + 'px', height: tw * .1 + 'px', borderRadius: '50%', background: 'radial-gradient(circle at 35% 30%, #E8DCC8, #8E7F6A 60%, #4A3F31)', boxShadow: '0 3px 6px rgba(0,0,0,.5)' }));
+      panel.appendChild(h('div', null, { flex: 1, width: '80%', backgroundImage: 'repeating-linear-gradient(0deg, #1C130B 0 3px, #4A3420 3px 7px)', borderRadius: u * .6 + 'px' }));
+      tv.appendChild(panel);
+      c.add(tv, 'mid'); c.item(tv, { at: .05, fx: s.fx || 'riseBig', dur: .7, keep: true }); c.sfx('thud', .3, .5);
+      c.onUpdate(lt => { scr.style.filter = `brightness(${1 + .06 * Math.sin(lt * 37)}) contrast(1.1)`; scan.style.backgroundPosition = `0 ${lt * 40}px`; }); mediaBox = tv;
+    } else if (frame === 'clipboard') {
+      const bw = P ? c.W * .74 : Math.min(c.W * .4, c.H * .7), bh = bw * 1.35;
+      const bd = h('div', 'abs', { width: bw + 'px', height: bh + 'px', left: (c.W - bw) / 2 + 'px', top: (P ? c.H * .16 : (c.H - bh) / 2 + u * 2) + 'px', borderRadius: u * 1.4 + 'px', background: 'linear-gradient(160deg, #B8865A, #8C5E36)', boxShadow: `0 ${u * 2}px ${u * 4}px rgba(0,0,0,.45)`, padding: `${bw * .14}px ${bw * .07}px ${bw * .07}px` });
+      const clip = h('div', 'abs', { left: '50%', top: -bw * .03 + 'px', width: bw * .36 + 'px', height: bw * .14 + 'px', transform: 'translateX(-50%)', borderRadius: u + 'px', background: 'linear-gradient(180deg, #E5E7EB, #9CA3AF 60%, #6B7280)', boxShadow: '0 3px 6px rgba(0,0,0,.4)', zIndex: 3 });
+      const sheet = h('div', null, { position: 'relative', width: '100%', height: '100%', background: '#F6F1E6', backgroundImage: `url(${paperTexture()})`, boxShadow: '0 2px 4px rgba(0,0,0,.2)', padding: u * 1.6 + 'px', display: 'flex', flexDirection: 'column', gap: u + 'px', color: '#1d1a15' });
+      if (src) { const ph = h('div', 'img look-' + (s.look || c.dl), { position: 'relative', width: '100%', height: '55%', overflow: 'hidden' }); const m = c.media(src, { label: s.mediaLabel }); Object.assign(m.style, { position: 'absolute', inset: 0 }); ph.appendChild(m); sheet.appendChild(ph); c.onUpdate(lt => updateMedia(m, lt, c.dur)); }
+      if (s.note) { const nt = h('div', 'mono', { fontSize: u * (P ? 2.4 : 1.9) + 'px', lineHeight: 1.45 }); sheet.appendChild(nt); nt.textContent = s.note; c.item(nt, { at: .6, fx: 'typeOn', dur: Math.min(2.2, s.note.length * .03), keep: true }); for (let i = 0; i < s.note.length; i += 3) c.sfx('key', .6 + Math.min(2.2, s.note.length * .03) * i / s.note.length, .2); }
+      for (let i = 0; i < 5; i++) sheet.appendChild(h('div', null, { height: u * .9 + 'px', background: '#1d1a1522', width: (60 + (i * 29) % 35) + '%' }));
+      bd.appendChild(sheet); bd.appendChild(clip);
+      c.add(bd, 'mid'); c.item(bd, { at: .05, fx: s.fx || 'slideU', rot: s.rot != null ? s.rot : -3, dur: .7, keep: true }); c.sfx('paper', .1, .6); mediaBox = bd;
+    }
+    // magnifying glass sweeping across the shot
+    if (s.magnifier && src) {
+      const R = (P ? c.W * .3 : c.H * .3), lens = h('div', 'abs', { width: R * 2 + 'px', height: R * 2 + 'px', borderRadius: '50%', overflow: 'hidden', border: `${u * 1.1}px solid #2B2B2B`, boxShadow: `0 0 0 ${u * .3}px #8B8B8B, 0 ${u * 1.6}px ${u * 3}px rgba(0,0,0,.5)`, zIndex: 25 });
+      const zoomImg = h('div', 'look-' + (s.look || c.dl), { position: 'absolute', width: c.W * 2 + 'px', height: c.H * 2 + 'px' });
+      const a = G.assets[src]; if (a && (a.type === 'image' || a.type === 'video')) { const im = h('img', null, { width: '100%', height: '100%', objectFit: 'cover' }); im.src = a.type === 'image' ? a.url : a.pattern.replace('%05d', '00001'); zoomImg.appendChild(im); }
+      lens.appendChild(zoomImg); lens.appendChild(h('div', 'fill', { background: 'radial-gradient(circle at 30% 25%, rgba(255,255,255,.35), transparent 45%)' }));
+      const handle = h('div', 'abs', { width: R * .28 + 'px', height: R * 1.1 + 'px', borderRadius: u + 'px', background: 'linear-gradient(90deg, #1E1E1E, #4A4A4A, #1E1E1E)', zIndex: 24, transformOrigin: '50% 0' });
+      c.ovl.appendChild(handle); c.ovl.appendChild(lens);
+      const path0 = s.magnifier.path || (P ? [[.3, .45], [.66, .55], [.45, .62]] : [[.3, .6], [.62, .66], [.45, .64]]);
+      c.onUpdate(lt => { const p = E.inOut(prog(lt, .4, Math.max(1, c.dur - .8))); const seg = p * (path0.length - 1), i0 = Math.min(path0.length - 2, Math.floor(seg)), f = seg - i0; const x = lerp(path0[i0][0], path0[i0 + 1][0], E.inOut(f)) * c.W, y = lerp(path0[i0][1], path0[i0 + 1][1], E.inOut(f)) * c.H; lens.style.left = x - R + 'px'; lens.style.top = y - R + 'px'; zoomImg.style.left = -(x * 2 - R) + 'px'; zoomImg.style.top = -(y * 2 - R) + 'px'; handle.style.left = x + R * .55 + 'px'; handle.style.top = y + R * .55 + 'px'; handle.style.transform = 'rotate(-45deg)'; const k = prog(lt, .2, .5); lens.style.opacity = handle.style.opacity = k; });
+      c.sfx('whoosh-soft', .4, .3);
+    }
+    // [ in 1985 ] bracketed year
+    if (s.year) {
+      const yb = h('div', 'abs', { left: '50%', top: (P ? 13 : 16) + '%', display: 'flex', alignItems: 'center', gap: u * 1 + 'px', zIndex: 26 });
+      const txt = h('div', null, { fontFamily: 'Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 700, fontSize: u * (P ? 7 : 6) + 'px', color: frame === 'full' ? '#F4EFE4' : 'var(--ink)', padding: `0 ${u * 1.4}px`, position: 'relative' }, esc(s.year));
+      yb.appendChild(txt); c.ovl.appendChild(yb);
+      c.postLayout(() => { const w = txt.offsetWidth, hh = txt.offsetHeight; const svgEl = sv('svg', { width: w, height: hh, style: 'position:absolute;left:0;top:0;overflow:visible' }); const col = 'var(--accent)'; const sw = Math.max(2, u * .35), bw = u * 1.2; const L = sv('path', { d: `M${bw} 0 L0 0 L0 ${hh} L${bw} ${hh}`, fill: 'none', stroke: col, 'stroke-width': sw }, svgEl); const Rp = sv('path', { d: `M${w - bw} 0 L${w} 0 L${w} ${hh} L${w - bw} ${hh}`, fill: 'none', stroke: col, 'stroke-width': sw }, svgEl); txt.appendChild(svgEl); c.onUpdate(lt => { drawPath(L, prog(lt, .2, .5)); drawPath(Rp, prog(lt, .2, .5)); }); });
+      c.item(yb, { at: .25, fx: 'blurIn', dur: .7, keep: true, center: true }); c.sfx('scribble', .2, .4);
+    }
+    // italic serif name label (on the photo)
+    if (s.name) { const nm = h('div', 'abs', { left: '50%', top: (P ? 54 : 72) + '%', fontFamily: 'Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 700, fontSize: u * (P ? 6 : 5) + 'px', color: '#F4EFE4', textShadow: '0 2px 14px rgba(0,0,0,.7)', whiteSpace: 'nowrap', zIndex: 26 }, esc(s.name)); c.ovl.appendChild(nm); c.item(nm, { at: .6, fx: 'blurIn', dur: .8, keep: true, center: true }); }
+    // red tag box with yellow serif words
+    if (s.tag) { const tg = h('div', 'abs', { left: '50%', top: (P ? 64 : 73) + '%', background: 'var(--accent)', color: 'var(--hl)', fontFamily: 'Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 700, fontSize: u * (P ? 4.6 : 3.8) + 'px', padding: `${u * .3}px ${u * 1.4}px`, whiteSpace: 'nowrap', boxShadow: '0 4px 12px rgba(0,0,0,.35)', zIndex: 27 }, esc(s.tag)); c.ovl.appendChild(tg); c.item(tg, { at: s.tagAt || 1.0, fx: 'stamp', dur: .45, keep: true, center: true }); c.sfx('hit', s.tagAt || 1.0, .45); }
+    // big words, optionally on a colour spot ("nothing unusual.")
+    if (s.text) {
+      const box = c.box(s.magnifier ? { display: 'flex', alignItems: 'flex-start', justifyContent: 'center', textAlign: 'center', paddingTop: c.H * .04 + 'px' } : { display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' });
+      const wrapT = h('div', null, { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' });
+      const spotOn = s.spot !== false && (s.spot || !src), sz = (P ? c.W * .8 : c.H * .7);
+      if (spotOn) { const sp = h('div', 'abs', { width: sz + 'px', height: sz + 'px', left: '50%', top: '50%', marginLeft: -sz / 2 + 'px', marginTop: -sz / 2 + 'px', borderRadius: '50%', background: typeof s.spot === 'string' ? s.spot : '#8E5B3B', opacity: .92, boxShadow: 'inset 0 0 40px rgba(0,0,0,.25)' }); wrapT.appendChild(sp); c.item(sp, { at: .05, fx: 'zoom', dur: .6, keep: true }); }
+      const tx = h('div', 'headline', { position: 'relative', fontSize: u * (s.size || (P ? 10 : 8.5)) + 'px', color: s.spot || !src ? '#141210' : '#fff', textShadow: s.spot || !src ? 'none' : '0 3px 18px rgba(0,0,0,.6)', maxWidth: (spotOn ? sz * .78 : P ? c.W * .82 : c.W * .7) + 'px' });
+      wrapT.appendChild(tx); box.appendChild(wrapT); c.add(box, 'fg');
+      c.text(tx, s.text, { at: .3, stagger: .1, fx: 'riseBig' });
+      if (s.magnifier && !s.size) tx.style.fontSize = u * (P ? 8 : 6) + 'px';
+      c.postLayout(() => fitText(tx, spotOn ? sz * .78 : P ? c.W * .82 : c.W * .7, spotOn ? sz * .6 : c.H * .3));
+    }
+    if (s.source) addSource(c, s.source, frame === 'full' ? '#fff' : null);
+  };
 
   // ---- HOOK: the first 1–3 seconds of a short — giant punchy words over a vivid shot
   SC.hook = (s, c) => {
@@ -1320,8 +1440,8 @@
   /* =====================================================================
      DEFAULT DURATIONS
      ===================================================================== */
-  const DEF_DUR = { title: 4, kinetic: 4, bignumber: 4.5, bar: 6, line: 6.5, donut: 5, icongrid: 5.5, map: 6.5, photo: 5, collage: 5.5, document: 6, quote: 5.5, timeline: 7, compare: 6, list: 6, chapter: 2.8, screen: 5.5, broll: 4.5, explain: 6, flow: 6, outro: 4, hook: 2.4, cinematic: 5.5, establishing: 5, opening: 5.5, narrative: 6, depth: 5.5 };
-  const SCENE_CAM = { hook: 'punch-in', cinematic: 'dolly-in', establishing: 'truck-right', opening: 'slow-push', narrative: 'steadicam', depth: 'parallax' };
+  const DEF_DUR = { title: 4, kinetic: 4, bignumber: 4.5, bar: 6, line: 6.5, donut: 5, icongrid: 5.5, map: 6.5, photo: 5, collage: 5.5, document: 6, quote: 5.5, timeline: 7, compare: 6, list: 6, chapter: 2.8, screen: 5.5, broll: 4.5, explain: 6, flow: 6, outro: 4, story: 4.5, hook: 2.4, cinematic: 5.5, establishing: 5, opening: 5.5, narrative: 6, depth: 5.5 };
+  const SCENE_CAM = { story: 'push-in-slow', hook: 'punch-in', cinematic: 'dolly-in', establishing: 'truck-right', opening: 'slow-push', narrative: 'steadicam', depth: 'parallax' };
   const words = s => String(s || '').replace(/[=*_\[\]{}~]/g, '').split(/\s+/).filter(Boolean).length;
 
   /* =====================================================================
@@ -1332,10 +1452,12 @@
     G = { W, H, u, fps: opt.fps || 30, sb, assets: opt.assets || {}, themeName: (sb.meta && sb.meta.theme) || 'noir', captions: (sb.meta && sb.meta.captions) !== false && (sb.meta && sb.meta.captions) !== 'none', capStyle: null, flash: 0, leakBoost: 0, burn: 0 };
     const M = sb.meta || {};
     G.cine = !!(THEMES[G.themeName] || {}).cine; G.viral = !!(THEMES[G.themeName] || {}).viral;
+    G.archive = !!(THEMES[G.themeName] || {}).archive;
+    G.motion = M.motion || (G.viral || G.archive ? 'vox' : G.cine ? 'cinematic' : 'vox');
     G.bpm = M.bpm || null; G.beat = G.bpm ? 60 / G.bpm : 0; G.beatPulse = G.bpm && (M.beatPulse != null ? M.beatPulse : (G.viral ? .022 : 0));
-    G.capStyle = typeof M.captions === 'string' && M.captions !== 'none' ? M.captions : G.viral ? 'viral' : (G.cine ? (H > W ? 'cinema' : 'subtitle') : (H > W ? 'karaoke' : 'boxed'));
+    G.capStyle = typeof M.captions === 'string' && M.captions !== 'none' ? M.captions : G.archive ? 'voxedit' : G.viral ? 'viral' : (G.cine ? (H > W ? 'cinema' : 'subtitle') : (H > W ? 'karaoke' : 'boxed'));
     const lbRatio = typeof M.letterbox === 'number' ? M.letterbox : 2.39;
-    G.lbH = W > H && !(G.viral && M.letterbox == null) ? Math.max(0, Math.round((H - W / lbRatio) / 2)) : 0;
+    G.lbH = W > H && !((G.viral || G.archive) && M.letterbox == null) ? Math.max(0, Math.round((H - W / lbRatio) / 2)) : 0;
     G.lbGlobal = M.letterbox == null ? null : !!M.letterbox;
     const stage = document.getElementById('stage');
     stage.innerHTML = ''; Object.assign(stage.style, { width: W + 'px', height: H + 'px' });
@@ -1349,7 +1471,7 @@
     // scenes
     const scenes = []; let t = 0; const events = [];
     const list = (sb.scenes || []);
-    const autoTrans = G.viral ? ['whip-left', 'zoom-through', 'cross-zoom', 'whip-up', 'slit', 'light-leak', 'whip-right', 'flash', 'push', 'glitch'] : G.cine ? ['cross-zoom', 'dissolve', 'luma', 'light-leak', 'whip-left', 'lens-blur', 'dip-black', 'slit', 'cross-zoom', 'film-burn'] : ['whip-left', 'paper-slide', 'zoom-through', 'whip-up', 'iris', 'tear', 'push', 'stack', 'whip-right', 'wipe-diagonal'];
+    const autoTrans = G.archive ? ['paper-slide', 'whip-left', 'zoom-through', 'tear', 'push', 'whip-up', 'stack', 'cross-zoom', 'whip-right', 'tear'] : G.viral ? ['whip-left', 'zoom-through', 'cross-zoom', 'whip-up', 'slit', 'light-leak', 'whip-right', 'flash', 'push', 'glitch'] : G.cine ? ['cross-zoom', 'dissolve', 'luma', 'light-leak', 'whip-left', 'lens-blur', 'dip-black', 'slit', 'cross-zoom', 'film-burn'] : ['whip-left', 'paper-slide', 'zoom-through', 'whip-up', 'iris', 'tear', 'push', 'stack', 'whip-right', 'wipe-diagonal'];
     const transSfx = (n, cine) => { const CT = { dissolve: 'air', luma: 'air', 'dip-black': 'swell', 'dip-white': 'swell', 'light-leak': 'shimmer', 'film-burn': 'shimmer', 'lens-blur': 'whoosh-deep', 'cross-zoom': 'whoosh-deep', slit: 'whoosh-deep' }; if (CT[n]) return CT[n]; const base = n.startsWith('whip') || n === 'push' ? 'whoosh' : n === 'flash' || n === 'glitch' ? 'hit' : n === 'paper-slide' || n === 'tear' || n === 'stack' ? 'paper' : 'whoosh-soft'; return cine && CINE_SFX[base] ? CINE_SFX[base] : base; };
     list.forEach((s0, i) => {
       const s = Object.assign({}, s0.data || {}, s0);
@@ -1359,7 +1481,7 @@
       s.duration = s.duration || Math.max(DEF_DUR[s.type] || 4.5, nw / 2.6 + 1.0);
       const c = makeCtx(s, i);
       c.wrap.appendChild(c.ovl);
-      c.layers.bg.appendChild(buildBg(s.bg || (sb.meta && sb.meta.bg) || 'paper', c));
+      c.layers.bg.appendChild(buildBg(s.bg || (sb.meta && sb.meta.bg) || (c.th.archive ? 'paper-grid' : c.th.cine ? 'atmos' : 'paper'), c));
       SC[s.type](s, c);
       (s.stickers || []).forEach(st => addSticker(c, st));
       if (s.lowerThird && !['photo', 'broll'].includes(s.type)) addLowerThird(c, s.lowerThird);
@@ -1374,7 +1496,7 @@
       c.events.forEach(e => events.push({ t: t + e.at, name: e.name, vol: e.vol }));
       // beat sync: make the next scene start exactly on a beat of the generated music
       if (G.beat && next && M.beatSync !== false) { const end = t + s.duration - td; const snapped = Math.ceil(end / G.beat - .001) * G.beat; s.duration += snapped - end; sc.dur = c.dur = s.duration; sc.cam = cameraFn(s.camera, s.duration); }
-      if (trName !== 'cut' && next) { let tn = transSfx(trName, c.cine); if (c.viral && VIRAL_SFX[tn]) tn = VIRAL_SFX[tn]; events.push({ t: t + s.duration - td * .6, name: tn, vol: .8 }); }
+      if (trName !== 'cut' && next) { let tn = transSfx(trName, c.cine && !c.archive); if (c.viral && VIRAL_SFX[tn]) tn = VIRAL_SFX[tn]; events.push({ t: t + s.duration - td * .6, name: tn, vol: .8 }); }
       if (s.camera === 'crash-zoom' || s.camera === 'shake-hit') events.push({ t: t + .05, name: c.cine ? 'braam' : 'boom', vol: .7 });
       (s.sfx || []).forEach(e => events.push({ t: t + (e.at || 0), name: e.type || e.name, vol: e.vol || .8 }));
       t += s.duration - (next ? td : 0);
@@ -1386,28 +1508,30 @@
     G.grainEl = grain; G.grainOn = (sb.meta && sb.meta.grain) !== false;
     if ((sb.meta && sb.meta.vignette) !== false) { const vg = h('div'); vg.id = 'vignette'; if (G.cine) vg.style.background = 'radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.5) 100%)'; stage.appendChild(vg); }
     // cinematic overlays: grade, light leaks, film burn, letterbox bars
-    const GRADES = { vivid: 'linear-gradient(170deg, rgba(120,60,255,.16) 0%, rgba(0,0,0,0) 50%, rgba(255,60,140,.14) 100%)', 'teal-orange': 'linear-gradient(170deg, rgba(0,95,115,.26) 0%, rgba(0,0,0,0) 50%, rgba(255,140,60,.18) 100%)', warm: 'linear-gradient(170deg, rgba(255,190,120,.16), rgba(255,120,60,.10))', cool: 'linear-gradient(170deg, rgba(70,120,220,.18), rgba(20,40,90,.10))', noir: 'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18))', bleach: 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.1))' };
+    const GRADES = { archive: 'radial-gradient(ellipse at 50% 45%, rgba(255,235,200,.10) 0%, rgba(60,40,20,.28) 100%)', vivid: 'linear-gradient(170deg, rgba(120,60,255,.16) 0%, rgba(0,0,0,0) 50%, rgba(255,60,140,.14) 100%)', 'teal-orange': 'linear-gradient(170deg, rgba(0,95,115,.26) 0%, rgba(0,0,0,0) 50%, rgba(255,140,60,.18) 100%)', warm: 'linear-gradient(170deg, rgba(255,190,120,.16), rgba(255,120,60,.10))', cool: 'linear-gradient(170deg, rgba(70,120,220,.18), rgba(20,40,90,.10))', noir: 'linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18))', bleach: 'linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.1))' };
     G.gradeName = M.grade != null ? M.grade : (THEMES[G.themeName] || {}).grade;
-    if (G.gradeName && G.gradeName !== 'none' && GRADES[G.gradeName]) { const gr = h('div', null, { background: GRADES[G.gradeName], mixBlendMode: 'soft-light' }); gr.id = 'grade'; stage.appendChild(gr); stage.style.filter = G.gradeName === 'vivid' ? 'saturate(1.12) contrast(1.05)' : G.gradeName === 'noir' ? 'grayscale(.15) contrast(1.06)' : 'contrast(1.04) saturate(1.04)'; }
+    if (G.gradeName && G.gradeName !== 'none' && GRADES[G.gradeName]) { const gr = h('div', null, { background: GRADES[G.gradeName], mixBlendMode: 'soft-light' }); gr.id = 'grade'; stage.appendChild(gr); stage.style.filter = G.gradeName === 'archive' ? 'sepia(.16) contrast(1.06) saturate(.86)' : G.gradeName === 'vivid' ? 'saturate(1.12) contrast(1.05)' : G.gradeName === 'noir' ? 'grayscale(.15) contrast(1.06)' : 'contrast(1.04) saturate(1.04)'; }
     G.leakBase = M.lightLeaks === false ? 0 : (typeof M.lightLeaks === 'number' ? M.lightLeaks : (G.cine ? .14 : 0));
     { const lk = h('div'); lk.id = 'leak'; stage.appendChild(lk); G.leakEl = lk; const bn = h('div'); bn.id = 'burn'; stage.appendChild(bn); G.burnEl = bn; }
     G.lbEls = [h('div', 'lbar', { top: 0, height: 0 }), h('div', 'lbar', { bottom: 0, height: 0 })]; G.lbEls.forEach(e => stage.appendChild(e));
     const fl = h('div'); fl.id = 'flash'; stage.appendChild(fl); G.flashEl = fl;
     const cap = h('div', 'cap-' + G.capStyle); cap.id = 'captions'; G.capBase = H > W ? H * .1 : H * .055; cap.style.bottom = G.capBase + 'px';
     if (G.capStyle === 'viral') { G.capBase = H > W ? H * .24 : H * .12; cap.style.bottom = G.capBase + 'px'; }
-    cap.style.fontSize = (G.capStyle === 'viral' ? (H > W ? u * 8.2 : u * 5.6) : G.capStyle === 'subtitle' ? (H > W ? u * 4.2 : u * 3.1) : G.capStyle === 'cinema' ? (H > W ? u * 5.4 : u * 3.8) : (H > W ? u * 6 : u * 4.2)) + 'px'; if (G.capStyle === 'subtitle') cap.style.setProperty('--capw', '72%'); stage.appendChild(cap); G.capEl = cap;
+    if (G.capStyle === 'voxedit') { G.capBase = H > W ? H * .3 : H * .16; cap.style.bottom = G.capBase + 'px'; }
+    cap.style.fontSize = (G.capStyle === 'voxedit' ? (H > W ? u * 7.2 : u * 5.4) : G.capStyle === 'viral' ? (H > W ? u * 8.2 : u * 5.6) : G.capStyle === 'subtitle' ? (H > W ? u * 4.2 : u * 3.1) : G.capStyle === 'cinema' ? (H > W ? u * 5.4 : u * 3.8) : (H > W ? u * 6 : u * 4.2)) + 'px'; if (G.capStyle === 'subtitle') cap.style.setProperty('--capw', '72%'); stage.appendChild(cap); G.capEl = cap;
     if (sb.meta && sb.meta.handle) { const wm = h('div', G.cine ? 'tracked' : null, { top: (G.cine && G.lbH && W > H ? u * 1.8 : u * 3) + 'px', right: u * 3.5 + 'px', fontFamily: G.cine ? 'Manrope' : '', fontSize: (G.cine ? u * 1.5 : u * 2.2) + 'px', color: G.cine ? 'rgba(255,255,255,.7)' : 'var(--ink)', mixBlendMode: G.cine ? 'difference' : '' }, esc(sb.meta.handle)); wm.id = 'wm'; stage.appendChild(wm); }
     if (M.progress || (G.viral && M.progress !== false)) { const pr = h('div'); pr.id = 'progress'; if (G.viral) { const pal = THEMES[G.themeName].pal; Object.assign(pr.style, { top: 0, bottom: 'auto', height: u * .55 + 'px', background: `linear-gradient(90deg, ${pal.join(',')})`, boxShadow: `0 0 ${u}px ${pal[0]}` }); } stage.appendChild(pr); G.progEl = pr; }
     // captions model
     G.capChunks = [];
     if (G.captions) scenes.forEach(sc => {
       if (sc.s.captions === false || (sc.s.type === 'hook' && sc.s.captions == null)) return;
-      const txt = String(sc.s.narration || '').replace(/==|\*\*|__|\[\[|\]\]|~~|\{\{|\}\}/g, '');
-      const ws = txt.split(/\s+/).filter(Boolean); if (!ws.length) return;
+      const raw = String(sc.s.narration || ''); let inBox = false; const boxed = [];
+      const ws = raw.split(/\s+/).filter(Boolean).map(w => { const open = w.startsWith('==') || w.startsWith('**'); if (open) inBox = true; const b = inBox; if (/(==|\*\*)[^\w]*$/.test(w)) inBox = false; boxed.push(b); return w.replace(/==|\*\*|__|\[\[|\]\]|~~|\{\{|\}\}/g, ''); }).filter(Boolean);
+      if (!ws.length) return;
       const vs = sc.start + (sc.s.voStart != null ? sc.s.voStart : .15), ve = sc.start + (sc.s.voDur ? sc.s.voStart + sc.s.voDur : sc.dur - .25);
       const weights = ws.map(w => w.length + 2), tot = weights.reduce((a, b) => a + b, 0);
-      let acc = vs; const timed = ws.map((w, i) => { const d = (ve - vs) * weights[i] / tot; const o = { w, t0: acc, t1: acc + d }; acc += d; return o; });
-      const per = G.capStyle === 'viral' ? (H > W ? 3 : 5) : G.capStyle === 'subtitle' ? (H > W ? 7 : 11) : G.capStyle === 'cinema' ? (H > W ? 5 : 7) : (H > W ? 4 : 7);
+      let acc = vs; const timed = ws.map((w, i) => { const d = (ve - vs) * weights[i] / tot; const o = { w, t0: acc, t1: acc + d, box: boxed[i] }; acc += d; return o; });
+      const per = G.capStyle === 'voxedit' ? 3 : G.capStyle === 'viral' ? (H > W ? 3 : 5) : G.capStyle === 'subtitle' ? (H > W ? 7 : 11) : G.capStyle === 'cinema' ? (H > W ? 5 : 7) : (H > W ? 4 : 7);
       for (let i = 0; i < timed.length; i += per) { const chunk = timed.slice(i, i + per); G.capChunks.push({ t0: chunk[0].t0, t1: chunk[chunk.length - 1].t1, words: chunk }); }
     });
     return { duration: G.duration, events: G.events, scenes: scenes.map(sc => ({ start: sc.start, dur: sc.dur, type: sc.s.type, voiceover: sc.s.voiceover || null, voStart: sc.s.voStart != null ? sc.s.voStart : .15 })) };
@@ -1485,9 +1609,12 @@
     if (G.progEl) G.progEl.style.width = (t / G.duration * 100) + '%';
     if (G.captions) {
       const ch = G.capChunks.find(c => t >= c.t0 - .05 && t <= c.t1 + .25);
-      if (ch !== G._lastChunk) { G._lastChunk = ch; G.capEl.innerHTML = ch ? `<div class="cap">${ch.words.map((w, i) => `<span class="cw" data-i="${i}">${esc(w.w)}</span>`).join(' ')}</div>` : ''; }
+      if (ch !== G._lastChunk) { G._lastChunk = ch; const ci = G.capChunks.indexOf(ch); G.capEl.innerHTML = ch ? `<div class="cap${G.capStyle === 'voxedit' && ci % 3 === 2 ? ' alt' : ''}">${ch.words.map((w, i) => `<span class="cw${w.box ? ' box' : ''}" data-i="${i}">${esc(w.w)}</span>`).join(' ')}</div>` : ''; }
       if (ch) { const spans = G.capEl.querySelectorAll('.cw'); ch.words.forEach((w, i) => { if (!spans[i]) return; spans[i].classList.toggle('on', t >= w.t0 && t < w.t1); spans[i].classList.toggle('done', t >= w.t1); }); const capDiv = G.capEl.firstChild;
-        if (G.capStyle === 'viral') {
+        if (G.capStyle === 'voxedit') {
+          ch.words.forEach((w, i) => { const sp = spans[i]; if (!sp) return; const k = prog(t, w.t0 - .04, .22); sp.style.opacity = k > 0 ? 1 : 0; sp.style.transform = `translateY(${(1 - E.outExpo(k)) * G.u * 1.6}px) scale(${lerp(1.18, 1, E.outExpo(k))})`; sp.style.filter = k < 1 ? `blur(${(1 - k) * G.u * .25}px)` : ''; });
+          capDiv.style.opacity = 1; capDiv.style.transform = '';
+        } else if (G.capStyle === 'viral') {
           const pal = (THEMES[G.themeName] || {}).pal || ['#FFD21F']; const ci = G.capChunks.indexOf(ch); capDiv.style.setProperty('--capc', pal[ci % pal.length]);
           ch.words.forEach((w, i) => { const sp = spans[i]; if (!sp) return; const k = prog(t, w.t0 - .03, .16); sp.style.opacity = k > 0 ? 1 : 0; const on = t >= w.t0 && t < w.t1; sp.style.transform = `scale(${lerp(1.45, on ? 1.14 : 1, E.outBack(k))}) rotate(${on ? -2 : 0}deg)`; });
           capDiv.style.opacity = 1; capDiv.style.transform = '';

@@ -27,8 +27,20 @@ for the best stock photos/footage ask the user to set any of `PEXELS_API_KEY`, `
 
 | Mode | When | Themes | Feel |
 |---|---|---|---|
+| **Vox edit (documentary collage)** | "Vox style", "Vox edit", "documentary edit", history / science / "the story of…" reels, explainers that should feel like a mini documentary | `archive` (paper, default for this mode) · `newsroom` (dark desk) | grid-paper world, archival black-and-white photos and cut-outs, props (old TV, clipboard, taped prints, magnifying glass), `[in 1985]` year brackets, italic name labels, red boxes with yellow serif words, colour spots, hand-drawn red underlines/circles, big caption words timed to the voice, tense documentary score |
 | **Viral short** | Reels / Shorts / TikTok, "viral", "engaging", "colourful", growth content, daily news reels, any 9:16 under 60 s unless they ask for calm/cinematic | `neon` (default) · `sunset` · `electric` · `aurora` · `candy` (bright/light) | vivid graded footage, giant word-by-word coloured captions, gradient numbers, punch-in motion, camera pulsing on the kick, cuts on the beat, 140-bpm trap / 118-bpm pop music, energetic voice, top progress bar |
 | **Cinematic story** | documentaries, 16:9 explainers, "film", "cinematic", "premium", calm or serious topics | `noir` · `film` · `midnight` · `ember` · `slate` · `ivory` | letterboxed graded film, serif titles, glass annotations, cinematic score, storyteller voice |
+
+### Vox-edit playbook (`theme: "archive"`)
+Build almost every shot with the `story` scene — it is the collage camera:
+- `frame: "full"` archival photo full-screen (+ `year: "in 1974"`, `name: "Elizabeth Loftus"`), `frame: "print"` a taped photo print,
+  `frame: "cutout"` with `"media": "cutout:<photo>"` (background removed automatically, e.g. a person), `frame: "tv"` footage on an
+  old CRT, `frame: "clipboard"` with a typed `note`, `magnifier: true` to sweep a lens over the shot.
+- `text` + `spot` for big statement words on a colour circle ("nothing **unusual.**"); `tag` for a red box label ("disturbing question").
+- Mark the key word in narration with `==word==` — the caption shows it as a red box with yellow serif; `__word__` in text = red underline,
+  `[[word]]` = red marker circle. Add hand-drawn `circle` / `arrow-curve` stickers in red (`"color": "#C2271E"`) to point at details.
+- Cut every 2–4 s; one idea per shot; mix full photos, props and paper text shots. Real archival / stock photos look best (`search:`),
+  and people work best as `cutout:` images.
 
 ### Viral short playbook (retention first)
 - **Second 0–2: `hook` scene.** 2–5 giant words that open a loop: a bold claim, a number, "You're doing X wrong", "Nobody talks about…".
@@ -53,7 +65,7 @@ for the best stock photos/footage ask the user to set any of `PEXELS_API_KEY`, `
 | Length | reel 30–60 s (6–9 scenes) · film 90–180 s (12–20 scenes) | explicit time wins |
 | Theme | viral shorts → `neon`; cinematic → `noir` | bright/fun/lifestyle → `candy`; motivation/money → `sunset`; tech/AI → `electric` or `neon`; health/nature/calm-but-colourful → `aurora` travel/nature/human → `film`; space/AI/night → `midnight`; energy/war/industry → `ember`; finance/science → `slate`; culture/luxury/essay → `ivory`. Only use classic themes (`paper` etc.) if the user asks for the flat "classic" look |
 | Captions | viral themes → `viral`; cinematic → `cinema` (9:16) / `subtitle` (16:9) | "no captions" → `"none"` |
-| Voice | viral → `hype`; cinematic → `storyteller` (warm US male) | female → `storyteller-female`; British → `documentary` / `documentary-female`; trailer → `trailer`; Indian English → `indian-storyteller`; Hindi/Telugu/Tamil etc. (`node engine/tts.mjs --list`); silent → `none` |
+| Voice | viral → `hype`; cinematic → `storyteller` (warm US male). If `kokoro-onnx` is installed (`pip install kokoro-onnx soundfile`) or the user wants offline / the most natural voice, use the Kokoro studio voices: `studio-female` (best overall), `studio-male`, `studio-hype`, `studio-deep`, `studio-uk-male`, `studio-uk-female`, `studio-hindi-*`, or `kokoro:<voice>` | female → `storyteller-female`; British → `documentary` / `documentary-female`; trailer → `trailer`; Indian English → `indian-storyteller`; Hindi/Telugu/Tamil etc. (`node engine/tts.mjs --list`); silent → `none` |
 | Music | viral → `auto:viral`; cinematic → `auto:cinematic` | tense → `auto:suspense`; uplifting → `auto:hopeful`; big → `auto:epic`; calm → `auto:ambient` |
 | Handle | none | any @handle → `meta.handle` |
 

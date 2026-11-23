@@ -184,3 +184,35 @@ html,body{background:#000;overflow:hidden}
 .cap-viral .cw{display:inline-block;opacity:0;transform-origin:50% 70%}
 .cap-viral .cw.on{color:var(--capc,#FFD21F);text-shadow:0 .05em 0 #000,.05em 0 0 #000,-.05em 0 0 #000,0 -.05em 0 #000,0 0 .4em var(--capc,#FFD21F)}
 .viral .kicker{color:#fff !important}
+
+/* =====================================================================
+   VOX MOTION LAYER — die-cut stickers, marker annotations, polaroids & tape
+   (default on viral themes; meta.motion: "vox" anywhere)
+   ===================================================================== */
+.vox .cutout{filter:drop-shadow(calc(var(--u)*.5) 0 0 #fff) drop-shadow(calc(var(--u)*-.5) 0 0 #fff) drop-shadow(0 calc(var(--u)*.5) 0 #fff) drop-shadow(0 calc(var(--u)*-.5) 0 #fff) drop-shadow(0 calc(var(--u)*1.2) calc(var(--u)*1.6) rgba(0,0,0,.45))}
+.cine .stk .stxt{font-family:Manrope,sans-serif;font-weight:800;text-transform:none;letter-spacing:-.01em}
+.vox .marker,.vox .stk .stxt.marker{font-family:Marker,cursive;font-style:normal;font-weight:400}
+.vox .tape{display:block}
+.vox .photo{padding:calc(var(--u)*.9);background:#fff;border-radius:calc(var(--u)*.3);box-shadow:0 calc(var(--u)*1.6) calc(var(--u)*4) rgba(0,0,0,.5)}
+.vox .photo .img{border-radius:0}
+
+/* =====================================================================
+   ARCHIVE / VOX-EDIT LAYER (archive · newsroom): paper collage documentary
+   ===================================================================== */
+.archive .headline{font-family:Manrope,sans-serif;font-weight:800;letter-spacing:-.04em;line-height:1;text-transform:none}
+.archive .sans-x{font-family:Manrope,sans-serif;font-weight:800;letter-spacing:-.035em}
+.archive .kicker{font-family:Manrope;font-weight:700;letter-spacing:.24em;opacity:.8}
+.archive .serif,.archive .marker{font-family:Serif,Georgia,serif;font-style:italic;font-weight:700}
+.archive .m-hl{background-image:linear-gradient(var(--accent),var(--accent)) !important;background-size:0% 100%;background-position:0 50%;color:var(--hl);font-family:Serif,Georgia,serif;font-style:italic;font-weight:700;padding:0 .14em;text-shadow:none !important}
+.archive .m-ac{color:var(--hl);font-style:normal}
+.archive .tape{display:block}
+.archive .card{background:#F4EFE4;border:none;border-radius:2px;backdrop-filter:none;box-shadow:0 calc(var(--u)*1.2) calc(var(--u)*3) rgba(0,0,0,.35);color:#17140F}
+.archive .photo{padding:calc(var(--u)*.9);background:#F4EFE4;border-radius:0}
+.look-archive img{filter:grayscale(1) contrast(1.28) brightness(1.02) sepia(.12)}
+.look-archive::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(0,0,0,.12) 1px,transparent 1.2px);background-size:3px 3px;mix-blend-mode:multiply;opacity:.55;pointer-events:none}
+.look-archive .ph-cine{filter:grayscale(.85) contrast(1.1)}
+.cap-voxedit .cap{font-family:Manrope,sans-serif;font-weight:800;color:#fff;letter-spacing:-.03em;line-height:1.05;max-width:84%;text-shadow:0 .03em .02em rgba(0,0,0,.9),0 0 .35em rgba(0,0,0,.65),0 .06em .5em rgba(0,0,0,.5)}
+.cap-voxedit .cap.alt{font-family:Serif,Georgia,serif;font-style:italic;font-weight:700;letter-spacing:0}
+.cap-voxedit .cw{display:inline-block;opacity:0;transform-origin:50% 80%}
+.cap-voxedit .cw.on{color:var(--hl)}
+.cap-voxedit .cw.box{background:#C2271E;color:#F2C437;font-family:Serif,Georgia,serif;font-style:italic;padding:0 .18em;text-shadow:none;box-shadow:0 .08em .3em rgba(0,0,0,.35)}

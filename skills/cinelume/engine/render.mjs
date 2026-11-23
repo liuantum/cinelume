@@ -48,9 +48,10 @@ const log = (...a) => console.log('[cinelume]', ...a);
 const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate'];
 const VIRAL_THEMES = ['neon', 'sunset', 'electric', 'aurora', 'candy'];
 const isViral = VIRAL_THEMES.includes(sb.meta.theme);
-const isCine = isViral || CINE_THEMES.includes(sb.meta.theme || 'noir');
+const isArchive = ['archive', 'newsroom'].includes(sb.meta.theme);
+const isCine = isViral || isArchive || CINE_THEMES.includes(sb.meta.theme || 'noir');
 // generated music tempo (the runtime snaps cuts to its beats and pulses the camera on the kick)
-const MUSIC = sb.audio.music == null ? (isViral ? 'auto:viral' : isCine ? 'auto:cinematic' : 'auto') : sb.audio.music;
+const MUSIC = sb.audio.music == null ? (isViral ? 'auto:viral' : isArchive ? 'auto:suspense' : isCine ? 'auto:cinematic' : 'auto') : sb.audio.music;
 const MOOD = String(MUSIC).startsWith('auto') ? (String(MUSIC).split(':')[1] || '') : null;
 const BPM = { viral: 140, upbeat: 118, phonk: 128, hype: 150 };
 if (MOOD && BPM[MOOD] && sb.meta.bpm == null) sb.meta.bpm = BPM[MOOD];
@@ -170,8 +171,9 @@ async function stockSearch(provider, q, wantVideo) {
 async function resolveAssets() {
   const refs = [...collectMedia(sb.scenes, new Set())];
   const assets = {}; const credits = [];
-  for (const ref of refs) {
-    let file = null, label = null;
+  for (const ref0 of refs) {
+    let file = null, label = null, ref = ref0;
+    const wantCut = /^cutout:/i.test(ref0); if (wantCut) ref = ref0.slice(7);
     try {
       const m = ref.match(/^(pexels|pixabay|unsplash|openverse|wikimedia|search)(-video)?:(.+)$/i);
       if (m) {
@@ -186,7 +188,14 @@ async function resolveAssets() {
         const p = path.resolve(baseDir, ref); if (fs.existsSync(p)) file = p; else label = path.basename(ref).replace(/\.[a-z0-9]+$/i, '').replace(/[-_]/g, ' ');
       }
     } catch (e) { log('asset failed', ref, e.message); label = label || ref; file = null; }
-    if (!file) { assets[ref] = { type: 'missing', label: label || ref }; continue; }
+    if (file && wantCut && IMG.test(file)) {
+      const cut = path.join(cacheDir, 'cut-' + hash(file) + '.png');
+      if (!fs.existsSync(cut)) { const py = ['python3', 'python'].find(p => spawnSync(p, ['--version']).status === 0); const r = py ? spawnSync(py, [path.join(HERE, '..', 'scripts', 'cutout.py'), file, cut], { encoding: 'utf8' }) : { status: 1, stderr: 'python not found' }; if (r.status !== 0) log('cutout failed (' + String(r.stderr || '').trim().split('\n').pop() + ') — using the full photo'); else log('cutout', path.basename(file)); }
+      if (fs.existsSync(cut)) file = cut;
+    }
+    if (!file) { assets[ref0] = { type: 'missing', label: label || ref }; continue; }
+    if (ref0 !== ref) { if (VID.test(file)) { /* cut-outs are photos only */ } }
+    ref = ref0;
     if (VID.test(file)) {
       const dir = path.join(cacheDir, 'frames-' + hash(file + fps + short)); const maxS = 30;
       if (!fs.existsSync(path.join(dir, '00001.jpg'))) { fs.mkdirSync(dir, { recursive: true }); log('extract frames', path.basename(file)); run(FFMPEG, ['-y', '-v', 'error', '-i', file, '-t', String(maxS), '-vf', `fps=${fps},scale='if(gt(iw,ih),-2,${Math.round(short * 1.2)})':'if(gt(iw,ih),${Math.round(short * 1.2)},-2)'`, '-q:v', '3', path.join(dir, '%05d.jpg')]); }
@@ -511,9 +520,10 @@ const progress = { done: 0, t0: Date.now(), total: 1, tick() { const p = this.do
     const nW = Math.max(1, Math.min(Number(opt.workers), Math.ceil(nFrames / 60)));
     const per = Math.ceil(nFrames / nW);
     log(`rendering ${nFrames} frames with ${nW} worker(s)`);
-    const segs = await Promise.all(Array.from({ length: nW }, (_, i) => renderSegment(browser, assets, i * per, Math.min(nFrames, (i + 1) * per), i, nFrames)));
-    process.stdout.write('\n');
     await browser.close();
+    // one browser process per worker: isolates heavy scenes (big textures, filters) so a worker can't take the others down
+    const segs = await Promise.all(Array.from({ length: nW }, async (_, i) => { const br = await launch(); try { return await renderSegment(br, assets, i * per, Math.min(nFrames, (i + 1) * per), i, nFrames); } finally { await br.close().catch(() => { }); } }));
+    process.stdout.write('\n');
     const list = path.join(tmp, 'segs.txt'); fs.writeFileSync(list, segs.map(s => `file '${s.replace(/'/g, "'\\''")}'`).join('\n'));
     const video = path.join(tmp, 'video.mp4'); run(FFMPEG, ['-y', '-v', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', video]);
     if (opt['no-audio'] || sb.meta.audio === false) fs.copyFileSync(video, outPath);

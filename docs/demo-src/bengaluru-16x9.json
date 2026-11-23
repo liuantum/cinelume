@@ -1,0 +1,48 @@
+{
+  "meta": { "title": "The City That Codes", "format": "16:9", "theme": "archive", "handle": "@liuantum", "voice": "kokoro:am_michael", "voiceRate": "-2%" },
+  "audio": { "music": "auto:suspense", "musicVolume": 0.32 },
+  "scenes": [
+    { "type": "story", "frame": "full", "media": "bengaluru/city-1985.jpg", "year": "Bangalore, 1985", "name": "a pensioners' paradise",
+      "narration": "In 1985, Bangalore was a quiet city of gardens and retirees. People called it a pensioners' paradise." },
+
+    { "type": "story", "frame": "clipboard", "media": "bengaluru/city-1985.jpg",
+      "note": "1985 — Miller's Road. Texas Instruments opens India's first multinational R&D centre.",
+      "source": "Texas Instruments",
+      "narration": "Then Texas Instruments opened India's first multinational research centre, on Miller's Road." },
+
+    { "type": "story", "frame": "print", "media": "bengaluru/city-1985.jpg", "tag": "on a bullock cart", "tagAt": 2.6, "rot": 2,
+      "source": "Deccan Herald",
+      "narration": "To talk to America, it needed a satellite dish. The dish arrived on a ==bullock cart.==" },
+
+    { "type": "timeline", "title": "How a quiet city changed",
+      "events": [
+        { "date": "1983", "label": "Infosys moves to Bangalore" },
+        { "date": "1985", "label": "Texas Instruments opens India's first multinational R&D centre" },
+        { "date": "2025", "label": "Tech workforce crosses 1 million" }
+      ], "source": "Infosys · TI · CBRE",
+      "narration": "Infosys had already moved here in 1983. Forty years later, the city's tech workforce crossed one million." },
+
+    { "type": "story", "frame": "tv", "media": "bengaluru/techpark-dusk.jpg",
+      "narration": "Tech parks rose across Whitefield, Electronic City and Manyata, glass towers where the fields used to be." },
+
+    { "type": "bignumber", "value": 1000000, "suffix": "+", "kicker": "One city", "label": "tech workers in [[Bengaluru]]",
+      "source": "CBRE Global Tech Talent Guidebook, 2025",
+      "narration": "Over one million tech workers. One of the largest tech talent pools in Asia." },
+
+    { "type": "story", "frame": "full", "media": "bengaluru/skyline-night.jpg", "magnifier": true, "text": "41% of India's software exports",
+      "source": "Govt. of Karnataka, FY 2025–26",
+      "narration": "Today, Karnataka produces forty one percent of India's software exports, and nearly all of it comes from Bengaluru." },
+
+    { "type": "map", "title": "Written in Bengaluru. Used everywhere.", "focus": { "lon": 30, "lat": 30, "zoom": 1.6 },
+      "highlight": ["India"], "pins": [{ "lon": 77.59, "lat": 12.97, "label": "Bengaluru" }],
+      "arcs": [{ "from": [77.59, 12.97], "to": [-122.4, 37.8] }, { "from": [77.59, 12.97], "to": [-0.12, 51.5] }, { "from": [77.59, 12.97], "to": [-74, 40.7] }],
+      "source": "RBI: US & Canada are the top destination for India's software exports",
+      "narration": "Most of that software flows to America and Europe, into the apps and banks people use every day." },
+
+    { "type": "story", "text": "the city that **codes.**", "spot": "#2F5D8C",
+      "narration": "From a bullock cart, to the city that codes the world." },
+
+    { "type": "outro", "headline": "Bengaluru.", "cta": "Follow for the next story", "handle": "@liuantum",
+      "narration": "Bengaluru. Follow for the next story." }
+  ]
+}

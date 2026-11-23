@@ -1,182 +1,293 @@
-# 🎞️ Cinelume — one prompt → a viral short or a cinematic film
+<div align="center">
 
-**An agent skill for Claude (Claude Code) and Google Antigravity** that turns a single prompt like
+# 🎞️ CINELUME
 
-> *"Make a 60-second cinematic film about why the world depends on one island for its chips, for @liuantum"*
+### One prompt → a finished, narrated video.
+#### Vox-edit documentaries · viral shorts · cinematic films
 
-into a finished, ready-to-post MP4 — in one of two modes:
+An agent skill for **Claude Code** and **Google Antigravity** that researches a topic, writes the script, plans the shots,
+narrates, scores and renders a ready-to-post MP4, in vertical **9:16** or widescreen **16:9**.
 
-- **🔥 Viral shorts** (Reels / Shorts / TikTok): vivid colour themes, a 1-second hook, giant word-by-word coloured captions,
-  gradient numbers, punch-in motion, cuts that land on the beat of generated trap/pop music, an energetic narrator run
-  through a broadcast voice chain, and a retention progress bar.
-- **🎬 Cinematic stories**: a finished **MP4 that feels like a documentary**: real photos and footage, film colour grading, 2.39:1 letterboxing,
-light leaks and lens flares, elegant serif titles, frosted-glass annotations, fine-line callouts, a generated cinematic
-score with braams and swells, and a **built-in neural narrator** — rendered frame-perfectly in headless Chrome.
+[![Vox edit](https://img.shields.io/badge/Style-Vox%20edit-c2271e?style=for-the-badge)](#-see-it)
+[![9:16](https://img.shields.io/badge/9%3A16-Reels%20%C2%B7%20Shorts%20%C2%B7%20TikTok-f2c437?style=for-the-badge)](#-see-it)
+[![16:9](https://img.shields.io/badge/16%3A9-YouTube%20%C2%B7%20films-2f5d8c?style=for-the-badge)](#-see-it)
+[![Voice](https://img.shields.io/badge/Narration-built--in-2e7d6e?style=for-the-badge)](#%EF%B8%8F-voices)
+[![License](https://img.shields.io/badge/License-MIT-17140f?style=for-the-badge)](LICENSE)
 
-<p align="center"><img src="docs/demo-viral.gif" width="230" alt="Viral short demo">&nbsp;&nbsp;<img src="docs/demo.gif" width="560" alt="Cinematic demo"></p>
-
-<p align="center"><img src="docs/gallery-viral.jpg" width="900" alt="Viral short frames"></p>
-
-<p align="center"><img src="docs/gallery-16x9.jpg" width="900" alt="16:9 film frames"></p>
-<p align="center"><img src="docs/gallery-9x16.jpg" width="900" alt="9:16 reel frames"></p>
-
-▶️ Demos: [`docs/demo-viral.mp4`](docs/demo-viral.mp4) (9:16 viral short) · [`docs/demo-film.mp4`](docs/demo-film.mp4) (16:9 short film) · [`docs/demo-reel.mp4`](docs/demo-reel.mp4) (9:16 cinematic reel)
-<sub>Demo photos: SpaceX launch photo (CC0), NASA Hubble Deep Field (public domain), coffee photo by Rachel Michetti (CC0). Demos were rendered offline, so they have score + sound design + captions but no narration.</sub>
+</div>
 
 ---
 
-## 🔥 Viral shorts mode
+## 👀 See it
 
-| | |
-|---|---|
-| **5 colour themes** | `neon` (pink/cyan/lime), `electric` (blue/acid lime), `sunset` (orange→pink→violet), `aurora` (mint/lavender), `candy` (bright light mode) |
-| **Hook scene** | `hook` — 2–3 giant lines punch in word by word over a vivid shot with a bass drop, in the first second |
-| **Captions as the hero** | `viral` captions: huge, outlined, each word pops in as it's spoken, every phrase gets a new colour with a glow |
-| **Colour type** | `**word**` → gradient word · `==word==` → colour block highlight · numbers count up in gradient |
-| **Music that drives the edit** | `auto:viral` (140-bpm trap: 808, claps, hat rolls, pluck hook), `auto:upbeat` (118 pop), `auto:phonk`, `auto:hype` — every cut is snapped to a beat and the camera pulses on the kick |
-| **Voice** | `hype`, `hype-female`, `creator`, `indian-creator`, Hindi/Telugu/Tamil… + a broadcast chain (EQ, de-ess, compressor, limiter) on every voice, tight timing, music ducks under speech |
-| **Retention details** | gradient progress bar, punch-in camera, fast whip/zoom/slit transitions with swooshes, glowing gradient "Follow for Part 2" CTA |
+**The City That Codes**: how Bengaluru went from a quiet "pensioners' paradise" to home of more than a million tech workers,
+starting with a satellite dish that arrived on a bullock cart in 1985. Both cuts are fully narrated, scored and captioned,
+rendered from a single storyboard file each.
 
-Ask: *"Make a viral 30-second Instagram reel about why sleep makes you smarter, neon theme, for @liuantum."*
-Example: [`skills/cinelume/examples/viral-short.json`](skills/cinelume/examples/viral-short.json)
+<table>
+<tr>
+<td align="center" width="34%">
 
-## What's new in Cinelume (v2)
+<a href="docs/bengaluru-9x16.mp4"><img src="docs/preview-9x16.webp" width="260" alt="9:16 Vox-edit reel preview"></a>
 
-Cinelume is the successor of `vox-video`. The flat "paper & cartoon sticker" explainer look is gone by default — every
-video now looks and sounds like a film.
+**9:16 · Reel / Short** · 35 s<br>
+<a href="docs/bengaluru-9x16.mp4"><b>▶ Watch with sound</b></a>
 
-| | |
-|---|---|
-| **Real imagery, automatically** | `search:` / `search-video:` media pull the best-matching photo or footage across **Pexels → Unsplash → Pixabay → Openverse → Wikimedia Commons** (the last two need no API key). Results are scored for orientation, aspect and resolution; credits & licences are written next to the video. No result → an atmospheric light-and-bokeh plate, never a cartoon placeholder |
-| **Film look** | 6 cinematic themes (`noir`, `film`, `midnight`, `ember`, `slate`, `ivory`), global colour grade (teal-orange, warm, cool, noir, bleach), graded photo looks, animated letterbox bars that slide in on story shots, light leaks, lens-flare sweeps, bokeh, vignette, fine grain |
-| **5 new story scenes** | `opening` (film title card) · `establishing` (place + time typed over footage, optional camera viewfinder + REC timecode) · `cinematic` (full-bleed shot + film title, slit/blur reveals) · `narrative` (documentary intertitles) · `depth` (2.5D parallax plate with foreground cut-out and floating particles) |
-| **Premium stickers** | 59 new: fine draw-on annotations (`ring`, `arrow-fine`, `leader` callouts, `corners`, `seal`), frosted-glass chips (`tag`, `stat`, `location`, `timestamp`, live `rec` timecode), light objects (`pulse`, `glint`, `flare`, `pin-glow`), real **photo stickers**, and 35 consistent line icons. The old cartoon set is kept only for classic themes |
-| **Typography** | Cormorant Garamond (titles), Cinzel (film titles & places), Manrope (UI, numbers, captions) — all bundled (OFL) |
-| **Camera & cuts** | +10 film camera moves (dolly, crane, truck, steadicam, parallax, reveal-pull…) and +9 film transitions (dissolve, cross-zoom, luma, light-leak, film-burn, lens-blur, dip-to-black/white, anamorphic slit) |
-| **Sound** | generated **cinematic score** (`auto:cinematic`, `suspense` with heartbeat, `hopeful`, `epic` with taiko, `ambient`) with reverb; braams, impacts, swells, shimmer, typewriter keys; storyteller / documentary / trailer narrator voices |
-| **Captions** | `cinema` (words brighten as they're spoken) and `subtitle` (film subtitles that sit inside the letterbox bar) |
-| **Everything else still works** | all 20 original scene types (maps, charts, timelines, documents, screens…) are restyled automatically on cinematic themes; classic themes and the old storyboards still render unchanged |
+</td>
+<td align="center" width="66%">
 
-## Install
+<a href="docs/bengaluru-16x9.mp4"><img src="docs/preview-16x9.webp" width="560" alt="16:9 Vox-edit documentary preview"></a>
 
-Requirements: **Node 18+**, **ffmpeg**, and Chrome/Chromium/Edge (auto-detected; the installer can download Chromium).
+**16:9 · YouTube documentary** · 63 s<br>
+<a href="docs/bengaluru-16x9.mp4"><b>▶ Watch with sound</b></a>
+
+</td>
+</tr>
+</table>
+
+<sub>Previews are silent loops; click to play the MP4 with narration and music.
+Storyboards: [9:16](docs/demo-src/bengaluru-9x16.json) · [16:9](docs/demo-src/bengaluru-16x9.json).
+Facts: Texas Instruments, CBRE Global Tech Talent Guidebook 2025, Government of Karnataka, RBI, Deccan Herald.
+The city backdrops in these demos are generated illustrations; in normal use Cinelume pulls real photos and footage for every shot.</sub>
+
+<details>
+<summary><b>🖼️ Every scene, frame by frame</b></summary>
+<br>
+<p align="center"><img src="docs/frames-9x16.jpg" alt="9:16 frames"></p>
+<p align="center"><img src="docs/frames-16x9.jpg" alt="16:9 frames"></p>
+</details>
+
+---
+
+## ✨ Three styles
+
+<table>
+<tr>
+<th width="33%">📼 Vox edit</th>
+<th width="33%">🔥 Viral shorts</th>
+<th width="33%">🎬 Cinematic</th>
+</tr>
+<tr valign="top">
+<td>
+
+Documentary collage, as in the demos above.
+- Grid paper, film grain, archival B&W prints
+- **Automatic cut-outs** of people & objects
+- Props: **old TV**, **clipboard** with typed notes, taped prints, **magnifying glass**
+- `[in 1985]` year brackets, italic name labels, **red boxes** with yellow serif words, colour spots
+- Big caption words timed to the voice
+- Hand-drawn red circles, arrows & underlines
+- Themes: `archive` `newsroom`
+
+</td>
+<td>
+
+Bright, fast and loud.
+- **1-second hook** over the strongest shot
+- Giant **word-by-word captions**, each phrase a new colour
+- Gradient numbers, colour highlights, glowing CTA
+- **Beat-synced cuts** on generated trap / pop / phonk music; camera pulses on the kick
+- Retention progress bar, punch-in camera, whip transitions
+- Themes: `neon` `electric` `sunset` `aurora` `candy`
+
+</td>
+<td>
+
+Film-like and calm.
+- Real footage with a film colour grade
+- Animated **2.39:1 letterbox**, light leaks, lens flares
+- Serif & film-title typography, glass labels
+- Title cards, place/time stamps, 2.5D parallax
+- Orchestral-style generated score
+- Themes: `noir` `film` `midnight` `ember` `slate` `ivory`
+
+</td>
+</tr>
+</table>
+
+**Vox animation in every style:** stickers land with an overshoot pop, a confetti burst and a gentle wiggle; markers draw
+themselves on; photos drop in as taped polaroids. 32 glossy die-cut stickers (fire, rocket, rupee, Indian flag, trend arrows,
+modern 3D faces, speech bubbles, sticky notes…), plus fine-line annotations, glass tags and 35 line icons.
+
+**Also in the box:** 28 scene types (maps that fly to countries, animated bar / line / donut charts, timelines, compare, lists,
+flows, documents, phone & browser screens, b-roll), 32 camera moves, 29 transitions, 20 themes, automatic real-image search
+with credits, and a deterministic renderer, so what you preview is exactly what ships.
+
+---
+
+## 🚀 Quick start
+
+**Requirements:** Node 18+, ffmpeg, and Chrome / Chromium / Edge (auto-detected; the installer can download Chromium).
 
 ```bash
 git clone https://github.com/liuantum/cinelume.git
 cd cinelume
-./install.sh                # Claude Code + Antigravity, available in all projects
+./install.sh            # installs for Claude Code + Antigravity (all projects)
 ```
-Windows: `powershell -ExecutionPolicy Bypass -File install.ps1`
+
+<details>
+<summary>Other install options</summary>
 
 | target | command | installs to |
 |---|---|---|
+| Windows | `powershell -ExecutionPolicy Bypass -File install.ps1` | same targets as below |
 | Claude Code only | `./install.sh claude` | `~/.claude/skills/cinelume` |
 | Antigravity only | `./install.sh antigravity` | `~/.gemini/config/skills/cinelume` |
-| One project (both agents) | `./install.sh all --project /path/to/repo` | `<repo>/.claude/skills/cinelume` and `<repo>/.agents/skills/cinelume` |
+| One project | `./install.sh all --project /path/to/repo` | `<repo>/.claude/skills/cinelume` + `<repo>/.agents/skills/cinelume` |
 
-The installer removes an old `vox-video` install if it finds one.
-
-**Claude Code plugin marketplace** (alternative):
+Claude Code plugin marketplace:
 ```
 /plugin marketplace add liuantum/cinelume
 /plugin install cinelume@liuantum-cinelume
 ```
 
-**Better images & footage (optional, all free):**
+Optional extras:
 ```bash
-export PEXELS_API_KEY=...         # photos + real video footage  (pexels.com/api)
-export UNSPLASH_ACCESS_KEY=...    # premium photography          (unsplash.com/developers)
-export PIXABAY_API_KEY=...        # photos + video               (pixabay.com/api/docs)
+pip install kokoro-onnx soundfile   # offline studio voices (used in the demos)
+pip install rembg                   # automatic cut-outs for Vox-edit collages
 ```
-Without keys, `search:` still finds openly-licensed photos on Openverse and Wikimedia Commons.
+</details>
 
-## Use
+Then just ask your agent:
 
-Ask your agent (in Antigravity you can type `/cinelume` to force it):
+> 💬 *"Make a Vox-edit reel about how Bengaluru became India's IT capital, for @liuantum."*
+>
+> 💬 *"A viral 30-second YouTube Short about the world's most expensive spice, sunset theme, female voice."*
+>
+> 💬 *"A 60-second cinematic film about the Strait of Hormuz and oil prices, British narrator."*
+>
+> 💬 *"Turn this article into a 9:16 Vox-edit short with a Hindi voice: [paste article]"*
 
-- *"A viral 30-second YouTube Short about the world's most expensive spice — sunset theme, female voice."*
-- *"Make a 90-second cinematic documentary about the Strait of Hormuz and oil prices."*
-- *"Turn this article into a 9:16 cinematic reel with a British narrator: <paste>"*
-- *"A 2-minute film on the history of the transistor — midnight theme, epic music."*
-- *"Daily AI story reel for @liuantum using these clips: ./footage/*.mp4"*
+The agent researches → writes a hook-first script → plans shots → writes `storyboard.json` → validates → renders a contact sheet
+and **looks at it** → fixes → renders the MP4 → hands you the video, the editable storyboard and the image credits.
 
-The agent researches → writes a story (cold open → question → world → rising → turn → resolution) → plans shots →
-writes `storyboard.json` → validates → renders a contact sheet and **looks at it** → fixes → renders the MP4 → hands you
-the video, the editable JSON and the media credits.
+---
 
-## Run the engine yourself
+## 🖼️ Real images, automatically
+
+Write `"media": "search:old bangalore street"` or `"search-video:…"` and Cinelume finds the best-matching photo or clip for the frame:
+
+**Pexels → Unsplash → Pixabay → Openverse → Wikimedia Commons** (the last two need no key) → otherwise an atmospheric backdrop.
+Results are scored for orientation, aspect and resolution, and every author and licence is written to `<video>.credits.txt`.
+Prefix any media with `cutout:` to remove its background (people, objects) for collage shots. Local files and URLs work too.
+
+```bash
+export PEXELS_API_KEY=...        # photos + real footage   (free: pexels.com/api)
+export UNSPLASH_ACCESS_KEY=...   # premium photography     (free: unsplash.com/developers)
+export PIXABAY_API_KEY=...       # photos + video          (free: pixabay.com/api/docs)
+```
+
+---
+
+## 🎙️ Voices
+
+Every scene's `narration` is spoken, captions sync to it word by word, and scenes stretch to fit the voice. All voices go through
+a broadcast chain (EQ, de-ess, compression, limiter), the music ducks under speech, and the mix is loudness-normalised for social.
+
+| engine | voices | notes |
+|---|---|---|
+| **Kokoro studio** (offline) | `studio-male` `studio-female` `studio-hype` `studio-deep` `studio-uk-male` `studio-uk-female` `studio-hindi-male` `studio-hindi-female`, or any `kokoro:<voice>` | the voices in the demos · `pip install kokoro-onnx soundfile` · ~120 MB model downloads once |
+| **Edge neural** (default) | `hype` `hype-female` `creator` `creator-female` `storyteller` `documentary` `trailer` · Indian English, Hindi, Telugu, Tamil, UK, AU, ES, FR, DE… | no setup, needs internet while rendering |
+| your own | `"voiceover": "my-take.mp3"` per scene or for the whole video | |
+
+```bash
+node skills/cinelume/engine/tts.mjs --list
+node skills/cinelume/engine/tts.mjs "Hello there" hello.mp3 --voice studio-female
+```
+
+---
+
+## 🛠️ Run the engine yourself
 
 ```bash
 cd skills/cinelume/engine && npm install
-node validate.mjs ../examples/silicon-island.json
-node render.mjs  ../examples/silicon-island.json --stills auto       # PNG per scene + contact-sheet.jpg
-node render.mjs  ../examples/ai-reel-cinematic.json --preview        # fast 540p draft
-node render.mjs  ../examples/silicon-island.json --out island.mp4    # final 1080p
-node render.mjs  ../examples/silicon-island.json --player            # scrub it live in a browser
+node validate.mjs ../examples/vox-edit-reel.json
+node render.mjs  ../examples/vox-edit-reel.json --stills auto       # one PNG per scene + contact sheet
+node render.mjs  ../examples/vox-edit-reel.json --preview           # fast 540p draft
+node render.mjs  ../examples/vox-edit-reel.json --out reel.mp4      # final 1080p
+node render.mjs  ../examples/vox-edit-reel.json --player            # scrub it live in a browser
 ```
-Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--voice documentary` · `--no-voice` · `--workers N` · `--crf N` · `--no-audio` · `--chrome PATH`.
-Voices: `node tts.mjs --list` · try one: `node tts.mjs "Hello" hello.mp3 --voice storyteller`
 
-A storyboard looks like this:
+Flags: `--format 9:16|16:9|1:1|4:5` · `--res 720|1080|2160` · `--fps 30|60` · `--voice studio-female` · `--no-voice` · `--workers N` · `--crf N` · `--no-audio`
+<br><sub>On 8 GB machines use `--workers 2` for long Vox-edit videos.</sub>
+
+| example | style | format |
+|---|---|---|
+| [`vox-edit-reel.json`](skills/cinelume/examples/vox-edit-reel.json) | Vox edit | 9:16 |
+| [`viral-short.json`](skills/cinelume/examples/viral-short.json) | Viral short | 9:16 |
+| [`silicon-island.json`](skills/cinelume/examples/silicon-island.json) | Cinematic | 16:9 |
+| [`ai-reel-cinematic.json`](skills/cinelume/examples/ai-reel-cinematic.json) | Cinematic | 9:16 |
+
+<details>
+<summary><b>What a storyboard looks like</b></summary>
 
 ```json
 {
-  "meta": { "format": "16:9", "theme": "noir", "handle": "@you", "voice": "storyteller" },
-  "audio": { "music": "auto:cinematic" },
+  "meta": { "format": "9:16", "theme": "archive", "handle": "@liuantum", "voice": "studio-male" },
+  "audio": { "music": "auto:suspense" },
   "scenes": [
-    { "type": "opening", "presenter": "Liuantum presents", "title": "The Silicon Island",
-      "tagline": "how one island came to power the world", "media": "search:taiwan coast fog dawn",
-      "transition": "dip-black", "narration": "Every phone you have ever owned begins in one place." },
-    { "type": "establishing", "location": "Hsinchu, Taiwan", "time": "04:12 AM", "viewfinder": true,
-      "media": "search-video:semiconductor factory night aerial",
-      "narration": "At four in the morning, the lights here never go out." },
-    { "type": "bignumber", "value": 92, "suffix": "%", "label": "of leading-edge chip capacity sits in ==Taiwan==",
-      "source": "BCG × SIA, 2021", "stickers": [{ "type": "glint", "x": 71, "y": 30, "size": 6, "at": 2.2 }] },
-    { "type": "depth", "kicker": "The machine", "headline": "Each one is the size of a bus.",
-      "media": "search:lithography machine cleanroom",
-      "stickers": [{ "type": "leader", "text": "EUV scanner", "sub": "Veldhoven, NL", "x": 74, "y": 40, "size": 22, "at": 1.8 }] }
+    { "type": "story", "frame": "full", "media": "search:bangalore 1980s street black and white", "year": "in 1985",
+      "narration": "In 1985, Bangalore was a quiet city of gardens." },
+    { "type": "story", "text": "a pensioners' **paradise.**",
+      "narration": "People called it a pensioners' paradise." },
+    { "type": "story", "frame": "print", "media": "search:bullock cart india", "tag": "bullock cart", "tagAt": 2.2,
+      "stickers": [{ "type": "circle", "x": 50, "y": 38, "size": 30, "at": 2.6, "color": "#C2271E" }],
+      "narration": "Its satellite dish arrived on a ==bullock cart.==" },
+    { "type": "story", "frame": "tv", "media": "search-video:bangalore tech park aerial",
+      "narration": "Glass tech parks rose where the fields used to be." },
+    { "type": "bignumber", "value": 1000000, "suffix": "+", "label": "tech workers in ==one city==", "source": "CBRE, 2025",
+      "narration": "Today, more than a million tech workers live in this one city." },
+    { "type": "outro", "headline": "Bengaluru.", "cta": "Follow for Part 2",
+      "narration": "Bengaluru. Follow for part two." }
   ]
 }
 ```
-Full reference: [`skills/cinelume/references/storyboard-schema.md`](skills/cinelume/references/storyboard-schema.md)
+Full reference: [`storyboard-schema.md`](skills/cinelume/references/storyboard-schema.md) ·
+look & themes: [`style-bible.md`](skills/cinelume/references/style-bible.md) ·
+stickers: [`stickers.md`](skills/cinelume/references/stickers.md) ·
+camera & transitions: [`camera-and-transitions.md`](skills/cinelume/references/camera-and-transitions.md)
+</details>
 
-## How it works
+<details>
+<summary><b>How it works</b></summary>
 
 ```
-prompt ─► agent (SKILL.md: research · story · shot plan · cinematic rules)
+prompt ─► agent (SKILL.md: research · hook-first script · shot plan · style rules)
             │
             ▼
-      storyboard.json ──► validate.mjs (schema, markup, premium-sticker check, pacing)
+      storyboard.json ──► validate.mjs (schema, markup, stickers, pacing, hook checks)
             │
             ▼
-      render.mjs ──► media: local / URL / Pexels · Unsplash · Pixabay · Openverse · Wikimedia (scored) → video frames
-            │        neural narration per scene → scene timing fits the voice
+      render.mjs ──► media search (Pexels · Unsplash · Pixabay · Openverse · Wikimedia) → scored, credited, optional cut-outs
+            │        narration per scene (Kokoro studio / Edge neural) → scenes fit the voice → cuts snap to the beat
             ▼
-      runtime (HTML/CSS/SVG, deterministic seek(t)) in headless Chrome
-            │  grade · letterbox · light leaks · parallax camera · N parallel workers → x264 segments
+      runtime (HTML/CSS/SVG, deterministic seek(t)) in headless Chrome, one browser per worker → x264
             ▼
-      audio: cinematic score + sound design + voice → ducked, loudness-normalised mix
+      audio: generated music + sound design + processed voice → ducked, loudness-normalised (−15 LUFS)
             ▼
-      film.mp4  (+ credits.txt · stills / contact sheet · interactive player)
+      video.mp4  (+ credits.txt · stills / contact sheet · interactive player)
 ```
 
 ```
 skills/cinelume/
-├── SKILL.md                 # the agent instructions (Claude + Antigravity share the same format)
-├── references/              # schema, cinematic bible, cameras & transitions, story/shot planning, stickers
-├── examples/                # viral-short.json (9:16 viral), silicon-island.json (16:9 film), ai-reel-cinematic.json (9:16), classic/ (old style)
-├── scripts/tts.py           # fallback text-to-speech engines
-└── engine/
-    ├── render.mjs           # CLI renderer + media search + score generator
-    ├── validate.mjs         # storyboard validator
-    ├── runtime/             # runtime.js, stickers.js, styles.css, worldmap.js
-    └── assets/fonts/        # OFL fonts (Cormorant Garamond, Cinzel, Manrope, Inter, Anton, IBM Plex Mono…)
+├── SKILL.md            # agent instructions (Claude + Antigravity)
+├── references/         # schema, style bible, camera & transitions, shot planning, stickers
+├── examples/           # vox-edit-reel, viral-short, silicon-island, ai-reel-cinematic, classic/
+├── scripts/            # kokoro_tts.py (studio voice), cutout.py (background removal), tts.py (fallbacks)
+└── engine/             # render.mjs, validate.mjs, tts.mjs, runtime/, assets/fonts/
 ```
+</details>
 
-## Responsible use
-The skill tells the agent to source real numbers (or label them *Illustrative*), not to fabricate quotes from real
-people, not to dress invented stories in real outlets' branding, and not to search for or show identifiable private
-people. Every downloaded image/clip keeps its author and licence in `<video>.credits.txt` — keep those credits when you publish.
+---
 
-## License
-MIT © Liuantum. Fonts under SIL OFL 1.1; map data from Natural Earth (public domain).
+## 🤝 Responsible use
+
+The skill tells the agent to source real numbers (or label them *Illustrative*), never fabricate quotes, never dress invented
+stories in real outlets' branding, and avoid images of identifiable private people. Keep the credits in `<video>.credits.txt`
+when you publish.
+
+## 📜 Credits & license
+
+MIT © [Liuantum](https://github.com/liuantum).
+Demo narration: [Kokoro-82M](https://github.com/thewh1teagle/kokoro-onnx) (Apache-2.0). Background removal: [rembg](https://github.com/danielgatis/rembg) (MIT).
+Fonts: Cormorant Garamond, Playfair Display, Cinzel, Manrope, Inter, Anton, IBM Plex Mono, Permanent Marker (SIL OFL 1.1 / Apache-2.0). Map data: Natural Earth (public domain).

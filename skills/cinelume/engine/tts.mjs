@@ -31,9 +31,13 @@ export const VOICE_ALIASES = {
   'german-male': 'de-DE-ConradNeural', 'german-female': 'de-DE-KatjaNeural',
 };
 
+// Kokoro (offline, studio-quality) voices: "kokoro:<voice>" or these aliases
+export const KOKORO_ALIASES = { 'studio-male': 'am_michael', 'studio-female': 'af_heart', 'studio-hype': 'am_puck', 'studio-deep': 'am_fenrir', 'studio-uk-male': 'bm_george', 'studio-uk-female': 'bf_emma', 'studio-hindi-male': 'hm_omega', 'studio-hindi-female': 'hf_alpha' };
 export function resolveVoice(spec) {
   let s = String(spec || 'auto').trim();
   if (s.startsWith('edge:')) s = s.slice(5);
+  if (KOKORO_ALIASES[s.toLowerCase()]) return { engine: 'kokoro', voice: KOKORO_ALIASES[s.toLowerCase()] };
+  if (s.startsWith('kokoro:')) return { engine: 'kokoro', voice: s.slice(7) || 'am_michael' };
   if (VOICE_ALIASES[s.toLowerCase()]) return { engine: 'edge', voice: VOICE_ALIASES[s.toLowerCase()] };
   if (/^[a-z]{2,3}-[A-Z]{2}-\w+Neural$/.test(s)) return { engine: 'edge', voice: s };
   const [eng, arg] = s.split(':');
@@ -72,11 +76,25 @@ function pythonTTS(text, out, engine, voice) {
   return out;
 }
 
+function kokoroTTS(text, out, voice, rate) {
+  const py = ['python3', 'python'].find(p => spawnSync(p, ['--version']).status === 0);
+  if (!py) throw new Error('python not available for Kokoro');
+  const speed = rate ? 1 + parseFloat(rate) / 100 : 1;
+  const r = spawnSync(py, [path.join(HERE, '..', 'scripts', 'kokoro_tts.py'), text, out, voice, String(speed)], { encoding: 'utf8', maxBuffer: 1 << 26 });
+  if (r.status !== 0) throw new Error((r.stderr || '').trim().split('\n').pop());
+  return out;
+}
+
 /** Synthesize `text` to an mp3 at `out`. Tries bundled Edge neural voices, then offline/system engines. */
 export async function synthesize(text, out, { voice = 'auto', rate } = {}) {
   const v = resolveVoice(voice);
   const errors = [];
-  if (v.engine === 'edge') {
+  if (v.engine === 'kokoro') {
+    try { return { file: kokoroTTS(text, out, v.voice, rate), engine: `kokoro (${v.voice})` }; }
+    catch (e) { errors.push(`kokoro: ${e.message}`); }
+    try { return { file: await edgeTTS(text, out, VOICE_ALIASES.auto, rate), engine: 'edge' }; }
+    catch (e) { errors.push(`edge: ${e.message || e}`); }
+  } else if (v.engine === 'edge') {
     try { return { file: await edgeTTS(text, out, v.voice, rate), engine: `edge (${v.voice})` }; }
     catch (e) { errors.push(`edge: ${e.message || e}`); }
     try { return { file: pythonTTS(text, out, 'auto', ''), engine: 'system fallback' }; }
@@ -93,7 +111,7 @@ export async function synthesize(text, out, { voice = 'auto', rate } = {}) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   const a = process.argv.slice(2); const get = k => { const i = a.indexOf(k); return i >= 0 ? a.splice(i, 2)[1] : undefined; };
   const voice = get('--voice'), rate = get('--rate');
-  if (a[0] === '--list') { console.log(Object.entries(VOICE_ALIASES).map(([k, v]) => `${k.padEnd(18)} ${v}`).join('\n')); process.exit(0); }
+  if (a[0] === '--list') { console.log(Object.entries(KOKORO_ALIASES).map(([k, v]) => `${k.padEnd(18)} kokoro:${v}  (offline studio voice)`).join('\n')); console.log(Object.entries(VOICE_ALIASES).map(([k, v]) => `${k.padEnd(18)} ${v}`).join('\n')); process.exit(0); }
   if (a.length < 2) { console.log('usage: node tts.mjs "text" out.mp3 [--voice male|female|indian-male|hindi-female|en-US-AvaNeural] [--rate +5%]\n       node tts.mjs --list'); process.exit(1); }
   synthesize(a[0], path.resolve(a[1]), { voice, rate }).then(r => { console.log(`✓ ${r.engine} -> ${r.file}`); process.exit(0); }).catch(e => { console.error('✗ TTS failed:', e.message); process.exit(1); });
 }

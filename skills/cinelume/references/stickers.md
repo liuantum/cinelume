@@ -60,3 +60,25 @@ is automatically swapped for its line-icon version.
 `rocket` `bulb` `clock` `lock` `dollar` `chip` `robot` `globe` `chart-up` `chart-down` `magnifier` `cursor` `hand` `person`
 `building` `phone` `laptop` `brain` `money` `flag` `trophy` and the `face-*` reaction faces. These have a white die-cut
 outline, pop with a bounce and wiggle. Use them only with `paper`, `dark`, `yellow`, `blueprint`, `red`, `navy` or `mint`.
+
+## Vox set (`vx-*`) — glossy die-cut stickers with the Vox pop
+
+Used with **Vox motion** (`meta.motion: "vox"`, the default on viral and archive themes): stickers land with an overshoot pop,
+a confetti burst and a gentle wiggle, hand-drawn marker annotations draw themselves on, photos sit in taped prints.
+
+| group | names |
+|---|---|
+| Objects | `vx-fire` `vx-bolt` `vx-star` `vx-heart` `vx-rocket` `vx-check` `vx-cross` `vx-arrow` `vx-money` `vx-rupee` `vx-up` `vx-down` `vx-globe` `vx-chip` `vx-brain` `vx-bulb` `vx-trophy` `vx-target` `vx-clock` `vx-lock` `vx-india` |
+| Faces (modern 3D style) | `vx-wow` `vx-mindblown` `vx-cool` `vx-think` `vx-laugh` `vx-love` |
+| Text (use `text`) | `vx-label` (pill) `vx-burst` (starburst) `vx-bubble` (speech bubble, set `aspect` for long text) `vx-note` (sticky note, marker font) `vx-tape` |
+| Marker draw-ons (Vox classics) | `circle` `arrow` `arrow-curve` `arrow-straight` `underline` `scribble` `cross` `check` `bracket` |
+
+Classic names (`fire`, `face-shock`, `burst`, `note`…) are automatically upgraded to their `vx-*` versions on modern themes.
+On the paper `archive` theme prefer marker draw-ons in red (`"color": "#C2271E"`), `vx-note`, `vx-tape` and the `story` props over emoji faces.
+
+```json
+{ "type": "vx-wow", "x": 80, "y": 22, "size": 14, "at": 2.0 }
+{ "type": "vx-label", "text": "1985", "x": 20, "y": 23, "size": 7, "rot": -6, "at": 1.0 }
+{ "type": "vx-bubble", "text": "Silicon Valley of India", "x": 74, "y": 62, "size": 8, "aspect": 4.4, "textSize": 0.27, "at": 2.6 }
+{ "type": "circle", "x": 50, "y": 38, "size": 30, "at": 2.6, "color": "#C2271E" }
+```
