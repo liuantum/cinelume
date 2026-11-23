@@ -27,6 +27,17 @@ export const GRADES = ['archive', 'vivid', 'teal-orange', 'warm', 'cool', 'noir'
 export const BGS = ['paper', 'texture', 'grid', 'dots', 'lines', 'halftone', 'stripes', 'rays', 'gradient', 'spotlight', 'plain', 'atmos', 'haze', 'black', 'paper-grid', 'paper-dark'];
 export const FXS = ['none', 'fade', 'pop', 'popBig', 'rise', 'riseBig', 'drop', 'slideL', 'slideR', 'slideU', 'slideD', 'stamp', 'zoom', 'spin', 'blur', 'wipe', 'wipeUp', 'flipX', 'swing', 'typeOn', 'blurIn', 'reveal', 'rise3d', 'settle', 'punch', 'riseFast'];
 
+export const IDLES = ['wiggle', 'float', 'breathe', 'pulse', 'spin', 'drift', 'bob', 'bounce', 'shake', 'sway', 'roll'];
+export const EDGES = ['left', 'right', 'top', 'bottom'];
+let _motionErrors = null;
+function checkMotion(st, at) {
+  const E = _motionErrors; if (!E) return;
+  if (st.idle && !IDLES.includes(st.idle)) E.push(`${at}: idle "${st.idle}" unknown (${IDLES.join(', ')})`);
+  if (st.from && !EDGES.includes(st.from)) E.push(`${at}: from must be left, right, top or bottom`);
+  if (st.exit && st.exit !== true && !EDGES.includes(st.exit)) E.push(`${at}: exit must be left, right, top or bottom`);
+  if (st.source && !['any', 'emoji', 'clipart', 'photo'].includes(st.source)) E.push(`${at}: source must be any, emoji, clipart or photo`);
+  [].concat(st.moves || [], st.to ? [st.to] : []).forEach((m, i) => { if (!m || typeof m !== 'object' || (m.x == null && m.y == null)) E.push(`${at}: moves[${i}] needs x and/or y (%)`); else if (m.at != null && typeof m.at !== 'number') E.push(`${at}: moves[${i}].at must be seconds`); });
+}
 export function stickerDefs() {
   const ctx = { window: {} }; vm.createContext(ctx);
   vm.runInContext(fs.readFileSync(path.join(HERE, 'runtime', 'stickers.js'), 'utf8'), ctx);
@@ -35,7 +46,7 @@ export function stickerDefs() {
 export function stickerNames() { return Object.keys(stickerDefs()); }
 
 export function validate(sb, baseDir = '.') {
-  const errors = [], warnings = [];
+  const errors = [], warnings = []; _motionErrors = errors;
   const defs = stickerDefs(); const stickers = new Set(Object.keys(defs));
   const premium = Object.keys(defs).filter(k => !defs[k].legacy);
   if (!sb || typeof sb !== 'object') return { errors: ['storyboard is not an object'], warnings };
@@ -57,7 +68,7 @@ export function validate(sb, baseDir = '.') {
     if (s.theme && !THEMES.includes(s.theme)) errors.push(`${at}: theme "${s.theme}" unknown`);
     if (s.bg && !BGS.includes(s.bg)) warnings.push(`${at}: bg "${s.bg}" unknown, falls back to plain colour`);
     const cine = CINE_THEMES.includes(s.theme || meta.theme || 'noir');
-    (s.stickers || []).forEach((st, j) => { const t = typeof st === 'string' ? st : st.type; if (t === 'character') { checkChar(st, `${at}: stickers[${j}]`); return; } if (t === 'image' || t === 'cutout') { if (!(st.media || st.src)) errors.push(`${at}: stickers[${j}] ${t} sticker needs media`); return; } if (!stickers.has(t)) errors.push(`${at}: stickers[${j}] type "${t}" unknown. Premium set: ${premium.join(', ')}`); else if (cine && defs[t].legacy) legacyUsed.add(t); if (t === 'photo' && !(st.media || st.src)) errors.push(`${at}: stickers[${j}] photo sticker needs media`); if (st.fx && !FXS.includes(st.fx)) errors.push(`${at}: stickers[${j}] fx "${st.fx}" unknown`); });
+    (s.stickers || []).forEach((st, j) => { const t = typeof st === 'string' ? st : st.type; if (t === 'character') { checkChar(st, `${at}: stickers[${j}]`); return; } if (typeof st === 'object' && st) checkMotion(st, `${at}: stickers[${j}]`); if (/^(find|sticker):/i.test(t || '')) { if (!t.replace(/^(find|sticker):((emoji|clipart|photo|any):)?/i, '').trim()) errors.push(`${at}: stickers[${j}] ${t} needs something to search for, e.g. "find:bullock cart"`); return; } if (t === 'sticker' || t === 'find') { if (!st.query) errors.push(`${at}: stickers[${j}] needs "query"`); return; } if (/^pack:/.test(t || '')) return; if (t === 'image' || t === 'cutout') { if (!(st.media || st.src)) errors.push(`${at}: stickers[${j}] ${t} sticker needs media`); return; } if (!stickers.has(t)) errors.push(`${at}: stickers[${j}] type "${t}" unknown. Premium set: ${premium.join(', ')}`); else if (cine && defs[t].legacy) legacyUsed.add(t); if (t === 'photo' && !(st.media || st.src)) errors.push(`${at}: stickers[${j}] photo sticker needs media`); if (st.fx && !FXS.includes(st.fx)) errors.push(`${at}: stickers[${j}] fx "${st.fx}" unknown`); });
     for (const k of ['headline', 'text', 'title', 'label', 'caption', 'narration']) {
       const v = s[k]; if (typeof v !== 'string') continue;
       for (const [o, c] of [['==', '=='], ['**', '**'], ['[[', ']]'], ['~~', '~~'], ['{{', '}}']]) { const n1 = v.split(o).length - 1, n2 = v.split(c).length - 1; if (o === c ? n1 % 2 : n1 !== n2) errors.push(`${at}: unbalanced "${o}" markup in ${k}`); }

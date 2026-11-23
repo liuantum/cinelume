@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "title": "Bengaluru traffic in 20 seconds",
+    "format": "9:16",
+    "theme": "archive",
+    "handle": "@liuantum",
+    "voice": "kokoro:am_michael",
+    "voiceRate": "+4%"
+  },
+  "scenes": [
+    {
+      "type": "kinetic",
+      "text": "10 km. ==36 minutes.==",
+      "bg": "paper-grid",
+      "narration": "In Bengaluru, a ten kilometre drive now takes thirty-six minutes.",
+      "cast": [
+        {
+          "id": "eng",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 74,
+          "y": 97,
+          "size": 30,
+          "at": 0.3,
+          "pose": "think"
+        }
+      ],
+      "actions": [
+        {
+          "who": "eng",
+          "do": "say",
+          "at": 1.6,
+          "text": "Still at Silk Board…",
+          "dur": 2.2
+        }
+      ],
+      "stickers": [
+        {
+          "type": "find:auto rickshaw",
+          "x": 34,
+          "y": 80,
+          "size": 22,
+          "at": 0.2,
+          "from": "left",
+          "travel": 1.6,
+          "flip": true,
+          "idle": "roll"
+        },
+        {
+          "type": "find:snail",
+          "x": 22,
+          "y": 30,
+          "size": 13,
+          "at": 1.4,
+          "moves": [
+            {
+              "x": 34,
+              "y": 30,
+              "at": 1.9,
+              "dur": 3.5,
+              "ease": "linear"
+            }
+          ],
+          "idle": "bob"
+        }
+      ]
+    },
+    {
+      "type": "bignumber",
+      "value": 168,
+      "suffix": " hrs",
+      "kicker": "Lost every year",
+      "label": "stuck in rush-hour ==traffic==",
+      "source": "TomTom Traffic Index 2025",
+      "narration": "That adds up to a hundred and sixty-eight hours a year. A full week of your life, gone in traffic.",
+      "stickers": [
+        {
+          "type": "find:hourglass",
+          "x": 78,
+          "y": 22,
+          "size": 17,
+          "at": 0.8,
+          "idle": "sway"
+        },
+        {
+          "type": "find:face steam",
+          "x": 22,
+          "y": 72,
+          "size": 16,
+          "at": 2.6,
+          "idle": "shake"
+        },
+        {
+          "type": "find:bus",
+          "x": 60,
+          "y": 80,
+          "size": 26,
+          "at": 1.4,
+          "from": "right",
+          "travel": 1.8,
+          "idle": "roll"
+        }
+      ]
+    },
+    {
+      "type": "kinetic",
+      "text": "World's ==#2== most congested city",
+      "bg": "paper-grid",
+      "narration": "TomTom now ranks it the second most congested city on Earth, behind only Mexico City.",
+      "stickers": [
+        {
+          "type": "find:motor scooter",
+          "x": 30,
+          "y": 78,
+          "size": 20,
+          "at": 0.3,
+          "from": "left",
+          "exit": "right",
+          "exitAt": 3.4,
+          "travel": 1.2,
+          "flip": true
+        },
+        {
+          "type": "find:stopwatch",
+          "x": 76,
+          "y": 26,
+          "size": 16,
+          "at": 0.9,
+          "idle": "pulse"
+        },
+        {
+          "type": "vx-india",
+          "x": 24,
+          "y": 26,
+          "size": 14,
+          "at": 1.5
+        }
+      ]
+    },
+    {
+      "type": "outro",
+      "headline": "Bengaluru.",
+      "cta": "Follow for more city stories",
+      "handle": "@liuantum",
+      "narration": "Bengaluru. Brilliant city. Bring snacks.",
+      "stickers": [
+        {
+          "type": "find:auto rickshaw",
+          "x": 50,
+          "y": 78,
+          "size": 21,
+          "at": 0.4,
+          "from": "left",
+          "exit": "right",
+          "exitAt": 2.6,
+          "flip": true
+        }
+      ]
+    }
+  ]
+}

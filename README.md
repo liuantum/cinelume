@@ -46,6 +46,17 @@ in sleepy 1985 Bangalore, an engineer who needs a satellite link and gets a bull
 </tr>
 </table>
 
+<table><tr>
+<td width="200" align="center"><a href="docs/bengaluru-traffic-9x16.mp4"><img src="docs/preview-traffic-9x16.webp" width="180" alt="Bengaluru traffic reel preview"></a></td>
+<td>
+
+**🔎 Bengaluru traffic in 20 seconds** · 9:16 · <a href="docs/bengaluru-traffic-9x16.mp4"><b>▶ Watch</b></a><br>
+Every prop here (auto rickshaw, snail, hourglass, bus, scooter, stopwatch) was **found online automatically** with
+`find:<thing>`, cut out, and animated: the auto drives in, the snail crawls, the bus pulls up, the scooter zips off.
+Figures: TomTom Traffic Index 2025. Storyboard: [bengaluru-traffic-9x16.json](docs/demo-src/bengaluru-traffic-9x16.json).
+
+</td></tr></table>
+
 <sub>Previews are silent loops; click to play the MP4 with narration and music.
 Storyboards: [9:16](docs/demo-src/bengaluru-9x16.json) · [16:9](docs/demo-src/bengaluru-16x9.json).
 Facts: Texas Instruments, CBRE Global Tech Talent Guidebook 2025, Government of Karnataka, RBI, Deccan Herald.
@@ -131,6 +142,21 @@ Cut-out paper characters with moving arms, legs, eyes and mouths. Cast them in a
   `head: "cutout:photo.jpg"` puts a real cut-out head on a drawn body (the classic Vox big-head look)
 - **Your own sticker pack**: drop PNG/WebP/SVG files you're allowed to use into `stickers/` and use them as `pack:<name>`
 
+### 🔎 No sticker for it? Cinelume finds one online and animates it
+
+Ask for anything by name: `{ "type": "find:tiger" }`, `find:auto rickshaw`, `find:photo:tractor`, `find:google logo`.
+Cinelume uses a built-in sticker if one fits, then your own pack, then searches **openly licensed** sources: 3D-style
+Fluent Emoji, Noto, Twemoji and OpenMoji via Iconify, Openverse clipart, Wikimedia Commons, and finally a real photo with
+the **background removed**. The find becomes a die-cut sticker with the same pop, burst and wiggle, and the credit goes
+into `credits.txt`. Offline or no match? It turns into a text label, so a frame is never empty.
+
+Props can act as well: `from: "left"` drives a sticker in, `moves` sends it across the frame on cue, `exit` drives it out,
+plus `flip` and `bounce` / `shake` / `sway` / `float` / `roll` idles.
+
+```bash
+node skills/cinelume/engine/sticker-search.mjs "auto rickshaw" --n 3 --out stickers/   # preview & keep the best
+```
+
 **Also in the box:** 28 scene types (maps that fly to countries, animated bar / line / donut charts, timelines, compare, lists,
 flows, documents, phone & browser screens, b-roll), 32 camera moves, 29 transitions, 20 themes, automatic real-image search
 with credits, and a deterministic renderer, so what you preview is exactly what ships.
@@ -166,7 +192,7 @@ Claude Code plugin marketplace:
 Optional extras:
 ```bash
 pip install kokoro-onnx soundfile   # offline studio voices (used in the demos)
-pip install rembg                   # automatic cut-outs for Vox-edit collages
+pip install rembg pillow            # automatic cut-outs (collages, photo stickers, found clipart)
 ```
 </details>
 
@@ -296,7 +322,7 @@ skills/cinelume/
 ├── references/         # schema, style bible, camera & transitions, shot planning, stickers
 ├── examples/           # vox-edit-reel, viral-short, silicon-island, ai-reel-cinematic, classic/
 ├── scripts/            # kokoro_tts.py (studio voice), cutout.py (background removal), tts.py (fallbacks)
-└── engine/             # render.mjs, validate.mjs, tts.mjs, runtime/, assets/fonts/
+└── engine/             # render.mjs, validate.mjs, tts.mjs, sticker-search.mjs (find:), runtime/, assets/fonts/
 ```
 </details>
 

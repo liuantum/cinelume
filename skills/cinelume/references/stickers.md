@@ -126,3 +126,51 @@ automatically (`captionsAt: "bottom"` to override).
 - **Sticker packs:** put PNG / WebP / SVG files you are allowed to use in `stickers/` next to the storyboard, or in
   `~/.cinelume/stickers/` (or `$CINELUME_STICKERS`), and use them by file name: `pack:<name>`.
 - Story props drawn for the skill: `vx-dish` (satellite dish), `vx-cart` (bullock cart), `vx-laptop`, `vx-office`, `vx-news`.
+
+## No sticker for it? `find:` searches the internet and animates the result
+
+When the story needs a thing the built-in set doesn't have (a tiger, a robot, a tractor, a dosa, a chai glass, a
+company logo…), ask for it by name. Cinelume picks the first source that has it:
+
+1. a **built-in** drawn sticker if one fits (`find:rocket` → `vx-rocket`, `find:satellite dish` → `vx-dish`)
+2. your **sticker pack** (`stickers/`, `~/.cinelume/stickers/`, `$CINELUME_STICKERS`), matching file names by words
+3. **Iconify colour emoji sets**: Fluent Emoji (3D-style), Noto, Twemoji, OpenMoji, EmojiOne… (open licences, no key). Add
+   the word `logo` for brand logos (`find:google logo`)
+4. **Openverse** illustrations & clipart (CC0 / CC BY / CC BY-SA), then **Wikimedia Commons** drawings & PNGs
+5. a **real photo** (Pexels / Unsplash / Pixabay if you set keys, else open photos) with the **background removed**
+
+Online finds are cached, cut out to a transparent PNG when needed (rembg, or a flat-background fill), credited in
+`credits.txt`, and get the full sticker animation: pop, confetti burst, wiggle, white die-cut rim. If nothing is found
+(or you're offline) the sticker becomes a glossy text label so the frame is never empty.
+
+```jsonc
+{ "type": "find:tiger", "x": 72, "y": 30, "size": 18 }
+{ "type": "find:photo:tractor", "x": 30, "y": 70, "size": 24, "from": "left" }       // force a cut-out photo
+{ "type": "find:clipart:bullock cart", "x": 45, "y": 78, "size": 16 }               // prefer clipart
+{ "type": "sticker", "query": "masala dosa", "source": "emoji", "x": 50, "y": 40 }  // long form
+{ "type": "image", "media": "find:auto rickshaw", "x": 60, "y": 60, "size": 20 }    // same, as media
+```
+`source`: `any` (default, order above) · `emoji` · `clipart` · `photo`.
+
+**Preview candidates first** (recommended for hero props): `node engine/sticker-search.mjs "auto rickshaw" --n 3 --out stickers/`
+downloads the top three into the pack folder with a `CREDITS.txt`. Look at them, keep the best, use `pack:auto-rickshaw`.
+
+Rules: only openly licensed sources are searched (credits are kept for you). Real people: public figures in a news context
+only, never private individuals. Logos: refer to the company, don't imply endorsement.
+
+## Sticker motion (any sticker: built-in, found, pack, photo)
+
+| field | effect |
+|---|---|
+| `from: "left" \| "right" \| "top" \| "bottom"` | drives / slides in from off-screen to `x,y` (instead of popping); `travel` = seconds (1.2) |
+| `moves: [{ "x": 80, "y": 15, "at": 1.6, "dur": 1.2 }]` (or `to: {…}`) | travels to new positions on cue (eased); chain several |
+| `exit: "right"`, `exitAt: 3.0` | leaves the frame on cue |
+| `flip: true` | mirror it (so the cart faces the way it drives) |
+| `idle` | `wiggle` (Vox default) · `bounce` · `float` · `bob` · `sway` · `shake` · `roll` · `pulse` · `breathe` · `spin` · `drift` · `null` |
+| `roll: false` | no wheel-bump while travelling |
+| `out` | fade out at this time |
+
+Example beat — the cart rolls in carrying the dish, stops, then leaves:
+```json
+{ "type": "vx-cart", "x": 60, "y": 74, "size": 30, "at": 0.4, "from": "left", "exit": "right", "exitAt": 4.2 }
+```

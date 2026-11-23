@@ -50,6 +50,12 @@ Build almost every shot with the `story` scene — it is the collage camera:
 - Props: `vx-*` stickers (dish, cart, laptop, office, rocket, rupee, flag…), real photo stickers (`"type": "image"`,
   `"media": "cutout:search:…"`), or the user's own pack (`pack:<name>`). Real public figures: use `head: "cutout:<photo>"`
   only with photos the user supplies or that are openly licensed; never private individuals.
+- **No sticker for something? Use `find:<thing>`** (`find:tiger`, `find:photo:tractor`, `find:google logo`). It uses a
+  built-in sticker if one fits, else the user's pack, else searches openly licensed emoji / clipart / photos online, cuts
+  it out and animates it like any other sticker. For a hero prop, preview first: `node engine/sticker-search.mjs "<thing>" --n 3 --out <storyboard dir>/stickers`,
+  look at the files, then use `pack:<name>`. Never use `find:` for private individuals.
+- **Make props act too**: `from: "left"` (drive in), `moves: [{x, y, at, dur}]` (travel on cue), `exit` + `exitAt`,
+  `flip`, `idle: bounce | shake | sway | float | roll`. A cart that rolls in as the narrator says "bullock cart" beats one that just appears.
 - Leave ~40% of the frame for the cast (feet line `y` 94–98, `size` 35–45 in 9:16, 55–60 in 16:9); captions move to the top.
 
 ### Viral short playbook (retention first)

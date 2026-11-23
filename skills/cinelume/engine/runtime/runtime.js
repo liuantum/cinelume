@@ -16,6 +16,7 @@
   const E = {
     linear: p => p,
     in: p => p * p * p,
+    inQuad: p => p * p,
     out: p => 1 - Math.pow(1 - p, 3),
     inOut: p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2),
     outExpo: p => (p >= 1 ? 1 : 1 - Math.pow(2, -10 * p)),
@@ -165,6 +166,18 @@
         if (o.idle === 'spin') r += it * 25;
         if (o.idle === 'drift') { ty += Math.sin(it * .9 + o.seed) * 0.35 * u; tx += Math.cos(it * .7 + o.seed) * 0.25 * u; }
         if (o.idle === 'bob') { ty += Math.sin(it * 2 + o.seed) * 0.6 * u; r += Math.sin(it * 1.3 + o.seed) * 1.5; }
+        if (o.idle === 'bounce') { ty -= Math.abs(Math.sin(it * 3.2 + o.seed)) * 1.4 * u; s *= 1 + Math.max(0, -Math.cos(it * 6.4 + o.seed * 2)) * .02; }
+        if (o.idle === 'shake') { tx += Math.sin(it * 38 + o.seed) * .28 * u; r += Math.sin(it * 31 + o.seed) * 1.6; }
+        if (o.idle === 'sway') r += Math.sin(it * 1.4 + o.seed) * 6;
+        if (o.idle === 'roll') { ty += Math.abs(Math.sin(it * 9 + o.seed)) * -.22 * u; r += Math.sin(it * 4.5 + o.seed) * .9; }
+      }
+      // sticker paths: keyframes of offsets (in % of the frame) from the sticker's resting position
+      if (o.path && o.path.length) {
+        const P = o.path; let dx = P[0].dx, dy = P[0].dy, moving = false;
+        for (let i = 1; i < P.length; i++) { const a = P[i - 1], b = P[i]; if (t >= b.t) { dx = b.dx; dy = b.dy; continue; } if (t > a.t) { const kk = (E[b.ease] || E.inOut)((t - a.t) / Math.max(.01, b.t - a.t)); dx = lerp(a.dx, b.dx, kk); dy = lerp(a.dy, b.dy, kk); moving = true; } break; }
+        tx += dx * G.W / 100; ty += dy * G.H / 100;
+        if (moving && o.rollWhileMoving) { ty -= Math.abs(Math.sin(t * 10 + o.seed)) * .3 * u; r += Math.sin(t * 5 + o.seed) * 1.2; }
+        if (t < P[0].t && o.fx === 'none') op = 0;
       }
       const pre = o.center ? 'translate(-50%,-50%) ' : '';
       this.el.style.transform = `${pre}translate(${tx}px,${ty}px) rotate(${r}deg) scale(${s})${f.ry ? ` perspective(800px) rotateY(${f.ry}deg)` : ''}`;
@@ -513,8 +526,9 @@
     if (st.text) { const tx = h('div', 'stxt' + (S.font === 'marker' ? ' marker' : ''), { fontSize: (st.textSize || (S.wide ? .34 : .22)) * hh + 'px', color: st.textColor || (S.txt === 'K' ? '#141414' : '#fff'), padding: S.wide ? '0 12%' : '14%' }, esc(st.text)); if (S.font === 'marker') tx.style.fontFamily = 'Marker'; el.appendChild(tx); }
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx: st.fx || (S.draw ? 'none' : 'popBig'), dur: st.dur || .5, rot: st.rot != null ? st.rot : (S.draw ? 0 : ((idHash(st.type + st.x) % 17) - 8)), idle: st.idle !== undefined ? st.idle : (S.draw ? null : 'wiggle'), out: st.out });
+    if (st.flip && el.firstElementChild) el.firstElementChild.style.transform = 'scaleX(-1)';
     if (S.draw) { it.draws = [...el.querySelectorAll('path')]; it.o.drawDur = st.dur || .6; c.sfx('scribble', it.o.at, .5); }
-    else { c.sfx('pop', it.o.at, .7); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 80, st.y != null ? st.y : 25, size, it.o.at, st.layer || 'fg'); }
+    else if (stickerMotion(it, st, st.x != null ? st.x : 80, st.y != null ? st.y : 25)) { c.sfx('pop', it.o.at, .7); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 80, st.y != null ? st.y : 25, size, it.o.at, st.layer || 'fg'); }
     return el;
   }
   const ARCHIVE_SFX = { tap: 'paper', air: 'whoosh-soft', bubble: 'pop', impact: 'thud', 'impact-soft': 'thud', pen: 'scribble', swell: 'riser', 'whoosh-deep': 'whoosh', chime: 'ding' };
@@ -678,14 +692,33 @@
   // a real photo (or your own PNG) as a die-cut sticker; "cutout:…" removes the background first
   function addImageSticker(c, st) {
     const u = G.u, a = G.assets[st.media || st.src];
+    // nothing found (offline / no match): say it with a glossy label sticker instead of an empty box
+    if ((!a || a.type === 'missing') && /^(sticker|pack):/i.test(st.media || '')) {
+      const txt = st.label || st.query || (a && a.label) || String(st.media).replace(/^[a-z]+:(?:(?:emoji|clipart|photo|any):)?/i, '');
+      return addSticker(c, Object.assign({}, st, { type: 'vx-label', text: txt, media: null, size: Math.max(6, (st.size || 16) * .45) }));
+    }
     const hh = (st.size || 16) * u;
     const el = h('div', 'stk cutout', { left: (st.x != null ? st.x : 50) + '%', top: (st.y != null ? st.y : 40) + '%', height: hh + 'px', zIndex: 20 });
-    if (a && a.type === 'image') { const im = h('img', st.look ? 'look-' + st.look : null, { height: '100%', width: 'auto', display: 'block' }); im.src = a.url; el.appendChild(im); }
+    if (a && a.type === 'image') { const im = h('img', st.look ? 'look-' + st.look : null, { height: '100%', width: 'auto', display: 'block', transform: st.flip ? 'scaleX(-1)' : '' }); im.src = a.url; el.appendChild(im); }
     else { el.style.width = hh + 'px'; el.appendChild(Object.assign(c.media(st.media || st.src, {}), { style: 'position:absolute;inset:0' })); }
     c.add(el, st.layer || 'fg');
-    const it = c.item(el, { at: st.at != null ? st.at : .6, fx: st.fx || (c.vox || !c.cine ? 'popBig' : 'blurIn'), rot: st.rot != null ? st.rot : (idHash(String(st.media)) % 9) - 4, idle: st.idle !== undefined ? st.idle : (c.vox ? 'wiggle' : 'drift'), center: true, keep: true });
-    c.sfx('pop', it.o.at, .6); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 50, st.y != null ? st.y : 40, hh, it.o.at, st.layer || 'fg');
+    const it = c.item(el, { at: st.at != null ? st.at : .6, fx: st.fx || (c.vox || !c.cine ? 'popBig' : 'blurIn'), rot: st.rot != null ? st.rot : (idHash(String(st.media)) % 9) - 4, idle: st.idle !== undefined ? st.idle : (c.vox ? 'wiggle' : 'drift'), out: st.out, center: true, keep: true });
+    const pops = stickerMotion(it, st, st.x != null ? st.x : 50, st.y != null ? st.y : 40);
+    if (pops) { c.sfx('pop', it.o.at, .6); if (c.vox || !c.cine) popBurst(c, st.x != null ? st.x : 50, st.y != null ? st.y : 40, hh, it.o.at, st.layer || 'fg'); }
     return el;
+  }
+
+  // Sticker motion: "from" (drive/slide in from off-screen), "moves" / "to" (travel), "exit" (leave), "flip"
+  function stickerMotion(it, st, x, y) {
+    const o = it.o, at = o.at, edge = (side, px, py) => side === 'left' ? [-(px + 40), 0] : side === 'right' ? [100 - px + 40, 0] : side === 'top' ? [0, -(py + 40)] : side === 'bottom' ? [0, 100 - py + 40] : [0, 0];
+    const P = [];
+    if (st.from) { const [dx, dy] = edge(st.from, x, y); const d = st.travel || 1.2; P.push({ t: at, dx, dy }, { t: at + d, dx: 0, dy: 0, ease: 'out' }); o.fx = 'none'; o.arrive = at + d; }
+    else P.push({ t: at, dx: 0, dy: 0 });
+    const moves = (st.moves || (st.to ? [st.to] : [])).slice().sort((a, b) => (a.at || 0) - (b.at || 0));
+    moves.forEach(m => { const prev = P[P.length - 1]; const t0 = Math.max(m.at != null ? m.at : prev.t + .2, prev.t); P.push({ t: t0, dx: prev.dx, dy: prev.dy }, { t: t0 + (m.dur || 1), dx: (m.x != null ? m.x : x + prev.dx) - x, dy: (m.y != null ? m.y : y + prev.dy) - y, ease: m.ease || 'inOut' }); });
+    if (st.exit) { const prev = P[P.length - 1]; const t0 = Math.max(st.exitAt != null ? st.exitAt : prev.t + 1.5, prev.t); const [ex, ey] = edge(typeof st.exit === 'string' ? st.exit : 'right', x + prev.dx, y + prev.dy); P.push({ t: t0, dx: prev.dx, dy: prev.dy }, { t: t0 + (st.travel || 1.1), dx: prev.dx + ex, dy: prev.dy + ey, ease: 'inQuad' }); }
+    if (P.length > 1) { o.path = P; o.rollWhileMoving = st.roll !== false; it.scene.sfx(st.from ? 'whoosh-soft' : 'swish', at, .4); }
+    return !st.from;
   }
 
   // Vox "pop": confetti dashes + dots radiate from a sticker as it lands
@@ -753,7 +786,7 @@
     c.add(el, st.layer || 'fg');
     const it = c.item(el, { at: st.at != null ? st.at : .8, fx, dur, rot: st.rot || 0, idle, out: st.out, center, keep: true, scale: st.scale || 1 });
     if (draws) { it.draws = draws; it.o.drawDur = dur; it.o.dur = .01; }
-    else if (c.vox && S.kind !== 'glow' && S.kind !== 'line') popBurst(c, x, y, (st.size || 8) * u, it.o.at, st.layer || 'fg');
+    else if (stickerMotion(it, st, x, y) && c.vox && S.kind !== 'glow' && S.kind !== 'line') popBurst(c, x, y, (st.size || 8) * u, it.o.at, st.layer || 'fg');
     c.sfx(snd, it.o.at, snd === 'pen' ? .35 : .5);
     return el;
   }
