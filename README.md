@@ -20,46 +20,47 @@ narrates, scores and renders a ready-to-post MP4, in vertical **9:16** or widesc
 
 ## 👀 See it
 
-**The City That Codes**: how Bengaluru went from a quiet "pensioners' paradise" to home of more than a million tech workers,
-starting with a satellite dish that arrived on a bullock cart in 1985. Both cuts are fully narrated, scored and captioned,
-rendered from a single storyboard file each. The story is acted out by animated character stickers: retired grandparents
-in sleepy 1985 Bangalore, an engineer who needs a satellite link and gets a bullock cart, and a crowd of a million coders.
+Three demos, each rendered from a single storyboard file, with narration, music and captions.
 
 <table>
 <tr>
-<td align="center" width="34%">
+<td align="center" width="50%" valign="top">
 
-<a href="docs/bengaluru-9x16.mp4"><img src="docs/preview-9x16.webp" width="260" alt="9:16 Vox-edit reel preview"></a>
+<a href="docs/bengaluru-9x16.mp4"><img src="docs/preview-9x16.webp" width="300" alt="The City That Codes, 9:16 reel preview"></a>
 
-**9:16 · Reel / Short** · 35 s<br>
+**📼 The City That Codes** · 9:16 · 35 s<br>
 <a href="docs/bengaluru-9x16.mp4"><b>▶ Watch with sound</b></a>
 
+<sub>How Bengaluru went from a sleepy "pensioners' paradise" to a million tech workers, acted out by
+<b>character stickers</b>: grandparents in 1985, an engineer who needs a satellite link and gets a bullock cart.</sub>
+
 </td>
-<td align="center" width="66%">
+<td align="center" width="50%" valign="top">
 
-<a href="docs/bengaluru-16x9.mp4"><img src="docs/preview-16x9.webp" width="560" alt="16:9 Vox-edit documentary preview"></a>
+<a href="docs/bengaluru-traffic-9x16.mp4"><img src="docs/preview-traffic-9x16.webp" width="300" alt="Bengaluru traffic reel preview"></a>
 
-**16:9 · YouTube documentary** · 63 s<br>
-<a href="docs/bengaluru-16x9.mp4"><b>▶ Watch with sound</b></a>
+**🔎 Bengaluru traffic in 20 seconds** · 9:16 · 20 s<br>
+<a href="docs/bengaluru-traffic-9x16.mp4"><b>▶ Watch with sound</b></a>
+
+<sub>Every prop (auto rickshaw, snail, hourglass, bus, scooter, stopwatch) was <b>found online automatically</b>
+with <code>find:&lt;thing&gt;</code>, cut out and animated: the auto drives in, the bus pulls up, the scooter zips off.</sub>
+
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+
+<a href="docs/bengaluru-16x9.mp4"><img src="docs/preview-16x9.webp" width="760" alt="The City That Codes, 16:9 documentary preview"></a>
+
+**🎬 The City That Codes** · 16:9 YouTube documentary · 63 s · <a href="docs/bengaluru-16x9.mp4"><b>▶ Watch with sound</b></a>
 
 </td>
 </tr>
 </table>
 
-<table><tr>
-<td width="200" align="center"><a href="docs/bengaluru-traffic-9x16.mp4"><img src="docs/preview-traffic-9x16.webp" width="180" alt="Bengaluru traffic reel preview"></a></td>
-<td>
-
-**🔎 Bengaluru traffic in 20 seconds** · 9:16 · <a href="docs/bengaluru-traffic-9x16.mp4"><b>▶ Watch</b></a><br>
-Every prop here (auto rickshaw, snail, hourglass, bus, scooter, stopwatch) was **found online automatically** with
-`find:<thing>`, cut out, and animated: the auto drives in, the snail crawls, the bus pulls up, the scooter zips off.
-Figures: TomTom Traffic Index 2025. Storyboard: [bengaluru-traffic-9x16.json](docs/demo-src/bengaluru-traffic-9x16.json).
-
-</td></tr></table>
-
 <sub>Previews are silent loops; click to play the MP4 with narration and music.
-Storyboards: [9:16](docs/demo-src/bengaluru-9x16.json) · [16:9](docs/demo-src/bengaluru-16x9.json).
-Facts: Texas Instruments, CBRE Global Tech Talent Guidebook 2025, Government of Karnataka, RBI, Deccan Herald.
+Storyboards: [9:16](docs/demo-src/bengaluru-9x16.json) · [traffic](docs/demo-src/bengaluru-traffic-9x16.json) · [16:9](docs/demo-src/bengaluru-16x9.json).
+Facts: Texas Instruments, CBRE Global Tech Talent Guidebook 2025, Government of Karnataka, RBI, Deccan Herald, TomTom Traffic Index 2025.
 The city backdrops in these demos are generated illustrations; in normal use Cinelume pulls real photos and footage for every shot.</sub>
 
 <details>
