@@ -22,7 +22,8 @@ narrates, scores and renders a ready-to-post MP4, in vertical **9:16** or widesc
 
 **The City That Codes**: how Bengaluru went from a quiet "pensioners' paradise" to home of more than a million tech workers,
 starting with a satellite dish that arrived on a bullock cart in 1985. Both cuts are fully narrated, scored and captioned,
-rendered from a single storyboard file each.
+rendered from a single storyboard file each. The story is acted out by animated character stickers: retired grandparents
+in sleepy 1985 Bangalore, an engineer who needs a satellite link and gets a bullock cart, and a crowd of a million coders.
 
 <table>
 <tr>
@@ -106,8 +107,29 @@ Film-like and calm.
 </table>
 
 **Vox animation in every style:** stickers land with an overshoot pop, a confetti burst and a gentle wiggle; markers draw
-themselves on; photos drop in as taped polaroids. 32 glossy die-cut stickers (fire, rocket, rupee, Indian flag, trend arrows,
-modern 3D faces, speech bubbles, sticky notes…), plus fine-line annotations, glass tags and 35 line icons.
+themselves on; photos drop in as taped polaroids. 37 glossy die-cut stickers (fire, rocket, rupee, Indian flag, satellite dish,
+bullock cart, laptop, office tower, trend arrows, modern 3D faces, speech bubbles, sticky notes…), plus fine-line annotations,
+glass tags and 35 line icons.
+
+### 🧑‍🤝‍🧑 Character stickers that tell the story
+
+Cut-out paper characters with moving arms, legs, eyes and mouths. Cast them in a scene and direct them like actors:
+
+```json
+"cast": [{ "id": "eng", "role": "engineer", "x": 26, "y": 94, "size": 40, "enter": "walk", "from": "left" }],
+"actions": [
+  { "who": "eng", "do": "say",   "at": 1.3, "text": "We need a satellite link!" },
+  { "who": "eng", "do": "shock", "at": 3.6 }
+]
+```
+
+- **11 roles**: engineer, founder (m/f), worker, scientist, doctor, student, farmer, official, person (m/f); any skin tone,
+  hair, outfit, glasses, beard and a prop (laptop, phone, clipboard, briefcase, megaphone, coffee, sign, backpack)
+- **Acting**: walk in or out, wave, point, cheer, think, shock, jump, change mood, **speak in a bubble with lip-sync**, or
+  lip-sync the narration (`talk: true`); they blink and breathe on their own
+- **Real-photo stickers**: `"media": "cutout:search:vintage satellite dish"` cuts any photo out into a die-cut sticker, and
+  `head: "cutout:photo.jpg"` puts a real cut-out head on a drawn body (the classic Vox big-head look)
+- **Your own sticker pack**: drop PNG/WebP/SVG files you're allowed to use into `stickers/` and use them as `pack:<name>`
 
 **Also in the box:** 28 scene types (maps that fly to countries, animated bar / line / donut charts, timelines, compare, lists,
 flows, documents, phone & browser screens, b-roll), 32 camera moves, 29 transitions, 20 themes, automatic real-image search

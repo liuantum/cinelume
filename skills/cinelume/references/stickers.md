@@ -82,3 +82,47 @@ On the paper `archive` theme prefer marker draw-ons in red (`"color": "#C2271E"`
 { "type": "vx-bubble", "text": "Silicon Valley of India", "x": 74, "y": 62, "size": 8, "aspect": 4.4, "textSize": 0.27, "at": 2.6 }
 { "type": "circle", "x": 50, "y": 38, "size": 30, "at": 2.6, "color": "#C2271E" }
 ```
+
+## Characters — stickers that act out the story
+
+Original Vox-style cut-out paper people (big head, die-cut white rim) with moving parts. Put them in any scene with
+`cast` (plus scene-level `actions`), or as a single `{ "type": "character", … }` sticker.
+
+```json
+"cast": [
+  { "id": "eng", "role": "engineer", "skin": "fair", "x": 28, "y": 94, "size": 40, "enter": "walk", "from": "left", "at": 0.1 },
+  { "id": "boss", "role": "founder-f", "x": 72, "y": 94, "size": 40, "flip": true, "talk": true }
+],
+"actions": [
+  { "who": "eng", "do": "say", "at": 1.3, "text": "We need a satellite link!", "dur": 2.0 },
+  { "who": "eng", "do": "shock", "at": 3.6 },
+  { "who": "boss", "do": "walk", "at": 4.0, "to": 55, "dur": 1.0 }
+]
+```
+
+| field | values |
+|---|---|
+| `role` | `engineer` `founder` `founder-f` `worker` `scientist` `doctor` `student` `farmer` `official` `person` `person-f` |
+| look overrides | `skin` (`light` `fair` `medium` `tan` `brown` `deep` or a hex), `hair` (`short` `long` `bun` `ponytail` `curly` `bald` `cap` `hardhat` `strawhat`), `hairColor`, `outfit`, `style` (`hoodie` `blazer` `suit` `labcoat` `vest` `shirt` `tee`), `pants`, `glasses`, `beard`, `prop` (`laptop` `phone` `clipboard` `briefcase` `megaphone` `coffee` `sign` + `propText`, `backpack`) |
+| placement | `x` (centre, % of width), `y` (feet line, % of height), `size` (% of frame height), `flip` (face left), `layer` |
+| entrance | `enter`: `pop` (Vox pop + confetti) · `walk` (+`from: left/right`) · `rise` · `drop` · `none`; `at` |
+| standing pose | `pose`: `idle` `wave` `point` `cheer` `think` `shock`; `mood`: `happy` `sad` `neutral` |
+| lip-sync | `talk: true` — the mouth moves while the scene's narration plays |
+| photo head | `head: "cutout:search:…"` or a local photo — a real cut-out head on a drawn body (the classic Vox big-head collage) |
+| `actions` | `walk` (`to`, `dur`) · `exit` (`to: left/right`) · `wave` · `point` (`dir: up`) · `cheer` · `think` · `shock` · `jump` · `say` (`text`, `dur` → speech bubble + lip-sync) · `face` (`mood`) |
+
+Characters blink, breathe and sway on their own. When a scene has a cast, captions move to the top of the frame
+automatically (`captionsAt: "bottom"` to override).
+
+## Real photo stickers & your own sticker packs
+
+```json
+{ "type": "image", "media": "cutout:search:vintage satellite dish", "x": 70, "y": 45, "size": 26 }
+{ "type": "image", "media": "pack:bullock-cart", "x": 30, "y": 60, "size": 22 }
+{ "type": "pack:rocket", "x": 80, "y": 25, "size": 14 }
+```
+- `cutout:` removes the background (needs `pip install rembg`), then the photo becomes a die-cut sticker that pops,
+  bursts and wiggles like the built-in ones. Works with `search:` stock results (credited) and local files.
+- **Sticker packs:** put PNG / WebP / SVG files you are allowed to use in `stickers/` next to the storyboard, or in
+  `~/.cinelume/stickers/` (or `$CINELUME_STICKERS`), and use them by file name: `pack:<name>`.
+- Story props drawn for the skill: `vx-dish` (satellite dish), `vx-cart` (bullock cart), `vx-laptop`, `vx-office`, `vx-news`.

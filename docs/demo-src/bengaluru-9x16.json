@@ -1,38 +1,277 @@
 {
-  "meta": { "title": "How a pensioners' paradise became India's tech capital", "format": "9:16", "theme": "archive", "handle": "@liuantum", "voice": "kokoro:am_michael", "voiceRate": "+4%" },
-  "audio": { "music": "auto:suspense", "musicVolume": 0.34 },
+  "meta": {
+    "title": "How a pensioners' paradise became India's tech capital",
+    "format": "9:16",
+    "theme": "archive",
+    "handle": "@liuantum",
+    "voice": "kokoro:am_michael",
+    "voiceRate": "+4%"
+  },
+  "audio": {
+    "music": "auto:suspense",
+    "musicVolume": 0.34
+  },
   "scenes": [
-    { "type": "story", "frame": "full", "media": "bengaluru/city-1985.jpg", "year": "in 1985",
-      "narration": "In 1985, Bangalore was a quiet city of gardens." },
-
-    { "type": "story", "text": "a pensioners' **paradise.**",
-      "narration": "People called it a pensioners' paradise." },
-
-    { "type": "story", "frame": "clipboard", "media": "bengaluru/city-1985.jpg",
+    {
+      "type": "story",
+      "frame": "full",
+      "media": "bengaluru/city-1985.jpg",
+      "year": "in 1985",
+      "narration": "In 1985, Bangalore was a quiet city of gardens."
+    },
+    {
+      "type": "story",
+      "cast": [
+        {
+          "id": "grandpa",
+          "role": "person",
+          "hair": "bald",
+          "hairColor": "#D9D9D9",
+          "glasses": true,
+          "outfit": "#E5E7EB",
+          "style": "shirt",
+          "skin": "tan",
+          "x": 32,
+          "y": 96,
+          "size": 44,
+          "pose": "wave",
+          "at": 0.2
+        },
+        {
+          "id": "grandma",
+          "role": "person-f",
+          "hair": "bun",
+          "hairColor": "#CFCFCF",
+          "outfit": "#C2271E",
+          "skin": "medium",
+          "x": 68,
+          "y": 96,
+          "size": 42,
+          "at": 0.5,
+          "flip": true
+        }
+      ],
+      "actions": [
+        {
+          "who": "grandma",
+          "do": "say",
+          "at": 1.0,
+          "text": "Such a peaceful city!",
+          "dur": 2.2
+        }
+      ],
+      "stickers": [
+        {
+          "type": "vx-note",
+          "text": "pensioners' paradise",
+          "x": 50,
+          "y": 36,
+          "size": 26,
+          "rot": -5,
+          "at": 0.4
+        }
+      ],
+      "narration": "People called it a pensioners' paradise."
+    },
+    {
+      "type": "story",
+      "frame": "clipboard",
+      "media": "bengaluru/city-1985.jpg",
       "note": "1985 — Miller's Road, Bangalore. Texas Instruments opens India's first multinational R&D centre.",
       "source": "Texas Instruments",
-      "narration": "Then an American chip company did something nobody expected." },
-
-    { "type": "story", "frame": "print", "media": "bengaluru/city-1985.jpg", "tag": "bullock cart", "tagAt": 2.2, "rot": -3,
-      "stickers": [{ "type": "circle", "x": 50, "y": 38, "size": 30, "at": 2.6, "color": "#C2271E" }],
+      "narration": "Then an American chip company did something nobody expected."
+    },
+    {
+      "type": "story",
+      "cast": [
+        {
+          "id": "eng",
+          "role": "engineer",
+          "skin": "fair",
+          "x": 24,
+          "y": 94,
+          "size": 40,
+          "enter": "walk",
+          "from": "left",
+          "at": 0.1
+        }
+      ],
+      "actions": [
+        {
+          "who": "eng",
+          "do": "say",
+          "at": 1.3,
+          "text": "We need a satellite link!",
+          "dur": 2.0
+        },
+        {
+          "who": "eng",
+          "do": "shock",
+          "at": 3.6,
+          "dur": 1.4
+        }
+      ],
+      "stickers": [
+        {
+          "type": "vx-cart",
+          "x": 76,
+          "y": 74,
+          "size": 34,
+          "at": 2.8
+        },
+        {
+          "type": "vx-dish",
+          "x": 72,
+          "y": 58,
+          "size": 17,
+          "at": 3.2
+        },
+        {
+          "type": "arrow-curve",
+          "x": 56,
+          "y": 44,
+          "size": 16,
+          "rot": 60,
+          "at": 3.7,
+          "color": "#C2271E"
+        }
+      ],
       "source": "Deccan Herald",
-      "narration": "It brought in a satellite dish to link Bangalore to the world, and the dish arrived on a ==bullock cart.==" },
-
-    { "type": "story", "frame": "tv", "media": "bengaluru/techpark-dusk.jpg",
-      "narration": "Infosys had already moved here. Then came the tech parks." },
-
-    { "type": "bignumber", "value": 1000000, "suffix": "+", "kicker": "Today", "label": "tech workers in ==one city==",
+      "narration": "It needed a satellite dish to link Bangalore to the world. And the dish arrived on a ==bullock cart.=="
+    },
+    {
+      "type": "story",
+      "frame": "tv",
+      "media": "bengaluru/techpark-dusk.jpg",
+      "stickers": [
+        {
+          "type": "vx-office",
+          "x": 20,
+          "y": 82,
+          "size": 14,
+          "at": 1.2
+        },
+        {
+          "type": "vx-laptop",
+          "x": 80,
+          "y": 82,
+          "size": 12,
+          "at": 1.5
+        }
+      ],
+      "narration": "Infosys had already moved here. Then came the tech parks."
+    },
+    {
+      "type": "bignumber",
+      "value": 1000000,
+      "suffix": "+",
+      "kicker": "Today",
+      "label": "tech workers in ==one city==",
       "source": "CBRE, 2025",
-      "narration": "Today, more than a million tech workers live in this one city." },
-
-    { "type": "story", "frame": "full", "media": "bengaluru/skyline-night.jpg", "magnifier": true, "text": "41% of India's software exports",
+      "cast": [
+        {
+          "id": "w1",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 14,
+          "y": 98,
+          "size": 17,
+          "at": 1.0
+        },
+        {
+          "id": "w2",
+          "role": "founder-f",
+          "skin": "fair",
+          "x": 32,
+          "y": 98,
+          "size": 17,
+          "at": 1.2
+        },
+        {
+          "id": "w3",
+          "role": "student",
+          "skin": "brown",
+          "x": 50,
+          "y": 98,
+          "size": 17,
+          "at": 1.4,
+          "pose": "cheer"
+        },
+        {
+          "id": "w4",
+          "role": "scientist",
+          "skin": "light",
+          "x": 68,
+          "y": 98,
+          "size": 17,
+          "at": 1.6
+        },
+        {
+          "id": "w5",
+          "role": "engineer",
+          "skin": "tan",
+          "hair": "long",
+          "outfit": "#DB2777",
+          "x": 86,
+          "y": 98,
+          "size": 17,
+          "at": 1.8,
+          "pose": "wave"
+        }
+      ],
+      "narration": "Today, more than a million tech workers live in this one city."
+    },
+    {
+      "type": "story",
+      "frame": "full",
+      "media": "bengaluru/skyline-night.jpg",
+      "magnifier": true,
+      "text": "41% of India's software exports",
       "source": "Govt. of Karnataka, FY 2025–26",
-      "narration": "Its state now produces forty one percent of India's software exports." },
-
-    { "type": "story", "text": "the city that **codes.**", "spot": "#2F5D8C",
-      "narration": "From a bullock cart, to the city that codes the world." },
-
-    { "type": "outro", "headline": "Bengaluru.", "cta": "Follow for Part 2", "handle": "@liuantum",
-      "narration": "Bengaluru. Follow for part two." }
+      "narration": "Its state now produces forty one percent of India's software exports."
+    },
+    {
+      "type": "story",
+      "text": "the city that **codes.**",
+      "spot": "#2F5D8C",
+      "stickers": [
+        {
+          "type": "vx-rocket",
+          "x": 80,
+          "y": 24,
+          "size": 13,
+          "rot": 14,
+          "at": 1.0
+        },
+        {
+          "type": "vx-india",
+          "x": 20,
+          "y": 26,
+          "size": 12,
+          "rot": -8,
+          "at": 1.2
+        }
+      ],
+      "narration": "From a bullock cart, to the city that codes the world."
+    },
+    {
+      "type": "outro",
+      "headline": "Bengaluru.",
+      "cta": "Follow for Part 2",
+      "handle": "@liuantum",
+      "cast": [
+        {
+          "id": "fin",
+          "role": "engineer",
+          "skin": "medium",
+          "x": 50,
+          "y": 98,
+          "size": 22,
+          "pose": "wave",
+          "at": 0.6
+        }
+      ],
+      "narration": "Bengaluru. Follow for part two."
+    }
   ]
 }

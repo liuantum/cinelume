@@ -42,6 +42,16 @@ Build almost every shot with the `story` scene — it is the collage camera:
 - Cut every 2–4 s; one idea per shot; mix full photos, props and paper text shots. Real archival / stock photos look best (`search:`),
   and people work best as `cutout:` images.
 
+### Tell the story with characters & stickers (any style, best in Vox edit)
+- Give the story a **cast**: 1–3 recurring characters (`references/stickers.md` → Characters). Keep the same `id`, `role`, `skin`
+  and colours across scenes so viewers recognise them.
+- Every 2–3 scenes, act a beat out instead of stating it: the character `walk`s in, `say`s the key line in a bubble
+  (or `talk: true` to lip-sync the narration), reacts (`shock`, `cheer`, `think`), points at a prop sticker.
+- Props: `vx-*` stickers (dish, cart, laptop, office, rocket, rupee, flag…), real photo stickers (`"type": "image"`,
+  `"media": "cutout:search:…"`), or the user's own pack (`pack:<name>`). Real public figures: use `head: "cutout:<photo>"`
+  only with photos the user supplies or that are openly licensed; never private individuals.
+- Leave ~40% of the frame for the cast (feet line `y` 94–98, `size` 35–45 in 9:16, 55–60 in 16:9); captions move to the top.
+
 ### Viral short playbook (retention first)
 - **Second 0–2: `hook` scene.** 2–5 giant words that open a loop: a bold claim, a number, "You're doing X wrong", "Nobody talks about…".
   Put the hook over the most striking real shot (`search-video:`). The hook's own text replaces captions (no duplication).

@@ -43,6 +43,8 @@ if (!pos[0] || opt.help) {
 const sbPath = path.resolve(pos[0]);
 const baseDir = path.dirname(sbPath);
 const sb = JSON.parse(fs.readFileSync(sbPath, 'utf8'));
+// sticker shorthand: { "type": "pack:rocket" } → an image sticker from your sticker pack
+for (const sc of sb.scenes || []) (sc.stickers || []).forEach((st, i) => { if (st && typeof st === 'object' && /^pack:/.test(st.type || '')) sc.stickers[i] = Object.assign({}, st, { type: 'image', media: st.type }); else if (typeof st === 'string' && st.startsWith('pack:')) sc.stickers[i] = { type: 'image', media: st }; });
 sb.meta = sb.meta || {}; sb.audio = sb.audio || {};
 const log = (...a) => console.log('[cinelume]', ...a);
 const CINE_THEMES = ['noir', 'film', 'ivory', 'midnight', 'ember', 'slate'];
@@ -79,7 +81,7 @@ const hash = s => crypto.createHash('sha1').update(String(s)).digest('hex').slic
 const IMG = /\.(png|jpe?g|webp|gif|avif|svg|bmp)$/i, VID = /\.(mp4|mov|webm|mkv|m4v|avi)$/i;
 
 /* ---------------- asset resolution ---------------- */
-const MEDIA_KEYS = new Set(['media', 'image', 'video', 'src', 'clips', 'images']);
+const MEDIA_KEYS = new Set(['media', 'image', 'video', 'src', 'clips', 'images', 'head']);
 function collectMedia(o, out) {
   if (Array.isArray(o)) o.forEach(x => collectMedia(x, out));
   else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) {
@@ -174,6 +176,8 @@ async function resolveAssets() {
   for (const ref0 of refs) {
     let file = null, label = null, ref = ref0;
     const wantCut = /^cutout:/i.test(ref0); if (wantCut) ref = ref0.slice(7);
+    // sticker packs: "pack:<name>" → <storyboard>/stickers/<name>.png|webp|svg|jpg, then ~/.cinelume/stickers/
+    if (/^pack:/i.test(ref)) { const nm = ref.slice(5); const dirs = [path.join(baseDir, 'stickers'), path.join(process.env.HOME || process.env.USERPROFILE || '', '.cinelume', 'stickers'), process.env.CINELUME_STICKERS || ''].filter(Boolean); let hit = null; for (const d of dirs) for (const ext of ['', '.png', '.webp', '.svg', '.jpg', '.jpeg']) { const f = path.join(d, nm + ext); if (!hit && fs.existsSync(f) && fs.statSync(f).isFile()) hit = f; } if (hit) ref = hit; else log(`sticker pack "${nm}" not found in ${dirs.join(' or ')}`); }
     try {
       const m = ref.match(/^(pexels|pixabay|unsplash|openverse|wikimedia|search)(-video)?:(.+)$/i);
       if (m) {
